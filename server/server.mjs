@@ -70,7 +70,7 @@ export const init = () => {
          console.log(`Server started ${style('✓', { color: 'green' })}`);
          res(true);
       } catch (error) {
-         console.log(`Server started ${style('X', { color: 'red' })}`);
+         console.log(`Server started ${style('X', { color: 'red' })}\n`);
          rej(error);
       }
    });
