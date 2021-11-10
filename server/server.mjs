@@ -41,12 +41,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 
 // Routes
-
-// - Public static files route
-server.use(express.static('./public'));
-
-// - Base route
-server.use('/', router);
+server.use(router);
 
 /** Starts the server */
 export const init = () => {

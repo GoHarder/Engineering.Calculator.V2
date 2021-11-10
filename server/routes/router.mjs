@@ -23,6 +23,7 @@ router.get('/', (req, res) => {
 });
 
 // Ping
-router.get('/ping', (req, res) => {
-   res.status(202).send();
-});
+router.get('/ping', (req, res) => res.status(202).send());
+
+// Static files route
+router.use('/public', express.static('./public'));
