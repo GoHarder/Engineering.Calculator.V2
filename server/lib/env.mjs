@@ -28,7 +28,7 @@ export const getEnv = () => {
    if (env) return env;
 
    try {
-      let path = new URL('../.env', import.meta.url);
+      const path = new URL('../.env', import.meta.url);
       let fileData = readFileSync(path, 'utf8');
 
       // Split string into array

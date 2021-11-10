@@ -11,9 +11,9 @@ import https from 'https';
 import express from 'express';
 
 // Project Imports
-import { getEnv } from './env.mjs';
-import { style } from './terminal.mjs';
-import { router } from './routes/base.mjs';
+import { getEnv } from './lib/env.mjs';
+import { style } from './lib/terminal.mjs';
+import { router } from './routes/router.mjs';
 
 /** The server environment */
 const env = getEnv();
