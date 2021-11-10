@@ -1,0 +1,56 @@
+$white: #ffffff;
+$gray-95: #f2f2f2;
+$gray-90: #e6e6e6;
+$gray-85: #d9d9d9;
+$gray-80: #cccccc;
+$gray-75: #bfbfbf;
+$gray-70: #b3b3b3;
+$gray-65: #a6a6a6;
+$gray-60: #999999;
+$gray-55: #8c8c8c;
+$gray-50: #808080;
+$gray-45: #737373;
+$gray-40: #666666;
+$gray-35: #595959;
+$gray-30: #4d4d4d;
+$gray-25: #404040;
+$gray-20: #333333;
+$gray-15: #262626;
+$gray-10: #1a1a1a;
+$gray-05: #0d0d0d;
+$black: #000000;
+
+$primary: #ffcb30;
+$secondary: $gray-30;
+$error: #b00020;
+
+$elevation-1: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+$elevation-2: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+$elevation-3: 0 3px 3px -2px rgb(0 0 0 / 20%), 0 3px 4px 0 rgb(0 0 0 / 14%), 0 1px 8px 0 rgb(0 0 0 / 12%);
+
+@mixin paper {
+   box-shadow: $elevation-3;
+   background-color: $white;
+}
+
+@mixin border-top {
+   border-top: 5px solid $primary;
+}
+
+// @mixin vantage-fieldset {
+//    @include vantage-paper;
+//    border: none;
+//    margin: 6px;
+
+//    legend {
+//       font-size: 1.1rem;
+//       margin: 6px 0 10px;
+//       float: left;
+//       clear: right;
+//    }
+
+//    hr {
+//       clear: both;
+//       border: 1px solid $mdc-theme-primary;
+//    }
+// }

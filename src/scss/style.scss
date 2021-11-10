@@ -1,0 +1,26 @@
+// *,
+// *::before,
+// *::after {
+//    box-sizing: border-box;
+// }
+
+html {
+   scroll-behavior: smooth;
+}
+
+body {
+   margin: 0;
+   line-height: 1.5;
+   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+   background-color: #e6e6e6;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: auto;
+}
+
+hr {
+   border: 0;
+   height: 1px;
+   background-color: rgba(0, 0, 0, 0.12);
+   margin-left: 0;
+   margin-right: 0;
+}
