@@ -19,12 +19,12 @@ const svelteConfig = {
 };
 
 const appConfig = {
-   input: 'src/js/app.js',
+   input: 'src/js/index.js',
    output: {
       sourcemap: true,
       format: 'iife',
-      name: 'app',
-      file: 'public/app.js',
+      name: 'index',
+      file: 'public/index.js',
    },
    plugins: [
       rootImport({

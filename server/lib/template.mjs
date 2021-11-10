@@ -36,7 +36,9 @@ export const getTemplate = (file) => {
 export const build = (fileData, props) => {
    const { baseUrl } = getEnv();
 
-   props = { ...props, baseUrl };
+   const reload = process.argv.includes('-dev') ? '\n<script src="http://localhost:35729/livereload.js"></script>' : '';
+
+   props = { ...props, baseUrl, reload };
 
    for (const key in props) {
       const value = props[key];
