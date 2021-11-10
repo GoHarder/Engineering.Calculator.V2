@@ -13,5 +13,22 @@
    "license": "MIT",
    "dependencies": {
       "express": "^4.17.1"
+   },
+   "devDependencies": {
+      "@rollup/plugin-commonjs": "^21.0.1",
+      "@rollup/plugin-json": "^4.1.0",
+      "@rollup/plugin-node-resolve": "^13.0.6",
+      "autoprefixer": "^10.4.0",
+      "postcss": "^8.3.11",
+      "rollup": "^2.59.0",
+      "rollup-plugin-livereload": "^2.0.5",
+      "rollup-plugin-root-import": "^1.0.0",
+      "rollup-plugin-scss": "^3.0.0",
+      "rollup-plugin-svelte": "^7.1.0",
+      "rollup-plugin-svg": "^2.0.0",
+      "rollup-plugin-terser": "^7.0.2",
+      "sass": "^1.43.4",
+      "svelte": "^3.44.1",
+      "svelte-preprocess": "^4.9.8"
    }
 }
