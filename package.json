@@ -1,0 +1,17 @@
+{
+   "name": "hw_engineering_calculator",
+   "version": "0.0.0",
+   "description": "H-W Engineering Calculator",
+   "main": "index.mjs",
+   "scripts": {
+      "build": "rollup -c",
+      "server": "node index.mjs",
+      "start": "nodemon index.mjs",
+      "watch": "rollup -c -w"
+   },
+   "author": "Gregory Harder",
+   "license": "MIT",
+   "dependencies": {
+      "express": "^4.17.1"
+   }
+}
