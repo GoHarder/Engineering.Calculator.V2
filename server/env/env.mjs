@@ -1,3 +1,7 @@
+/**
+ * @module env A module to process the server .env file
+ */
+
 // Node Imports
 import { readFileSync } from 'fs';
 
@@ -61,5 +65,3 @@ export const getEnv = () => {
       return {};
    }
 };
-
-console.log(getEnv());
