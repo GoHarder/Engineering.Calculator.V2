@@ -33,7 +33,7 @@ const appConfig = {
          extensions: '.js',
       }),
       svelte(svelteConfig),
-      scss({ output: 'public/style.css' }),
+      scss({ output: 'public/index.css' }),
       json(),
       svg(),
       resolve({ browser: true, dedupe: ['svelte'] }),

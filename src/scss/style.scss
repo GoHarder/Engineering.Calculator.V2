@@ -1,8 +1,10 @@
-// *,
-// *::before,
-// *::after {
-//    box-sizing: border-box;
-// }
+@use './src/scss/theme';
+
+*,
+*::before,
+*::after {
+   box-sizing: border-box;
+}
 
 html {
    scroll-behavior: smooth;
@@ -15,6 +17,76 @@ body {
    background-color: #e6e6e6;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: auto;
+   height: 100px;
+   min-height: 100vh;
+}
+
+header.main {
+   position: relative;
+   z-index: 2;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   height: 60px;
+   padding: 10px;
+   font-size: 18px;
+   background-color: theme.$gray-20;
+   color: theme.$white;
+   box-shadow: theme.$elevation-3;
+
+   h1 {
+      font-size: 18px;
+      font-weight: normal;
+      margin-left: 210px;
+      margin-right: auto;
+   }
+
+   img {
+      width: 120px;
+   }
+
+   .logo {
+      align-items: center;
+      background: #ffffff;
+      display: flex;
+      height: 100%;
+      left: 0px;
+      margin: 0;
+      padding: 20px;
+      position: absolute;
+      top: 0px;
+
+      & > * {
+         z-index: 1;
+      }
+      &:after {
+         background: #ffffff;
+         content: '';
+         height: 100%;
+         position: absolute;
+         right: -35px;
+         top: 0;
+         transform: skewX(-27deg);
+         width: 50px;
+         z-index: 0;
+      }
+   }
+}
+
+main {
+   min-height: calc(100% - 95px);
+}
+
+footer.main {
+   border-top: 1px solid theme.$gray-80;
+   padding: 5px 16px;
+   background-color: theme.$white;
+
+   span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      line-height: 1.66;
+   }
 }
 
 hr {
@@ -23,4 +95,13 @@ hr {
    background-color: rgba(0, 0, 0, 0.12);
    margin-left: 0;
    margin-right: 0;
+}
+
+@media print {
+   header {
+      display: none;
+   }
+   footer {
+      display: none;
+   }
 }
