@@ -1,10 +1,11 @@
 {
    "name": "hw_engineering_calculator",
-   "version": "0.0.0",
+   "version": "0.0.1",
    "description": "H-W Engineering Calculator",
    "main": "index.mjs",
    "scripts": {
       "build": "rollup -c",
+      "pre-build": "node build/build.mjs",
       "server": "node index.mjs",
       "start": "nodemon index.mjs -dev",
       "watch": "rollup -c -w"
