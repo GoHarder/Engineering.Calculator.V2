@@ -13,6 +13,7 @@ import express from 'express';
 // Project Imports
 import { getEnv } from './env.mjs';
 import { style } from './terminal.mjs';
+import { router } from './routes/base.mjs';
 
 /** The server environment */
 const env = getEnv();
@@ -21,7 +22,7 @@ const env = getEnv();
 const server = express();
 
 /** The port the server receives requests */
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || env.port;
 
 /** The https certificate data */
 let cert = undefined;
@@ -41,13 +42,11 @@ server.use(express.urlencoded({ extended: false }));
 
 // Routes
 
-// - Ping route
-server.get('/ping', (req, res) => {
-   res.status(202).send();
-});
-
-// - Public static file route
+// - Public static files route
 server.use(express.static('./public'));
+
+// - Base route
+server.use('/', router);
 
 /** Starts the server */
 export const init = () => {

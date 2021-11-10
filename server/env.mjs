@@ -55,9 +55,13 @@ export const getEnv = () => {
          return obj;
       }, {});
 
-      env = fileData;
+      // Create the base url string
+      const portStr = fileData.host === 'localhost' ? `:${fileData.port}` : '';
 
-      process.env.PORT = env.port;
+      fileData.baseUrl = `${fileData.protocol}://${fileData.host}${portStr}`;
+
+      // Save the creation of the env object
+      env = fileData;
 
       return fileData;
    } catch (error) {
