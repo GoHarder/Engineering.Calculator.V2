@@ -1,3 +1,7 @@
+/**
+ * @module index The main application module
+ */
+
 // Project Imports
 import { getEnv } from './server/env.mjs';
 import { init as server } from './server/server.mjs';
