@@ -6,18 +6,20 @@
 import express from 'express';
 
 // Project Imports
-import { getEnv } from '../env.mjs';
+import { getTemplate, build } from '../lib/template.mjs';
 
 /** The router for the module */
 export const router = express.Router();
 
 // Main html page
 router.get('/', (req, res) => {
-   const { baseUrl } = getEnv();
+   let template = getTemplate('index.html');
 
-   console.log(baseUrl);
+   if (!template) return res.status(500).json({ message: 'Could not load index.html' });
 
-   res.status(200).send(baseUrl);
+   template = build(template, {});
+
+   res.status(200).send(template);
 });
 
 // Ping
