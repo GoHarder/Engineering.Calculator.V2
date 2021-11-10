@@ -3,9 +3,9 @@
  */
 
 // Project Imports
-import { getEnv } from './server/env.mjs';
+import { getEnv } from './server/lib/env.mjs';
 import { init as server } from './server/server.mjs';
-import { hr, style } from './server/terminal.mjs';
+import { hr, style } from './server/lib/terminal.mjs';
 
 const { protocol, host, name, port } = getEnv();
 

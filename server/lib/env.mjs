@@ -6,7 +6,7 @@
 import { readFileSync } from 'fs';
 
 // Project Imports
-import { toCamelCase } from '../lib/string.mjs';
+import { toCamelCase } from '../../lib/string.mjs';
 
 /** The server environment */
 let env = undefined;
@@ -28,7 +28,7 @@ export const getEnv = () => {
    if (env) return env;
 
    try {
-      const path = new URL('../.env', import.meta.url);
+      const path = new URL('../../.env', import.meta.url);
       let fileData = readFileSync(path, 'utf8');
 
       // Split string into array
