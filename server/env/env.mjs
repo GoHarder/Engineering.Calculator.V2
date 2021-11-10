@@ -1,5 +1,5 @@
 /**
- * @module env A module to process the server .env file
+ * @module env Processes the server .env file
  */
 
 // Node Imports
