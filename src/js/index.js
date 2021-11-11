@@ -1,3 +1,4 @@
 import '../scss/style.scss';
+import Index from '../svelte/pages/index/index.svelte';
 
-console.log('Ding?');
+const svelteIndex = new Index({ target: document.querySelector('main') });
