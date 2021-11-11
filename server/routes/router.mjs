@@ -7,11 +7,14 @@ import express from 'express';
 
 // Project Imports
 import { getTemplate, build } from '../lib/template.mjs';
+import { router as api } from './api/router.mjs';
 
 /** The router for the module */
 export const router = express.Router();
 
-// Main html page
+// Routes
+
+// - Index page
 router.get('/', (req, res) => {
    let template = getTemplate('index.html');
 
@@ -22,8 +25,11 @@ router.get('/', (req, res) => {
    res.status(200).send(template);
 });
 
-// Ping
+// - API
+router.use('/api', api);
+
+// - Ping
 router.get('/ping', (req, res) => res.status(202).send());
 
-// Static files route
+// - Static files route
 router.use('/public', express.static('./public'));
