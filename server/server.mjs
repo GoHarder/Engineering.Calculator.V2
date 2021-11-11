@@ -61,10 +61,10 @@ export const init = () => {
             httpServer.listen(port);
          }
 
-         console.log(`Server started ${style('✓', { color: 'green' })}`);
+         console.log(`${style('✓', { color: 'green' })} Server started`);
          res(true);
       } catch (error) {
-         console.log(`Server started ${style('X', { color: 'red' })}\n`);
+         console.log(`${style('X', { color: 'red' })} Server started\n`);
          rej(error);
       }
    });
