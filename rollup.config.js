@@ -13,8 +13,9 @@ const production = !process.env.ROLLUP_WATCH;
 
 let includePathConfig = {
    include: {},
+   paths: ['src/svelte/components', 'public'],
    external: [],
-   extensions: ['.js'],
+   extensions: ['.js', '.mjs'],
 };
 
 const resolveConfig = {
@@ -34,15 +35,15 @@ const pageConfig = (fileName) => {
    return {
       input: `src/js/${fileName}.js`,
       output: {
-         sourcemap: true,
+         sourcemap: !production,
          format: 'iife',
-         name: `${fileName}Store`,
-         file: `/public/pages/${fileName}/script.js`,
+         name: `${fileName}Page`,
+         file: `public/pages/${fileName}/script.js`,
       },
       plugins: [
          includePaths(includePathConfig),
          svelte(svelteConfig),
-         scss({ output: `/public/pages/${fileName}/style.css` }),
+         scss({ output: `public/pages/${fileName}/style.css` }),
          json(),
          svg(),
          resolve(resolveConfig),
