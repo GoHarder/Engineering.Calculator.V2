@@ -1,6 +1,6 @@
 <script>
    // Components
-   import Login from './components/login.svelte';
+   import Login from './components/Login.svelte';
 
    // Stores
    // Properties
