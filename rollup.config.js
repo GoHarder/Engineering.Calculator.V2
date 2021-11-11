@@ -1,7 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
-import rootImport from 'rollup-plugin-root-import';
+import includePaths from 'rollup-plugin-includepaths';
 import livereload from 'rollup-plugin-livereload';
 import scss from 'rollup-plugin-scss';
 import svelte from 'rollup-plugin-svelte';
@@ -10,6 +10,18 @@ import svg from 'rollup-plugin-svg';
 import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
+
+let includePathConfig = {
+   include: {},
+   external: [],
+   extensions: ['.js'],
+};
+
+const resolveConfig = {
+   browser: true,
+   dedupe: ['svelte'],
+   moduleDirectories: ['node_modules', 'public'],
+};
 
 const svelteConfig = {
    preprocess: sveltePre(),
@@ -25,19 +37,15 @@ const pageConfig = (fileName) => {
          sourcemap: true,
          format: 'iife',
          name: `${fileName}Store`,
-         file: `public/pages/${fileName}/script.js`,
+         file: `/public/pages/${fileName}/script.js`,
       },
       plugins: [
-         rootImport({
-            root: __dirname,
-            useInput: 'prepend',
-            extensions: '.js',
-         }),
+         includePaths(includePathConfig),
          svelte(svelteConfig),
-         scss({ output: `public/pages/${fileName}/style.css` }),
+         scss({ output: `/public/pages/${fileName}/style.css` }),
          json(),
          svg(),
-         resolve({ browser: true, dedupe: ['svelte'] }),
+         resolve(resolveConfig),
          commonjs(),
          !production && livereload('public'),
          production && terser(),
