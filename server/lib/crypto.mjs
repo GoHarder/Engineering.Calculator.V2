@@ -25,3 +25,18 @@ export const hash = (str) => createHmac('sha256', hashStr).update(str).digest('h
  * @param {object} payload The payload of the token
  */
 export const signToken = (payload) => jwt.sign(payload, hashStr, { noTimestamp: true });
+
+/**
+ * Verifies the token and returns the payload
+ * @param {string} token The token string
+ */
+export const verifyToken = (token) => {
+   try {
+      const payload = jwt.verify(token, hashStr);
+
+      return payload;
+   } catch (error) {
+      console.log(error);
+      return undefined;
+   }
+};
