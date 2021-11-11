@@ -4,8 +4,10 @@
 
 // Project Imports
 import { getEnv } from './server/lib/env.mjs';
-import { init as server } from './server/server.mjs';
 import { hr, style } from './server/lib/terminal.mjs';
+
+import { init as server } from './server/server.mjs';
+import { init as mongodb } from './server/data/mongodb/mongodb.mjs';
 
 const { protocol, host, name, port } = getEnv();
 
@@ -14,7 +16,8 @@ const init = async () => {
    console.log(style('Environment:', { bold: true }), name);
 
    try {
-      server();
+      await mongodb();
+      await server();
    } catch (error) {
       console.log(error);
    }
