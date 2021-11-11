@@ -18,32 +18,36 @@ const svelteConfig = {
    },
 };
 
-const appConfig = {
-   input: 'src/js/index.js',
-   output: {
-      sourcemap: true,
-      format: 'iife',
-      name: 'index',
-      file: 'public/index.js',
-   },
-   plugins: [
-      rootImport({
-         root: __dirname,
-         useInput: 'prepend',
-         extensions: '.js',
-      }),
-      svelte(svelteConfig),
-      scss({ output: 'public/index.css' }),
-      json(),
-      svg(),
-      resolve({ browser: true, dedupe: ['svelte'] }),
-      commonjs(),
-      !production && livereload('public'),
-      production && terser(),
-   ],
-   watch: {
-      clearScreen: false,
-   },
+const pageConfig = (fileName) => {
+   return {
+      input: `src/js/${fileName}.js`,
+      output: {
+         sourcemap: true,
+         format: 'iife',
+         name: `${fileName}Store`,
+         file: `public/pages/${fileName}/script.js`,
+      },
+      plugins: [
+         rootImport({
+            root: __dirname,
+            useInput: 'prepend',
+            extensions: '.js',
+         }),
+         svelte(svelteConfig),
+         scss({ output: `public/pages/${fileName}/style.css` }),
+         json(),
+         svg(),
+         resolve({ browser: true, dedupe: ['svelte'] }),
+         commonjs(),
+         !production && livereload('public'),
+         production && terser(),
+      ],
+      watch: {
+         clearScreen: false,
+      },
+   };
 };
 
-export default [appConfig];
+const indexPage = pageConfig('index');
+
+export default [indexPage];
