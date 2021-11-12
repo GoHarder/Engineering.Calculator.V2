@@ -1,3 +1,4 @@
+import A from './A.svelte';
 import Svg from './Svg.svelte';
 
-export { Svg };
+export { A, Svg };
