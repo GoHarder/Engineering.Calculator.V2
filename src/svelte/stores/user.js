@@ -15,7 +15,7 @@ const getUser = async (token) => {
    let res, body;
 
    try {
-      res = await fetch('/api/users', { headers: { Authorization: token } });
+      res = await fetch('/api/users', { headers: { Authorization: `Bearer ${token}` } });
 
       if (res.body && res.status !== 204) body = await res.json();
 
@@ -55,7 +55,7 @@ const { subscribe, set: _set } = writable(localStorage.getItem('token'), async (
          try {
             res = await fetch('/api/tokens', {
                method: 'PUT',
-               headers: { Authorization: token },
+               headers: { Authorization: `Bearer ${token}` },
             });
 
             if (res.body && res.status !== 204) body = await res.json();

@@ -4,9 +4,9 @@
    import { account_circle_svg, logout_svg, person_svg, supervisor_account_svg } from 'img/icons';
 
    // Components
+   import { Svg } from './components/common';
    import { Button } from './components/material/button';
    import { Divider, Item, Menu } from './components/material/menu';
-   import { Svg } from './components/common';
 
    // Stores
    import userStore from './stores/user';
@@ -24,6 +24,10 @@
    // Contexts
    // Reactive Rules
    // Events
+   const onLogout = () => {
+      userStore.destroy();
+   };
+
    // Lifecycle
    onDestroy(() => {
       clearUser();
@@ -55,7 +59,7 @@
 
       <Divider />
 
-      <Item>
+      <Item on:click={onLogout}>
          <svelte:fragment slot="leadingIcon"><Svg fileData={logout_svg} /></svelte:fragment>
          Logout
       </Item>
