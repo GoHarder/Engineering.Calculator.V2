@@ -2,7 +2,7 @@
    import { onMount, onDestroy } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCMenu } from '@material/menu';
-   import { forwardEvents } from '../js/svelte';
+   import { forwardEvents } from '../../lib';
 
    // Components
    // Stores
