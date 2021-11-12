@@ -59,7 +59,7 @@
 
    // Lifecycle
    onMount(() => {
-      history.pushState({ path: '/Login' }, '');
+      history.pushState({ path: '/Login/LoginForm' }, '');
       setTimeout(() => (showApp = true), 1000);
    });
 
