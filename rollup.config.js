@@ -13,7 +13,7 @@ const production = !process.env.ROLLUP_WATCH;
 
 let includePathConfig = {
    include: {},
-   paths: ['', 'src/svelte/components', 'public'],
+   paths: ['', 'src/svelte', 'public'],
    external: [],
    extensions: ['.js', '.mjs'],
 };
@@ -21,7 +21,7 @@ let includePathConfig = {
 const resolveConfig = {
    browser: true,
    dedupe: ['svelte'],
-   moduleDirectories: ['node_modules', 'public'],
+   moduleDirectories: ['node_modules'],
 };
 
 const svelteConfig = {
@@ -31,32 +31,28 @@ const svelteConfig = {
    },
 };
 
-const pageConfig = (fileName) => {
-   return {
-      input: `src/js/${fileName}.js`,
-      output: {
-         sourcemap: !production,
-         format: 'iife',
-         name: `${fileName}Page`,
-         file: `public/pages/${fileName}/script.js`,
-      },
-      plugins: [
-         includePaths(includePathConfig),
-         svelte(svelteConfig),
-         scss({ output: `public/pages/${fileName}/style.css` }),
-         json(),
-         svg(),
-         resolve(resolveConfig),
-         commonjs(),
-         !production && livereload('public'),
-         production && terser(),
-      ],
-      watch: {
-         clearScreen: false,
-      },
-   };
+const appBuild = {
+   input: `src/js/app.js`,
+   output: {
+      sourcemap: !production,
+      format: 'iife',
+      name: `app`,
+      file: `public/app.js`,
+   },
+   plugins: [
+      includePaths(includePathConfig),
+      svelte(svelteConfig),
+      scss({ output: `public/app.css` }),
+      json(),
+      svg(),
+      resolve(resolveConfig),
+      commonjs(),
+      !production && livereload('public'),
+      production && terser(),
+   ],
+   watch: {
+      clearScreen: false,
+   },
 };
 
-const indexPage = pageConfig('index');
-
-export default [indexPage];
+export default [appBuild];
