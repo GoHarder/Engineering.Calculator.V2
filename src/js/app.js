@@ -1,4 +1,30 @@
 import '../scss/style.scss';
-import Svelte from '../svelte/App.svelte';
+import App from '../svelte/App.svelte';
+import Nav from '../svelte/Nav.svelte';
 
-const svelte = new Svelte({ target: document.querySelector('main') });
+// Monkey patch to add a custom location change event to window
+history.pushState = ((f) =>
+   function pushState() {
+      var ret = f.apply(this, arguments);
+      window.dispatchEvent(new Event('pushstate'));
+      window.dispatchEvent(new Event('locationchange'));
+      return ret;
+   })(history.pushState);
+
+history.replaceState = ((f) =>
+   function replaceState() {
+      var ret = f.apply(this, arguments);
+      window.dispatchEvent(new Event('replacestate'));
+      window.dispatchEvent(new Event('locationchange'));
+      return ret;
+   })(history.replaceState);
+
+window.addEventListener('popstate', () => {
+   window.dispatchEvent(new Event('locationchange'));
+});
+
+/** Svelte application instance */
+const svelteApp = new App({ target: document.querySelector('main') });
+
+/** Svelte navigation instance */
+const svelteNav = new Nav({ target: document.querySelector('nav') });
