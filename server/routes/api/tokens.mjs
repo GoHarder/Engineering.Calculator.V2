@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
    token = signToken(token);
 
-   res.status(200).send(token);
+   res.status(200).json({ token });
 });
 
 // - Put
@@ -82,5 +82,5 @@ router.put('/', (req, res) => {
 
    token = signToken(token);
 
-   res.status(200).send(token);
+   res.status(200).json({ token });
 });
