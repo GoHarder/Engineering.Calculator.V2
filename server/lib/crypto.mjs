@@ -21,6 +21,12 @@ const { hash: hashStr } = getEnv();
 export const hash = (str) => createHmac('sha256', hashStr).update(str).digest('hex');
 
 /**
+ * Creates a random string of alphanumeric characters
+ * @param {number} length The length of the string
+ */
+export const randomStr = (length = 10) => crypto.randomBytes(length).toString('base64').slice(0, length);
+
+/**
  * Creates a JSON web token
  * @param {object} payload The payload of the token
  */
