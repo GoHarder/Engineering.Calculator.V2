@@ -1,5 +1,7 @@
 <script>
    // Components
+   import ConfirmPasswordForm from './Components/ConfirmPasswordForm.svelte';
+   import ForgotPasswordForm from './Components/ForgotPasswordForm.svelte';
    import LoginForm from './Components/LoginForm.svelte';
 
    // Stores
@@ -7,6 +9,8 @@
    // Methods
    // Constants
    const comps = {
+      ConfirmPasswordForm,
+      ForgotPasswordForm,
       LoginForm,
    };
 
@@ -19,8 +23,15 @@
    $: h2Text = comp === LoginForm ? 'Sign In' : 'Forgot Password';
 
    // Events
+   const onLocationChange = () => {
+      const path = history.state.path.split('/').slice(1);
+      comp = comps[path[1]];
+   };
+
    // Lifecycle
 </script>
+
+<svelte:window on:locationchange={onLocationChange} />
 
 <section class="page">
    <h2>{h2Text}</h2>

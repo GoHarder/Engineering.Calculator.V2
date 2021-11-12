@@ -69,7 +69,7 @@
 
       <span>&nbsp;|&nbsp;</span>
 
-      <A href="/Login/ForgotPassword">Forgot Password?</A>
+      <A href="/Login/ForgotPasswordForm">Forgot Password?</A>
    </div>
 
    <div class="row">
