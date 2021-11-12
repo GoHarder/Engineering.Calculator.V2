@@ -6,7 +6,7 @@
    import { link_svg } from 'img/icons';
 
    // Components
-   import { Svg } from 'common';
+   import { Svg } from 'components/common';
 
    // Stores
    // Properties

@@ -5,7 +5,7 @@
 
    // Components
    import Input from './Input.svelte';
-   import { Svg } from 'common';
+   import { Svg } from 'components/common';
 
    // Stores
    // Properties
