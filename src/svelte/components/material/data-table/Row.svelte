@@ -1,0 +1,22 @@
+<script>
+   import { classList } from '../../lib';
+
+   // Components
+   // Stores
+   // Properties
+   // Methods
+   // Constants
+   // Variables
+   // Subscriptions
+   // Contexts
+   // Reactive Rules
+   $: trClass = classList(['mdc-data-table__row', $$props.class]);
+
+   // Events
+   // Lifecycle
+</script>
+
+<tr class={trClass}><slot /></tr>
+
+<style>
+</style>
