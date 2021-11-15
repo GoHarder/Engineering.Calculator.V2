@@ -74,7 +74,17 @@ header.main {
 }
 
 main {
+   height: 100px;
    min-height: calc(100% - 95px);
+   min-width: 768px;
+   padding: 0.75em 1em 1em;
+   margin: 0 auto;
+}
+
+@media (min-width: 1600px) {
+   main {
+      max-width: 1600px;
+   }
 }
 
 footer.main {
