@@ -1,8 +1,8 @@
 <script>
    // Components
-   import ConfirmPasswordForm from './Components/ConfirmPasswordForm.svelte';
-   import ForgotPasswordForm from './Components/ForgotPasswordForm.svelte';
-   import LoginForm from './Components/LoginForm.svelte';
+   import ConfirmPasswordForm from './components/ConfirmPasswordForm.svelte';
+   import ForgotPasswordForm from './components/ForgotPasswordForm.svelte';
+   import LoginForm from './components/LoginForm.svelte';
 
    // Stores
    // Properties
