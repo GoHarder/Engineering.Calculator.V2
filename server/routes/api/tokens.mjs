@@ -9,7 +9,8 @@ import express from 'express';
 import * as validate from '../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
-import { hash as getHash, signToken, verifyToken } from '../../lib/crypto.mjs';
+import { hash as getHash, signToken } from '../../lib/crypto.mjs';
+import { checkAuth } from '../../middleware/lib.mjs';
 
 /** The router for the module */
 export const router = express.Router();
@@ -67,13 +68,8 @@ router.post('/', async (req, res) => {
 });
 
 // - Put
-router.put('/', (req, res) => {
-   // Verify the token
-   let token = req.headers.authorization.split(' ')[1];
-
-   token = verifyToken(token);
-
-   if (!token) return res.status(401).json({ message: 'Authorization has expired' });
+router.put('/', checkAuth, (req, res) => {
+   let { token } = req;
 
    // See if the token need to be renewed
    const newExp = Math.floor(Date.now() / 1000) + 60 * 60;

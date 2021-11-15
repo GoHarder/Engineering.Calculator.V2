@@ -7,33 +7,15 @@ import express from 'express';
 import { ObjectId } from 'mongodb';
 
 // Project Imports
-import { signToken, verifyToken } from '../../lib/crypto.mjs';
+import { signToken } from '../../lib/crypto.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import * as validate from '../../lib/validate.mjs';
 import { hash, randomStr } from '../../lib/crypto.mjs';
 import { sendResetPassword } from '../../lib/mailgun.mjs';
+import { checkAuth } from '../../middleware/lib.mjs';
 
 /** The router for the module */
 export const router = express.Router();
-
-/**
- * Checks the authorization header for a valid token
- * @param req The request object
- * @param res The response object
- * @param next Forwards to next part of handler
- */
-const checkAuth = (req, res, next) => {
-   // Verify the token
-   let token = req.headers.authorization?.split(' ')[1];
-
-   token = verifyToken(token);
-
-   if (!token) return res.status(401).json({ message: 'Authorization is invalid' });
-
-   req.token = token;
-
-   next();
-};
 
 // Routes
 
