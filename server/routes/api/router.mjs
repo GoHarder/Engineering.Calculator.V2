@@ -16,7 +16,7 @@ export const router = express.Router();
 // Routes
 
 // - Projects
-router.use('./projects', projects);
+router.use('/projects', projects);
 
 // - Tokens
 router.use('/tokens', tokens);
