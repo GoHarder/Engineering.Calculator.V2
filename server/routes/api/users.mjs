@@ -4,7 +4,6 @@
 
 // NPM Imports
 import express from 'express';
-import { ObjectId } from 'mongodb';
 
 // Project Imports
 import { signToken } from '../../lib/crypto.mjs';
@@ -22,9 +21,6 @@ export const router = express.Router();
 // - Get
 router.get('/', checkAuth, async (req, res) => {
    let { _id } = req.token;
-
-   // Sanitize _ids
-   _id = ObjectId(_id);
 
    // Lookup the user
    let userDoc = undefined;
@@ -90,7 +86,7 @@ router.put('/', checkAuth, async (req, res) => {
    let updateInfo = undefined;
 
    try {
-      const _id = ObjectId(token._id);
+      const _id = token._id;
       const hashedPassword = hash(body.password);
 
       updateInfo = await appDB.collection('users').updateOne({ _id }, { $set: { hashedPassword } });

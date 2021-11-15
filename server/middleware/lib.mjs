@@ -2,6 +2,9 @@
  * @module lib Library of route middleware
  */
 
+// Npm Imports
+import { ObjectId } from 'mongodb';
+
 // Project Imports
 import { verifyToken } from '../lib/crypto.mjs';
 
@@ -18,6 +21,8 @@ export const checkAuth = (req, res, next) => {
    token = verifyToken(token);
 
    if (!token) return res.status(401).json({ message: 'Authorization is invalid' });
+
+   token._id = new ObjectId(token._id);
 
    req.token = token;
 
