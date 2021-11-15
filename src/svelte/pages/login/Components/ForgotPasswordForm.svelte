@@ -7,7 +7,12 @@
    import { HelperText, Input } from 'components/material/input';
 
    // Stores
+   import fetchStore from 'stores/fetch';
+
    // Properties
+   export let resetToken = undefined;
+   export let userId = undefined;
+
    // Methods
    // Constants
    // Variables
@@ -17,8 +22,27 @@
    // Contexts
    // Reactive Rules
    // Events
-   const onSubmit = (event) => {
+   const onSubmit = async (event) => {
       event.preventDefault();
+      fetchStore.loading(true);
+      let res, body;
+
+      try {
+         res = await fetch(`/api/users/${email.toLocaleLowerCase()}`, {
+            headers: { 'Content-Type': 'application/json' },
+         });
+
+         if (res.body) body = await res.json();
+
+         if (!res.ok) throw new Error(body.message);
+
+         userId = body._id;
+         resetToken = body.token;
+         fetchStore.loading(false);
+         history.pushState({ path: '/Login/ConfirmPasswordForm' }, '');
+      } catch (error) {
+         fetchStore.setError({ res, error });
+      }
    };
 
    // Lifecycle

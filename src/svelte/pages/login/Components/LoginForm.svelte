@@ -12,6 +12,8 @@
    import userStore from 'stores/user';
 
    // Properties
+   export const resetToken = undefined;
+
    // Methods
    // Constants
    // Variables

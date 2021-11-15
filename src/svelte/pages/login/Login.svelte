@@ -15,7 +15,9 @@
    };
 
    // Variables
-   let comp = LoginForm;
+   // let comp = LoginForm;
+   let comp = ConfirmPasswordForm;
+   let resetToken = undefined;
 
    // Subscriptions
    // Contexts
@@ -36,7 +38,7 @@
 <section class="page">
    <h2>{h2Text}</h2>
    <p>Hollister-Whitney Engineering Calculator</p>
-   <svelte:component this={comp} />
+   <svelte:component this={comp} bind:resetToken />
 </section>
 
 <style lang="scss">
