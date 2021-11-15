@@ -15,8 +15,7 @@
    };
 
    // Variables
-   // let comp = LoginForm;
-   let comp = ConfirmPasswordForm;
+   let comp = LoginForm;
    let resetToken = undefined;
 
    // Subscriptions
