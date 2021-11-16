@@ -22,7 +22,11 @@ export const checkAuth = (req, res, next) => {
 
    if (!token) return res.status(401).json({ message: 'Authorization is invalid' });
 
-   token._id = new ObjectId(token._id);
+   try {
+      token._id = new ObjectId(token._id);
+   } catch (error) {
+      return res.status().json({ message: error.message });
+   }
 
    req.token = token;
 
