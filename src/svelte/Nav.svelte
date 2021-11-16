@@ -50,7 +50,7 @@
          Account Settings
       </Item>
 
-      {#if user.admin}
+      {#if user.role !== 'user'}
          <Item>
             <svelte:fragment slot="leadingIcon"><Svg fileData={supervisor_account_svg} /></svelte:fragment>
             Admin Tools
