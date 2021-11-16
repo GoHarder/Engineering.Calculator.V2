@@ -19,6 +19,39 @@ export const router = express.Router();
 // Routes
 
 // - Get
+router.get('/all', checkAuth, async (req, res) => {
+   let { _id } = req.token;
+
+   const projection = {
+      hashedPassword: 0,
+      role: 0,
+   };
+
+   let docs = [];
+
+   try {
+      docs = await appDB
+         .collection('users')
+         .find({ _id: { $ne: _id } }, { projection })
+         .toArray();
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   // // Lookup the user
+   // let userDoc = undefined;
+
+   // try {
+   //    userDoc = await appDB.collection('users').findOne({ _id }, { projection: { hashedPassword: 0 } });
+   // } catch (error) {
+   //    return res.status(500).json({ message: error.message });
+   // }
+
+   // if (!userDoc) return res.status(404).json({ message: `Could not find user` });
+
+   res.status(200).json(docs);
+});
+
 router.get('/bearer', checkAuth, async (req, res) => {
    let { _id } = req.token;
 
