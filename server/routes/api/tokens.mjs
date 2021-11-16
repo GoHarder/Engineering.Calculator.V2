@@ -55,7 +55,6 @@ router.post('/', async (req, res) => {
    // Create the token and send it
    const exp = Math.floor(Date.now() / 1000) + 60 * 60 * (longToken ? 336 : 1);
 
-   // TODO: 11-11-2021 3:16 PM - remove the admin boolean before rolling out
    let token = {
       _id: userDoc._id,
       role: userDoc.role,
