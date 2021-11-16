@@ -19,7 +19,7 @@ export const router = express.Router();
 // Routes
 
 // - Get
-router.get('/', checkAuth, async (req, res) => {
+router.get('/bearer', checkAuth, async (req, res) => {
    let { _id } = req.token;
 
    // Lookup the user
@@ -36,7 +36,7 @@ router.get('/', checkAuth, async (req, res) => {
    res.status(200).json(userDoc);
 });
 
-router.get('/:email', async (req, res) => {
+router.get('email/:email', async (req, res) => {
    const { email } = req.params;
 
    if (!validate.email(email)) return res.status(400).json({ message: 'Email is invalid' });

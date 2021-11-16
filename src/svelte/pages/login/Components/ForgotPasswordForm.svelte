@@ -28,7 +28,7 @@
       let res, body;
 
       try {
-         res = await fetch(`/api/users/${email.toLocaleLowerCase()}`, {
+         res = await fetch(`/api/users/email/${email.toLocaleLowerCase()}`, {
             headers: { 'Content-Type': 'application/json' },
          });
 
