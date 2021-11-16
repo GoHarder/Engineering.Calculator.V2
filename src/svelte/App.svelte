@@ -1,5 +1,6 @@
 <script>
    import { onDestroy, onMount } from 'svelte';
+   import { fade } from 'svelte/transition';
 
    // Components
    import { Button } from './components/material/button';
@@ -47,7 +48,7 @@
 
    // Events
    const onBeforeUnload = () => {
-      console.log('before unload');
+      navigator.sendBeacon(`/api/projects/check-in/${user._id}`);
    };
 
    const onCloseError = () => fetchStore.clearError();
@@ -59,7 +60,6 @@
 
    // Lifecycle
    onMount(() => {
-      history.pushState({ path: '/Login/LoginForm' }, '');
       setTimeout(() => (showApp = true), 1000);
    });
 
@@ -88,7 +88,9 @@
 </Dialog>
 
 {#if showApp}
-   <svelte:component this={comp} />
+   <div transition:fade class="main-content">
+      <svelte:component this={comp} />
+   </div>
 {/if}
 
 <style>
