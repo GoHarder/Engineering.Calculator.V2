@@ -38,17 +38,6 @@ router.get('/all', checkAuth, async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   // // Lookup the user
-   // let userDoc = undefined;
-
-   // try {
-   //    userDoc = await appDB.collection('users').findOne({ _id }, { projection: { hashedPassword: 0 } });
-   // } catch (error) {
-   //    return res.status(500).json({ message: error.message });
-   // }
-
-   // if (!userDoc) return res.status(404).json({ message: `Could not find user` });
-
    res.status(200).json(docs);
 });
 
