@@ -131,6 +131,42 @@ const save = async (project, userId = undefined) => {
 };
 
 /**
+ * Shares a project with another user
+ * @param {object} project The project object
+ * @param {string} email The user to send to
+ */
+const share = async (project, email) => {
+   const token = localStorage.getItem('token');
+
+   // Run fetch
+   fetchStore.loading(true);
+   let res, body;
+
+   try {
+      const payload = JSON.stringify(project);
+
+      res = await fetch(`api/projects/share/${email}`, {
+         method: 'PUT',
+         headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+         },
+         body: payload,
+      });
+
+      if (res.body && res.status !== 204) body = await res.json();
+
+      if (!res.ok) throw new Error(body.message);
+
+      fetchStore.loading(false);
+
+      _set(body);
+   } catch (error) {
+      fetchStore.setError({ res, error });
+   }
+};
+
+/**
  * Sets the project in the store
  * @param {object} project The project object
  */
@@ -142,5 +178,6 @@ export default {
    destroy,
    save,
    set,
+   share,
    subscribe,
 };
