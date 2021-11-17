@@ -43,8 +43,14 @@ const send = async (to, subject, html) => {
    }
 };
 
+/**
+ * Sends the reset password email
+ * @param {string} to The recipients email
+ * @param {string} resetCode The reset code to send
+ */
 export const sendResetPassword = (to, resetCode) => {
-   let template = getTemplate('reset-password.html');
+   let baseTemplate = getTemplate('base-email.html');
+   let bodyTemplate = getTemplate('reset-password.html');
 
    const subject = 'Reset Password';
 
@@ -54,7 +60,31 @@ export const sendResetPassword = (to, resetCode) => {
       baseUrl,
    };
 
-   template = build(template, props);
+   baseTemplate = build(baseTemplate, { message: bodyTemplate });
+   baseTemplate = build(baseTemplate, props);
 
-   return send(to, subject, template);
+   return send(to, subject, baseTemplate);
+};
+
+/**
+ * Sends the shared project email
+ * @param {string} to The recipients email
+ * @param {object} props The information to fill out the email template
+ */
+export const sendSharedProject = (to, props = {}) => {
+   let baseTemplate = getTemplate('base-email.html');
+   let bodyTemplate = getTemplate('share-project.html');
+
+   const subject = 'Shared Workbook';
+
+   props = {
+      ...props,
+      emailTitle: `${subjectTitle}${subject}`,
+      baseUrl,
+   };
+
+   baseTemplate = build(baseTemplate, { message: bodyTemplate });
+   baseTemplate = build(baseTemplate, props);
+
+   return send(to, subject, baseTemplate);
 };
