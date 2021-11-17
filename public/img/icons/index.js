@@ -4,6 +4,7 @@ import arrow_drop_up_svg from './arrow_drop_up.svg';
 import check_svg from './check.svg';
 import chevron_left_svg from './chevron_left.svg';
 import chevron_right_svg from './chevron_right.svg';
+import close_svg from './close.svg';
 import delete_svg from './delete.svg';
 import email_svg from './email.svg';
 import file_copy_svg from './file_copy.svg';
@@ -14,6 +15,7 @@ import login_svg from './login.svg';
 import logout_svg from './logout.svg';
 import more_vert_svg from './more_vert.svg';
 import person_svg from './person.svg';
+import save_svg from './save.svg';
 import search_svg from './search.svg';
 import share_svg from './share.svg';
 import supervisor_account_svg from './supervisor_account.svg';
@@ -27,6 +29,7 @@ export {
    check_svg,
    chevron_left_svg,
    chevron_right_svg,
+   close_svg,
    delete_svg,
    email_svg,
    file_copy_svg,
@@ -37,6 +40,7 @@ export {
    logout_svg,
    more_vert_svg,
    person_svg,
+   save_svg,
    search_svg,
    share_svg,
    supervisor_account_svg,
