@@ -95,7 +95,7 @@ router.get('email/:email', async (req, res) => {
 });
 
 // - Put
-router.put('/', checkAuth, async (req, res) => {
+router.put('/reset-password', checkAuth, async (req, res) => {
    const { body, token } = req;
 
    // Check if reset strings are valid
