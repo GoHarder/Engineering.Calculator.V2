@@ -60,7 +60,7 @@
       </svelte:fragment>
    </Input>
 
-   <InputPassword bind:value={password} label="Password" fullWidth>
+   <InputPassword bind:value={password} label="Password" required fullWidth>
       <svelte:fragment slot="helperText">
          <HelperText validation>Invalid Password</HelperText>
       </svelte:fragment>

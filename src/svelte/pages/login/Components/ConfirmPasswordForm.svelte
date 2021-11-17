@@ -73,13 +73,13 @@
             </svelte:fragment>
          </Input>
 
-         <InputPassword bind:value={password1} label="New Password" fullWidth>
+         <InputPassword bind:value={password1} label="New Password" required fullWidth>
             <svelte:fragment slot="helperText">
                <HelperText validation>Invalid Password</HelperText>
             </svelte:fragment>
          </InputPassword>
 
-         <InputPassword bind:value={password2} label="Confirm New Password" fullWidth>
+         <InputPassword bind:value={password2} label="Confirm New Password" required fullWidth>
             <svelte:fragment slot="helperText">
                <HelperText validation>Invalid Password</HelperText>
             </svelte:fragment>

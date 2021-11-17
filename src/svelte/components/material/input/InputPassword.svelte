@@ -30,7 +30,7 @@
 </script>
 
 {#if showPassword}
-   <Input bind:value {...props} required {pattern}>
+   <Input bind:value {...props} {pattern}>
       <svelte:fragment slot="trailingIcon">
          <Svg on:click={onToggle} fileData={visibility_off_svg} role="button" tabindex="0" title="Hide Password" />
       </svelte:fragment>
@@ -40,7 +40,7 @@
       </svelte:fragment>
    </Input>
 {:else}
-   <Input bind:value {...props} required {pattern} type="password">
+   <Input bind:value {...props} {pattern} type="password">
       <svelte:fragment slot="trailingIcon">
          <Svg on:click={onToggle} fileData={visibility_svg} role="button" tabindex="0" title="Show Password" />
       </svelte:fragment>
