@@ -24,6 +24,8 @@
    // Contexts
    // Reactive Rules
    // Events
+   const onAccountSettings = () => history.pushState({ path: '/AccountSettings' }, '');
+
    const onLogout = () => {
       userStore.destroy();
    };
@@ -45,7 +47,7 @@
    </Button>
 
    <Menu bind:show={showMenu}>
-      <Item>
+      <Item on:click={onAccountSettings}>
          <svelte:fragment slot="leadingIcon"><Svg fileData={account_circle_svg} /></svelte:fragment>
          Account Settings
       </Item>

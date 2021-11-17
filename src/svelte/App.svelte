@@ -7,6 +7,7 @@
    import { Dialog, Title } from './components/material/dialog';
    import { LinearProgress } from './components/material/progress';
 
+   import AccountSettings from './pages/account-settings/AccountSettings.svelte';
    import Home from './pages/home/Home.svelte';
    import Login from './pages/login/Login.svelte';
 
@@ -18,12 +19,13 @@
    // Methods
    // Constants
    const comps = {
+      AccountSettings,
       Home,
       Login,
    };
 
    // Variables
-   let comp = Login;
+   let comp = AccountSettings;
    let errorData = undefined;
    let showApp = false;
    let showError = false;
