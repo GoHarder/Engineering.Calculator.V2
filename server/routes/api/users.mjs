@@ -4,12 +4,12 @@
 
 // NPM Imports
 import express from 'express';
+import { ObjectId } from 'mongodb';
 
 // Project Imports
-import { signToken } from '../../lib/crypto.mjs';
+import { hash, signToken, randomStr } from '../../lib/crypto.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import * as validate from '../../lib/validate.mjs';
-import { hash, randomStr } from '../../lib/crypto.mjs';
 import { sendResetPassword } from '../../lib/mailgun.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';
 
@@ -95,6 +95,39 @@ router.get('email/:email', async (req, res) => {
 });
 
 // - Put
+router.put('/', checkAuth, async (req, res) => {
+   const { body, token } = req;
+
+   // Sanitize the body
+   body._id = new ObjectId(body._id);
+
+   // Check if person is able to edit
+   if (token.role === 'user' && body._id.toString() !== token._id.toString()) {
+      return res.status(401).send({ message: 'Authorization is invalid' });
+   }
+
+   delete body._id;
+
+   // If its a password change then hash it
+   if (body.password) {
+      body.hashedPassword = hash(body.password);
+      delete body.password;
+   }
+
+   // Update the user document
+   let updateInfo = undefined;
+
+   try {
+      updateInfo = await appDB.collection('users').updateOne({ _id: token._id }, { $set: body });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (updateInfo.modifiedCount === 0) return res.status(400).json({ message: 'Nothing was changed' });
+
+   res.status(204).send();
+});
+
 router.put('/reset-password', checkAuth, async (req, res) => {
    const { body, token } = req;
 
