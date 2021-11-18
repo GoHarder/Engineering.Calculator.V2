@@ -36,7 +36,7 @@
             password: password2,
          });
 
-         res = await fetch(`/api/users`, {
+         res = await fetch(`/api/users/reset-password`, {
             method: 'PUT',
             headers: {
                Authorization: `Bearer ${resetToken}`,
