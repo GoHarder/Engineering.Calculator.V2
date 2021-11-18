@@ -1,5 +1,3 @@
-import Divider from './Divider.svelte';
-import Item from './Item.svelte';
-import List from './List.svelte';
-
-export { Divider, Item, List };
+export { default as Divider } from './Divider.svelte';
+export { default as Item } from './Item.svelte';
+export { default as List } from './List.svelte';

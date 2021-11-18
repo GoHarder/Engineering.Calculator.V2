@@ -1,7 +1,5 @@
-import Cell from './Cell.svelte';
-import PageRows from './PageRows.svelte';
-import Nav from './Nav.svelte';
-import Row from './Row.svelte';
-import Table from './Table.svelte';
-
-export { Cell, PageRows, Nav, Row, Table };
+export { default as Cell } from './Cell.svelte';
+export { default as PageRows } from './PageRows.svelte';
+export { default as Nav } from './Nav.svelte';
+export { default as Row } from './Row.svelte';
+export { default as Table } from './Table.svelte';

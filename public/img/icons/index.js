@@ -1,49 +1,23 @@
-import account_circle_svg from './account_circle.svg';
-import add_svg from './add.svg';
-import arrow_drop_up_svg from './arrow_drop_up.svg';
-import check_svg from './check.svg';
-import chevron_left_svg from './chevron_left.svg';
-import chevron_right_svg from './chevron_right.svg';
-import close_svg from './close.svg';
-import delete_svg from './delete.svg';
-import email_svg from './email.svg';
-import file_copy_svg from './file_copy.svg';
-import first_page_svg from './first_page.svg';
-import last_page_svg from './last_page.svg';
-import link_svg from './link.svg';
-import login_svg from './login.svg';
-import logout_svg from './logout.svg';
-import more_vert_svg from './more_vert.svg';
-import person_svg from './person.svg';
-import save_svg from './save.svg';
-import search_svg from './search.svg';
-import share_svg from './share.svg';
-import supervisor_account_svg from './supervisor_account.svg';
-import visibility_off_svg from './visibility_off.svg';
-import visibility_svg from './visibility.svg';
-
-export {
-   account_circle_svg,
-   add_svg,
-   arrow_drop_up_svg,
-   check_svg,
-   chevron_left_svg,
-   chevron_right_svg,
-   close_svg,
-   delete_svg,
-   email_svg,
-   file_copy_svg,
-   first_page_svg,
-   last_page_svg,
-   link_svg,
-   login_svg,
-   logout_svg,
-   more_vert_svg,
-   person_svg,
-   save_svg,
-   search_svg,
-   share_svg,
-   supervisor_account_svg,
-   visibility_off_svg,
-   visibility_svg,
-};
+export { default as account_circle_svg } from './account_circle.svg';
+export { default as add_svg } from './add.svg';
+export { default as arrow_drop_up_svg } from './arrow_drop_up.svg';
+export { default as check_svg } from './check.svg';
+export { default as chevron_left_svg } from './chevron_left.svg';
+export { default as chevron_right_svg } from './chevron_right.svg';
+export { default as close_svg } from './close.svg';
+export { default as delete_svg } from './delete.svg';
+export { default as email_svg } from './email.svg';
+export { default as file_copy_svg } from './file_copy.svg';
+export { default as first_page_svg } from './first_page.svg';
+export { default as last_page_svg } from './last_page.svg';
+export { default as link_svg } from './link.svg';
+export { default as login_svg } from './login.svg';
+export { default as logout_svg } from './logout.svg';
+export { default as more_vert_svg } from './more_vert.svg';
+export { default as person_svg } from './person.svg';
+export { default as save_svg } from './save.svg';
+export { default as search_svg } from './search.svg';
+export { default as share_svg } from './share.svg';
+export { default as supervisor_account_svg } from './supervisor_account.svg';
+export { default as visibility_off_svg } from './visibility_off.svg';
+export { default as visibility_svg } from './visibility.svg';

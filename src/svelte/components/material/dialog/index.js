@@ -1,4 +1,2 @@
-import Dialog from './Dialog.svelte';
-import Title from './Title.svelte';
-
-export { Dialog, Title };
+export { default as Dialog } from './Dialog.svelte';
+export { default as Title } from './Title.svelte';

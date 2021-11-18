@@ -1,4 +1,2 @@
-import Button from './Button.svelte';
-import IconButton from './IconButton.svelte';
-
-export { Button, IconButton };
+export { default as Button } from './Button.svelte';
+export { default as IconButton } from './IconButton.svelte';

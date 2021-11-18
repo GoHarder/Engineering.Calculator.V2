@@ -1,6 +1,4 @@
-import Anchor from './Anchor.svelte';
-import Divider from '../list/Divider.svelte';
-import Item from '../list/Item.svelte';
-import Menu from './Menu.svelte';
-
-export { Anchor, Divider, Item, Menu };
+export { default as Anchor } from './Anchor.svelte';
+export { default as Divider } from '../list/Divider.svelte';
+export { default as Item } from '../list/Item.svelte';
+export { default as Menu } from './Menu.svelte';

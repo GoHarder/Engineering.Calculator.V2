@@ -1,5 +1,3 @@
-import A from './A.svelte';
-import PasswordRequire from './PasswordRequire.svelte';
-import Svg from './Svg.svelte';
-
-export { A, PasswordRequire, Svg };
+export { default as A } from './A.svelte';
+export { default as PasswordRequire } from './PasswordRequire.svelte';
+export { default as Svg } from './Svg.svelte';

@@ -1,3 +1,1 @@
-import LinearProgress from './LinearProgress.svelte';
-
-export { LinearProgress };
+export { default as LinearProgress } from './LinearProgress.svelte';
