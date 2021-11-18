@@ -25,7 +25,7 @@
    };
 
    // Variables
-   let comp = AccountSettings;
+   let comp = Login;
    let errorData = undefined;
    let showApp = false;
    let showError = false;

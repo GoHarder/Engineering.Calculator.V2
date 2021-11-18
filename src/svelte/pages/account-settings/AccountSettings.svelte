@@ -1,7 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
-   import { close_svg, save_svg } from 'img/icons';
+   import { save_svg } from 'img/icons';
 
    // Components
    import { PasswordRequire, Svg } from 'components/common';
@@ -10,13 +10,13 @@
    import { Snackbar } from 'components/material/snackbar';
 
    // Stores
-   import fetchStore from 'stores/fetch';
    import userStore from 'stores/user';
 
    // Properties
    // Methods
    // Constants
    // Variables
+   let _id;
    let email;
    let firstName;
    let lastName;
@@ -26,49 +26,27 @@
    let showSnackbar = false;
 
    // Subscriptions
-   const clearUser = userStore.subscribe((store) => {
-      email = store.email;
-      firstName = store.firstName;
-      lastName = store.lastName;
-   });
+   const clearUser = userStore.subscribe((store) => (_id = store._id));
 
    // Contexts
    // Reactive Rules
    // Events
-   const onCancel = () => history.back();
+   const onBack = () => history.back();
 
-   const onSubmit = async (event) => {
+   const onSubmit = (event) => {
       event.preventDefault();
 
-      fetchStore.loading(true);
-      let res, body;
+      // Create the request
+      const update = { _id };
+      if (email) update.firstName = email;
+      if (firstName) update.firstName = firstName;
+      if (lastName) update.lastName = lastName;
+      if (password1) update.password1 = password1;
+      if (password2) update.password2 = password2;
 
-      try {
-         if (password1 !== password2) throw new Error('Passwords do not match');
+      const isSet = userStore.setUser(update);
 
-         const reqBody = JSON.stringify({
-            reset: resetCode,
-            password: password2,
-         });
-
-         res = await fetch(`/api/users`, {
-            method: 'PUT',
-            headers: {
-               Authorization: `Bearer ${resetToken}`,
-               'Content-Type': 'application/json',
-            },
-            body: reqBody,
-         });
-
-         if (res.body && res.status !== 204) body = await res.json();
-
-         if (!res.ok) throw new Error(body.message);
-
-         fetchStore.loading(false);
-         showSnackbar = true;
-      } catch (error) {
-         fetchStore.setError({ res, error });
-      }
+      if (isSet) showSnackbar = true;
    };
 
    // Lifecycle
@@ -82,7 +60,7 @@
 <form on:submit={onSubmit}>
    <h3>Personal Information</h3>
 
-   <Input bind:value={firstName} label="Last Name" fullWidth>
+   <Input bind:value={firstName} label="First Name" fullWidth>
       <svelte:fragment slot="helperText">
          <HelperText validation>Invalid first name</HelperText>
       </svelte:fragment>
@@ -120,7 +98,7 @@
 
    <hr />
 
-   <p>Enter current password to confirm settings</p>
+   <p>Enter current password to confirm new settings</p>
 
    <InputPassword bind:value={password} label="Current Password" required fullWidth>
       <svelte:fragment slot="helperText">
@@ -129,12 +107,7 @@
    </InputPassword>
 
    <div class="button-section">
-      <Button on:click={onCancel} color="secondary" variant="outlined">
-         Cancel
-         <svelte:fragment slot="trailingIcon">
-            <Svg fileData={close_svg} />
-         </svelte:fragment>
-      </Button>
+      <Button on:click={onBack} color="secondary" variant="outlined" type="button">Back</Button>
 
       <Button variant="contained" type="submit">
          Save
