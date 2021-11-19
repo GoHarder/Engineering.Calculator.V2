@@ -8,6 +8,7 @@
 
 html {
    scroll-behavior: smooth;
+   @include theme.scrollbar(#e6e6e6);
 }
 
 body {
@@ -17,8 +18,9 @@ body {
    background-color: #e6e6e6;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: auto;
-   height: 100px;
    min-height: 100vh;
+   position: relative;
+   padding-bottom: 2.25em;
 }
 
 header.main {
@@ -73,15 +75,12 @@ header.main {
    }
 }
 
-main {
-   // height: 100px;
-   min-height: calc(100% - 95px);
-}
-
 .main-content {
    min-width: 768px;
    padding: 0.75em 1em 1em;
    margin: 0 auto;
+   display: flex;
+   flex-direction: column;
 }
 
 @media (min-width: 1600px) {
@@ -93,21 +92,17 @@ main {
 footer.main {
    border-top: 1px solid theme.$gray-80;
    padding: 5px 16px;
+   height: 2.25em;
    background-color: theme.$white;
+   position: absolute;
+   bottom: 0;
+   width: 100%;
 
    span {
       font-size: 0.75rem;
       font-weight: 400;
       line-height: 1.66;
    }
-}
-
-hr {
-   border: 0;
-   height: 1px;
-   background-color: rgba(0, 0, 0, 0.12);
-   margin-left: 0;
-   margin-right: 0;
 }
 
 @media print {
@@ -117,4 +112,12 @@ hr {
    footer {
       display: none;
    }
+}
+
+hr {
+   border: 0;
+   height: 1px;
+   background-color: rgba(0, 0, 0, 0.12);
+   margin-left: 0;
+   margin-right: 0;
 }
