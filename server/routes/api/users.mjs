@@ -44,7 +44,7 @@ router.post('/', checkAuth, async (req, res) => {
 
    const bodyIndex = roles.findIndex((role) => role === body.role);
 
-   if (tokenIndex < bodyIndex) return res.status(403).json({ message: `User does not have permission assign that role` });
+   if (tokenIndex < bodyIndex) return res.status(403).json({ message: 'User does not have permission assign that role' });
 
    const password = randomPassword();
 
@@ -61,7 +61,7 @@ router.post('/', checkAuth, async (req, res) => {
    }
 
    // Send email
-   const sentEmail = await sendNewUser('gharder@hwec.com', { password });
+   const sentEmail = await sendNewUser(body.email, { password });
 
    if (!sentEmail) return res.status(500).json({ message: `Could not send email` });
 
@@ -183,6 +183,32 @@ router.put('/', checkAuth, async (req, res) => {
    res.status(204).send();
 });
 
+router.put('/admin', checkAuth, async (req, res) => {
+   const { body, token } = req;
+
+   // See if user had permission
+   const tokenIndex = roles.findIndex((role) => role === token.role);
+
+   const bodyIndex = roles.findIndex((role) => role === body.role);
+
+   if (tokenIndex < bodyIndex) return res.status(403).json({ message: 'User does not have permission to modify' });
+
+   // Update the user document
+   let updateInfo = undefined;
+
+   try {
+      body._id = new ObjectId(body._id);
+
+      updateInfo = await appDB.collection('users').updateOne({ _id: body._id }, { $set: { ...body } });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (updateInfo.modifiedCount === 0) return res.status(400).json({ message: 'Nothing was changed' });
+
+   res.status(204).send();
+});
+
 router.put('/reset-password', checkAuth, async (req, res) => {
    const { body, token } = req;
 
@@ -205,6 +231,45 @@ router.put('/reset-password', checkAuth, async (req, res) => {
    }
 
    if (updateInfo.modifiedCount === 0) return res.status(400).json({ message: 'Nothing was changed' });
+
+   res.status(204).send();
+});
+
+// - Delete
+router.delete('/:_id', checkAuth, async (req, res) => {
+   const { params, token } = req;
+   let { _id } = params;
+
+   // Find the user to delete
+   let userDoc = undefined;
+
+   try {
+      _id = new ObjectId(_id);
+      userDoc = await appDB.collection('users').findOne({ _id });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (!userDoc) return res.status(404).json({ message: 'User not found' });
+
+   // See if user had permission
+   const tokenIndex = roles.findIndex((role) => role === token.role);
+
+   const docIndex = roles.findIndex((role) => role === userDoc.role);
+
+   if (tokenIndex < docIndex) return res.status(403).json({ message: 'User does not have permission to delete' });
+
+   // Delete user
+
+   let updateInfo = undefined;
+
+   try {
+      updateInfo = await appDB.collection('users').deleteOne({ _id });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (updateInfo.deletedCount === 0) return res.status(400).json({ message: 'Nothing was changed' });
 
    res.status(204).send();
 });
