@@ -16,7 +16,7 @@
    // Lifecycle
 </script>
 
-<tr class={trClass}><slot /></tr>
+<tr on:click class={trClass}><slot /></tr>
 
 <style>
 </style>
