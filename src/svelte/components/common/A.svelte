@@ -13,6 +13,9 @@
    // Events
    const onClick = (event) => {
       event.preventDefault();
+
+      if (href === 'back') history.back();
+
       history.pushState({ path: href }, '');
    };
 
