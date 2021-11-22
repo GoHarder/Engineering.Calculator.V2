@@ -27,14 +27,17 @@
 
    // Subscriptions
    // Reactive Rules
+
    $: labelClass = classList([
       $$props.class,
-      'mdc-text-field',
-      'mdc-text-field--filled',
+      'mdc-text-field mdc-text-field--filled',
+      value ? 'mdc-text-field--label-floating' : '',
       fullWidth ? 'mdc-text-field--fullwidth' : '',
       $$slots.leadingIcon ? 'mdc-text-field--with-leading-icon' : '',
       $$slots.trailingIcon ? 'mdc-text-field--with-trailing-icon' : '',
    ]);
+
+   $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
    $: props = filterProps($$props, ['fullWidth', 'label', 'value']);
 
@@ -67,7 +70,7 @@
 <label bind:this={labelEle} class={labelClass}>
    <span class="mdc-text-field__ripple" />
 
-   <span class="mdc-floating-label" id={`input-${id}`}>{label}</span>
+   <span class={spanClass} id={`input-${id}`}>{label}</span>
 
    <slot name="leadingIcon" />
 
@@ -90,14 +93,11 @@
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use "@material/theme" with (
-      $primary: vantage.$primary,
-      $secondary: vantage.$secondary,
-   );
-   @use "@material/floating-label/mdc-floating-label";
-   @use "@material/line-ripple/mdc-line-ripple";
-   @use "@material/notched-outline/mdc-notched-outline";
-   @use "@material/textfield";
+   @use '@material/theme' with ($primary: vantage.$primary, $secondary: vantage.$secondary);
+   @use '@material/floating-label/mdc-floating-label';
+   @use '@material/line-ripple/mdc-line-ripple';
+   @use '@material/notched-outline/mdc-notched-outline';
+   @use '@material/textfield';
    @include textfield.core-styles;
 
    .mdc-text-field {
