@@ -380,7 +380,7 @@
    {/await}
 
    <svelte:fragment slot="pagination">
-      <Nav bind:page length={workbooks.length} {totalWorkbooks} {maxRows} />
+      <Nav bind:page length={workbooks.length} total={totalWorkbooks} {maxRows} />
    </svelte:fragment>
 </Table>
 
