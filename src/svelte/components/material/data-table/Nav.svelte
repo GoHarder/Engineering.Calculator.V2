@@ -9,7 +9,7 @@
    // Properties
    export let page = 0;
    export let length = 0;
-   export let totalWorkbooks = 0;
+   export let total = 0;
    export let maxRows = 0;
 
    // Methods
@@ -25,9 +25,9 @@
 
    $: minRange = 1 + maxRange - length;
 
-   $: fullNumString = `${totalWorkbooks}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+   $: fullNumString = `${total}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-   $: tooBig = totalWorkbooks <= Number('1e+15') - 1;
+   $: tooBig = total <= Number('1e+15') - 1;
 
    $: if (tooBig) {
       numString = fullNumString.replace(/,\d{3}/g, '');
@@ -57,7 +57,7 @@
 
    const onNext = () => page++;
 
-   const onLast = () => (page = Math.ceil(totalWorkbooks / length));
+   const onLast = () => (page = Math.ceil(total / length));
 
    // Lifecycle
 </script>
@@ -73,11 +73,11 @@
       <Svg fileData={chevron_left_svg} />
    </IconButton>
 
-   <IconButton on:click={onNext} disabled={maxRange === totalWorkbooks} class="mdc-data-table__pagination-button">
+   <IconButton on:click={onNext} disabled={maxRange === total} class="mdc-data-table__pagination-button">
       <Svg fileData={chevron_right_svg} />
    </IconButton>
 
-   <IconButton on:click={onLast} disabled={maxRange === totalWorkbooks} class="mdc-data-table__pagination-button">
+   <IconButton on:click={onLast} disabled={maxRange === total} class="mdc-data-table__pagination-button">
       <Svg fileData={last_page_svg} />
    </IconButton>
 </div>
