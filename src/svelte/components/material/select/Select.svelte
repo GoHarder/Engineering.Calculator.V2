@@ -2,7 +2,7 @@
    import { onDestroy, onMount } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
-   import { forwardEvents } from '../js/svelte';
+   import { classList, filterProps, forwardEvents } from '../../lib';
 
    // Components
    // Stores
@@ -12,6 +12,7 @@
    export let required = false;
    export let selectedIndex = -1;
    export let value = undefined;
+   export let fullWidth = false;
 
    // Methods
    // Constants
@@ -24,6 +25,10 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: props = filterProps($$props, ['class', 'fullWidth', 'label', 'value']);
+
+   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class, fullWidth ? 'mdc-select--fullwidth' : '']);
+
    $: if (Select) {
       Select.disabled = disabled;
       Select.required = required;
@@ -45,7 +50,7 @@
    });
 </script>
 
-<div bind:this={divEle} use:events on:MDCSelect:change={onChange} class="mdc-select mdc-select--filled">
+<div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
    <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
       <span class="mdc-select__ripple" />
       <span id="demo-label" class="mdc-floating-label">{label}</span>
@@ -69,16 +74,17 @@
 </div>
 
 <style lang="scss" global>
-   @use './src/scss/vantage-theme';
-   @use "@material/theme" with (
-      $primary: vantage-theme.$mdc-theme-primary,
-      $secondary: vantage-theme.$mdc-theme-secondary,
-   );
-   @use "@material/select";
-   @use "@material/select/styles";
+   @use './src/scss/theme' as vantage;
+   @use '@material/theme' with ($primary: vantage.$primary, $secondary: vantage.$secondary);
+   @use '@material/select';
+   @use '@material/select/styles';
 
    .mdc-select {
-      @include select.label-color(vantage-theme.$mdc-theme-secondary);
+      @include select.label-color(vantage.$secondary);
       @include select.filled-shape-radius(0);
+   }
+
+   .mdc-select--fullwidth {
+      width: 100%;
    }
 </style>

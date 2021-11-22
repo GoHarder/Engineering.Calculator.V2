@@ -1,5 +1,5 @@
 <script>
-   import { classList } from '../js/svelte';
+   import { classList } from '../../lib';
 
    // Components
    // Stores
