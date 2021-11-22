@@ -8,6 +8,7 @@
    import { LinearProgress } from './components/material/progress';
 
    import AccountSettings from './pages/account-settings/AccountSettings.svelte';
+   import AdminTools from './pages/admin-tools/AdminTools.svelte';
    import Home from './pages/home/Home.svelte';
    import Login from './pages/login/Login.svelte';
 
@@ -20,12 +21,13 @@
    // Constants
    const comps = {
       AccountSettings,
+      AdminTools,
       Home,
       Login,
    };
 
    // Variables
-   let comp = Login;
+   let comp = AdminTools;
    let errorData = undefined;
    let showApp = false;
    let showError = false;

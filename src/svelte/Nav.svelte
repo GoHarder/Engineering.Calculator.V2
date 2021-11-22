@@ -26,6 +26,8 @@
    // Events
    const onAccountSettings = () => history.pushState({ path: '/AccountSettings' }, '');
 
+   const onAdminTools = () => history.pushState({ path: '/AdminTools' }, '');
+
    const onLogout = () => {
       userStore.destroy();
    };
@@ -53,7 +55,7 @@
       </Item>
 
       {#if user.role !== 'user'}
-         <Item>
+         <Item on:click={onAdminTools}>
             <svelte:fragment slot="leadingIcon"><Svg fileData={supervisor_account_svg} /></svelte:fragment>
             Admin Tools
          </Item>
