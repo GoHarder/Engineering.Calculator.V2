@@ -416,7 +416,7 @@
          size: 16px;
          weight: inherit;
       }
-      line-height: 1.57;
+      line-height: 1.5;
    }
 
    .search-container {
