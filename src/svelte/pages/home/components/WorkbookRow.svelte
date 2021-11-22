@@ -8,7 +8,8 @@
    import { IconButton } from 'components/material/button';
    import { Chip } from 'components/material/chip';
    import { Cell, Row } from 'components/material/data-table';
-   import { Anchor, Item, Menu } from 'components/material/menu';
+   import { Item, Menu } from 'components/material/menu';
+   import { ToolTip } from 'components/material/tool-tip';
 
    // Stores
    // Properties
@@ -54,10 +55,10 @@
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__layout">{workbook.layout}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(workbook.created)}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(opened)}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__chip">
+   <Cell on:click={() => onClick('select')} class="workbook-row-cell__chip" data-tooltip-id="name-{workbook._id}" style="text-align: center;">
       <Chip>{initials}</Chip>
    </Cell>
-   <div class="mdc-menu-surface--anchor menu-cell">
+   <div class="mdc-menu-surface--anchor menu-cell" data-tooltip-id="menu-{workbook._id}">
       <IconButton on:click={() => (open = !open)}>
          <Svg fileData={more_vert_svg} />
       </IconButton>
@@ -78,6 +79,9 @@
       </Menu>
    </div>
 </Row>
+
+<ToolTip id="name-{workbook._id}">{creator}</ToolTip>
+<ToolTip id="menu-{workbook._id}">Menu</ToolTip>
 
 <style lang="scss">
    .menu-cell {

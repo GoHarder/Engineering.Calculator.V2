@@ -27,7 +27,7 @@
    };
 
    // Variables
-   let comp = AdminTools;
+   let comp = Login;
    let errorData = undefined;
    let showApp = false;
    let showError = false;

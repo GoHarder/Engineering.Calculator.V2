@@ -1,5 +1,5 @@
 <script>
-   import { classList } from '../../lib';
+   import { classList, filterProps } from '../../lib';
 
    // Components
    // Stores
@@ -11,12 +11,13 @@
    // Contexts
    // Reactive Rules
    $: trClass = classList(['mdc-data-table__row', $$props.class]);
+   $: props = filterProps($$props, ['class']);
 
    // Events
    // Lifecycle
 </script>
 
-<tr on:click class={trClass}><slot /></tr>
+<tr on:click class={trClass} {...props}><slot /></tr>
 
 <style>
 </style>
