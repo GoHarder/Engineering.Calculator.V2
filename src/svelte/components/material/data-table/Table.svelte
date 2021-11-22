@@ -2,7 +2,7 @@
    import { createEventDispatcher, onDestroy, onMount } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCDataTable } from '@material/data-table';
-   import { forwardEvents, classList } from '../../lib';
+   import { classList, filterProps, forwardEvents } from '../../lib';
 
    // Components
    // Stores
@@ -23,6 +23,7 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: props = filterProps($$props, ['class']);
    $: divClass = classList([$$props.class, 'mdc-data-table', sticky ? 'mdc-data-table--sticky-header' : '']);
 
    // Events
@@ -50,7 +51,7 @@
    });
 </script>
 
-<div bind:this={divEle} use:events on:MDCDataTable:sorted={onSort} class={divClass}>
+<div bind:this={divEle} use:events on:MDCDataTable:sorted={onSort} class={divClass} {...props}>
    <div class="mdc-data-table__table-container">
       <table class="mdc-data-table__table">
          {#if $$slots.head}
@@ -240,8 +241,8 @@
 </div> -->
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use "@material/data-table/data-table";
-   @use "@material/data-table/data-table-theme";
+   @use '@material/data-table/data-table';
+   @use '@material/data-table/data-table-theme';
    @include data-table.core-styles;
    @include data-table.theme-baseline;
 
