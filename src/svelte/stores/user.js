@@ -15,7 +15,12 @@ const getUser = async (token) => {
    let res, body;
 
    try {
-      res = await fetch('/api/users/bearer', { headers: { Authorization: `Bearer ${token}` } });
+      res = await fetch('/api/users/bearer', {
+         headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+         },
+      });
 
       if (res.body && res.status !== 204) body = await res.json();
 
