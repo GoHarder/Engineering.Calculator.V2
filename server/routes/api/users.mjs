@@ -22,18 +22,23 @@ export const router = express.Router();
 router.get('/all', checkAuth, async (req, res) => {
    let { _id } = req.token;
 
+   let filter = { _id: { $ne: _id } };
+
+   if (req.query.self === 'true') filter = {};
+
    const projection = {
       hashedPassword: 0,
-      role: 0,
+   };
+
+   const sort = {
+      lastName: 1,
+      firstName: 1,
    };
 
    let docs = [];
 
    try {
-      docs = await appDB
-         .collection('users')
-         .find({ _id: { $ne: _id } }, { projection })
-         .toArray();
+      docs = await appDB.collection('users').find(filter, { projection, sort }).toArray();
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
