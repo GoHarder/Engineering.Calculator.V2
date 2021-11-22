@@ -1,6 +1,8 @@
 <script>
-   import { onMount } from 'svelte';
-   import { classList } from '../../lib';
+   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+   import { get_current_component } from 'svelte/internal';
+   import { MDCList } from '@material/list';
+   import { classList, filterProps, forwardEvents } from '../../lib';
 
    // Components
    // Stores
@@ -10,15 +12,22 @@
 
    // Methods
    // Constants
+   const dispatch = createEventDispatcher();
+   const events = forwardEvents(get_current_component(), ['MDCList:action']);
+
    // Variables
    let ulEle;
+   let List;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: ulClass = classList(['mdc-deprecated-list', dense ? 'mdc-deprecated-list--dense' : '']);
+   $: props = filterProps($$props, ['class']);
+   $: ulClass = classList(['mdc-deprecated-list', dense ? 'mdc-deprecated-list--dense' : '', $$props.class]);
 
    // Events
+   const onAction = (event) => dispatch('action', event.detail);
+
    // Lifecycle
    onMount(() => {
       if (!interactive) {
@@ -28,20 +37,25 @@
             item.classList.add('mdc-deprecated-list-item--non-interactive');
          });
       }
+
+      if (interactive) {
+         List = new MDCList(ulEle);
+      }
+   });
+
+   onDestroy(() => {
+      if (List) List.destroy();
    });
 </script>
 
-<ul bind:this={ulEle} class={ulClass}>
+<ul bind:this={ulEle} class={ulClass} use:events on:MDCList:action={onAction} {...props}>
    <slot />
 </ul>
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use "@material/theme" with (
-      $primary: vantage.$secondary,
-      $secondary: vantage.$primary,
-   );
-   @use "@material/list";
+   @use '@material/theme' with ($primary: vantage.$secondary, $secondary: vantage.$primary);
+   @use '@material/list';
    @include list.deprecated-core-styles;
 
    .mdc-list-item {
