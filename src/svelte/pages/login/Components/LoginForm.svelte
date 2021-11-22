@@ -44,7 +44,7 @@
          if (!res.ok) throw new Error(body.message);
 
          fetchStore.loading(false);
-         userStore.set(body.token);
+         userStore.setToken(body.token);
       } catch (error) {
          fetchStore.setError({ res, error });
       }
