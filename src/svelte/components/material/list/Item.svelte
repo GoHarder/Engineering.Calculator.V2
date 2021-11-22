@@ -1,6 +1,6 @@
 <script>
    import { afterUpdate } from 'svelte';
-   import { classList } from '../../lib';
+   import { classList, filterProps } from '../../lib';
 
    // Components
    // Stores
@@ -15,7 +15,8 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: liClass = classList(['mdc-list-item mdc-deprecated-list-item', selected ? 'mdc-deprecated-list-item--selected' : '']);
+   $: props = filterProps($$props, ['class']);
+   $: liClass = classList(['mdc-list-item mdc-deprecated-list-item', $$props.class, selected ? 'mdc-deprecated-list-item--selected' : '']);
 
    // Events
    // Lifecycle
@@ -34,7 +35,7 @@
    });
 </script>
 
-<li on:click bind:this={liEle} class={liClass} {...$$props}>
+<li on:click bind:this={liEle} class={liClass} {...props}>
    <span class="mdc-deprecated-list-item__ripple" />
    <slot name="leadingIcon" />
    <span class="mdc-deprecated-list-item__text"><slot /></span>
