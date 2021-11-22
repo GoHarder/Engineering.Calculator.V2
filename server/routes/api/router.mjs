@@ -6,6 +6,7 @@
 import express from 'express';
 
 // Project Imports
+import { router as engineering } from './engineering/router.mjs';
 import { router as projects } from './projects.mjs';
 import { router as tokens } from './tokens.mjs';
 import { router as users } from './users.mjs';
@@ -14,6 +15,9 @@ import { router as users } from './users.mjs';
 export const router = express.Router();
 
 // Routes
+
+// - Engineering
+router.use('/engineering', engineering);
 
 // - Projects
 router.use('/projects', projects);
