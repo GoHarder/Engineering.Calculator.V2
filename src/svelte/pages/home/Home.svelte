@@ -375,7 +375,7 @@
       {/if}
    {:catch error}
       <Cell row colspan="9">
-         <span style="color: #b00020">{error}</span>
+         <span style="color: #b00020;">{error}</span>
       </Cell>
    {/await}
 
