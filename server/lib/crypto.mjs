@@ -27,6 +27,40 @@ export const hash = (str) => createHmac('sha256', hashStr).update(str).digest('h
 export const randomStr = (length = 10) => randomBytes(length).toString('base64').slice(0, length);
 
 /**
+ * Creates a random string of alphanumeric characters
+ * @param {number} length The length of the string
+ */
+export const randomPassword = (length = 10) => {
+   let password = randomStr(length);
+
+   password = password.replace('/', '');
+
+   if (!password.match(/[a-z]/g)) {
+      password += 'abcdefghijklmnopqrstuvwxyz'.charAt(Math.floor(Math.random() * 26));
+   }
+
+   if (!password.match(/[A-Z]/g)) {
+      password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(Math.floor(Math.random() * 26));
+   }
+
+   if (!password.match(/[0-9]/g)) {
+      password += '0123456789'.charAt(Math.floor(Math.random() * 10));
+   }
+
+   if (!password.match(/[~!@#$%^&*()_\+\-\=]/g)) {
+      password += '[~!@#$%^&*()_+-=]'.charAt(Math.floor(Math.random() * 17));
+   }
+
+   if (!password.match(/\S{8,15}/g)) {
+      do {
+         password += 'x';
+      } while (password.length < 8);
+   }
+
+   return password;
+};
+
+/**
  * Creates a JSON web token
  * @param {object} payload The payload of the token
  */
