@@ -7,16 +7,66 @@ import express from 'express';
 import { ObjectId } from 'mongodb';
 
 // Project Imports
-import { hash, signToken, randomStr } from '../../lib/crypto.mjs';
+import { hash, signToken, randomPassword } from '../../lib/crypto.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import * as validate from '../../lib/validate.mjs';
+import { capitalize } from '../../../lib/string.mjs';
 import { sendResetPassword } from '../../lib/mailgun.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';
+import { sendNewUser } from '../../lib/mailgun.mjs';
 
 /** The router for the module */
 export const router = express.Router();
 
+/** System roles */
+const roles = ['user', 'admin', 'super'];
+
 // Routes
+
+// - Post
+router.post('/', checkAuth, async (req, res) => {
+   const { body, token } = req;
+
+   // Validate the request query
+   const schema = {
+      email: (value) => validate.email(value),
+      firstName: (value) => validate.string(value),
+      lastName: (value) => validate.string(value),
+      role: (value) => validate.string(value) && ['user', 'admin', 'super'].includes(value),
+   };
+
+   const test = validate.object(body, schema);
+
+   if (!test.valid) return res.status(400).json({ message: `${capitalize(test.errors[0])} is invalid` });
+
+   // Check request roles
+   const tokenIndex = roles.findIndex((role) => role === token.role);
+
+   const bodyIndex = roles.findIndex((role) => role === body.role);
+
+   if (tokenIndex < bodyIndex) return res.status(403).json({ message: `User does not have permission assign that role` });
+
+   const password = randomPassword();
+
+   body.hashedPassword = hash(password);
+
+   // Add user
+   let updateInfo = undefined;
+
+   try {
+      updateInfo = await appDB.collection('users').insertOne(req.body);
+      body._id = updateInfo.insertedId;
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   // Send email
+   const sentEmail = await sendNewUser('gharder@hwec.com', { password });
+
+   if (!sentEmail) return res.status(500).json({ message: `Could not send email` });
+
+   res.status(200).json(body);
+});
 
 // - Get
 router.get('/all', checkAuth, async (req, res) => {

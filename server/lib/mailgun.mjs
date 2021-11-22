@@ -88,3 +88,21 @@ export const sendSharedProject = (to, props = {}) => {
 
    return send(to, subject, baseTemplate);
 };
+
+export const sendNewUser = (to, props = {}) => {
+   let baseTemplate = getTemplate('base-email.html');
+   let bodyTemplate = getTemplate('new-user.html');
+
+   const subject = 'Registration';
+
+   props = {
+      ...props,
+      emailTitle: `${subjectTitle}${subject}`,
+      baseUrl,
+   };
+
+   baseTemplate = build(baseTemplate, { message: bodyTemplate });
+   baseTemplate = build(baseTemplate, props);
+
+   return send(to, subject, baseTemplate);
+};
