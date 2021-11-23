@@ -11,6 +11,7 @@
    import AdminTools from './pages/admin-tools/AdminTools.svelte';
    import Home from './pages/home/Home.svelte';
    import Login from './pages/login/Login.svelte';
+   import Project from './pages/project/Project.svelte';
 
    // Stores
    import fetchStore from './stores/fetch';
@@ -24,6 +25,7 @@
       AdminTools,
       Home,
       Login,
+      Project,
    };
 
    // Variables

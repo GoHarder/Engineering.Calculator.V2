@@ -156,9 +156,7 @@
       projectStore.clear();
    };
 
-   const onNew = (event) => {
-      console.log(event);
-   };
+   const onNew = () => history.pushState({ path: '/Project/Summary' }, '');
 
    const onDelete1 = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
@@ -336,7 +334,7 @@
 <div class="search-container">
    <InputSearch on:search={onSearch} on:clear={onClear} bind:value={search} fullWidth />
 
-   <Button on:click={onNew} variant="contained" href="/project/requirements" style="height: 56px; margin: 0; padding: 0 16px">
+   <Button on:click={onNew} variant="contained" style="height: 56px; margin: 0; padding: 0 16px">
       Create New Workbook
       <svelte:fragment slot="trailingIcon">
          <Svg fileData={add_svg} />
