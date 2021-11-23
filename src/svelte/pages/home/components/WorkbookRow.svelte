@@ -33,7 +33,7 @@
    const dispatch = createEventDispatcher();
    const creator = `${workbook.creator.firstName} ${workbook.creator.lastName}`;
    const initials = creator.replace(/(\b[a-zA-Z])[a-zA-Z]* ?/g, '$1');
-   const opened = workbook.opened.find((book) => book.userId === userId)?.time;
+   const opened = workbook.opened.find((user) => user._id === userId)?.date;
 
    // Variables
    let open;
@@ -50,9 +50,9 @@
 <Row class="workbook-row">
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__contract" scope="row">{workbook.contract}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__job-name">{workbook.jobName}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__car">{workbook.carNo}</Cell>
+   <Cell on:click={() => onClick('select')} class="workbook-row-cell__car">{workbook.carNo ? workbook.carNo : 'N/A'}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__customer">{workbook.customer}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__layout">{workbook.layout}</Cell>
+   <Cell on:click={() => onClick('select')} class="workbook-row-cell__layout">{workbook.layout ? workbook.layout : 'N/A'}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(workbook.created)}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(opened)}</Cell>
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__chip" data-tooltip-id="name-{workbook._id}" style="text-align: center;">
