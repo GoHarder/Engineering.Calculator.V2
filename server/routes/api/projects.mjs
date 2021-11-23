@@ -10,7 +10,7 @@ import { ObjectId } from 'mongodb';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import { byRecentlyOpened, bySearch } from '../../data/mongodb/pipelines/projects.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';
-import * as validate from '../../lib/validate.mjs';
+import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { sendSharedProject } from '../../lib/mailgun.mjs';
 
@@ -50,16 +50,15 @@ const sanitizeBody = (req, res, next) => {
    body.created = new Date(body.created);
 
    // Sanitize arrays
-   body.opened = body.opened.map((nth) => {
-      nth.userId = new ObjectId(nth.userId);
-      nth.time = new Date(nth.time);
-      return nth;
+   body.opened = body.opened.map((user) => {
+      user._id = new ObjectId(user._id);
+      user.date = new Date(user.date);
+      return user;
    });
 
-   body.notes = body.notes.map((nth) => {
-      nth.time = new Date(nth.time);
-
-      return nth;
+   body.notes = body.notes.map((note) => {
+      note.date = new Date(note.date);
+      return note;
    });
 
    next();
@@ -72,7 +71,7 @@ router.post('/', [checkAuth, sanitizeBody], async (req, res) => {
    let updateInfo;
 
    try {
-      updateInfo = await appDB.collection('proj').insertOne(req.body);
+      updateInfo = await appDB.collection('projects').insertOne(req.body);
       req.body._id = updateInfo.insertedId;
    } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -89,7 +88,7 @@ router.post('/check-in/:_id', async (req, res) => {
    try {
       _id = new ObjectId(_id);
 
-      updateInfo = await appDB.collection('proj').updateMany({ checkout: _id }, { $unset: { checkout: 1 } });
+      updateInfo = await appDB.collection('projects').updateMany({ checkout: _id }, { $unset: { checkout: 1 } });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -110,7 +109,7 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
    try {
       _id = new ObjectId(_id);
 
-      doc = await appDB.collection('proj').findOne({ _id });
+      doc = await appDB.collection('projects').findOne({ _id });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -126,7 +125,7 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
    let updateInfo = undefined;
 
    try {
-      updateInfo = appDB.collection('proj').updateOne({ _id }, { $set: doc });
+      updateInfo = appDB.collection('projects').updateOne({ _id }, { $set: doc });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -158,15 +157,15 @@ router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
    const _count = [_docs[0], { $count: 'total' }];
 
    try {
-      docs = await appDB.collection('proj').aggregate(_docs).toArray();
-      count = await appDB.collection('proj').aggregate(_count).next();
+      docs = await appDB.collection('projects').aggregate(_docs).toArray();
+      count = await appDB.collection('projects').aggregate(_count).next();
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
 
-   if (!docs || !count) res.status(500).json({ message: 'Could not get workbooks' });
+   if (docs === undefined) res.status(500).json({ message: 'Could not get workbooks' });
 
-   res.status(200).json({ docs, length: count.total });
+   res.status(200).json({ docs, length: count?.total || 0 });
 });
 
 router.get('/search', [checkAuth, sanitizeQuery], async (req, res) => {
@@ -190,15 +189,15 @@ router.get('/search', [checkAuth, sanitizeQuery], async (req, res) => {
    const _count = [_docs[0], { $count: 'total' }];
 
    try {
-      docs = await appDB.collection('proj').aggregate(_docs).toArray();
-      count = await appDB.collection('proj').aggregate(_count).next();
+      docs = await appDB.collection('projects').aggregate(_docs).toArray();
+      count = await appDB.collection('projects').aggregate(_count).next();
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
 
-   if (!docs || !count) res.status(500).json({ message: 'Could not get workbooks' });
+   if (docs === undefined) res.status(500).json({ message: 'Could not get workbooks' });
 
-   res.status(200).json({ docs, length: count.total });
+   res.status(200).json({ docs, length: count?.total ?? 0 });
 });
 
 // - Put
@@ -206,7 +205,7 @@ router.put('/', [checkAuth, sanitizeBody], async (req, res) => {
    let updateInfo;
 
    try {
-      updateInfo = await appDB.collection('proj').updateOne({ _id: req.body._id }, { $set: req.body });
+      updateInfo = await appDB.collection('projects').updateOne({ _id: req.body._id }, { $set: req.body });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -240,7 +239,7 @@ router.put('/share/:email', [checkAuth, sanitizeBody], async (req, res) => {
    let updateInfo;
 
    try {
-      updateInfo = await appDB.collection('proj').updateOne({ _id: req.body._id }, { $set: req.body });
+      updateInfo = await appDB.collection('projects').updateOne({ _id: req.body._id }, { $set: req.body });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -268,7 +267,7 @@ router.delete('/:_id', [checkAuth], async (req, res) => {
    try {
       _id = new ObjectId(_id);
 
-      updateInfo = await appDB.collection('proj').deleteOne({ _id });
+      updateInfo = await appDB.collection('projects').deleteOne({ _id });
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }

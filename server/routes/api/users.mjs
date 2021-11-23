@@ -9,7 +9,7 @@ import { ObjectId } from 'mongodb';
 // Project Imports
 import { hash, signToken, randomPassword } from '../../lib/crypto.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
-import * as validate from '../../lib/validate.mjs';
+import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { sendResetPassword } from '../../lib/mailgun.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';

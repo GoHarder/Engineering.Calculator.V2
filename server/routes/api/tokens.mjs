@@ -6,7 +6,7 @@
 import express from 'express';
 
 // Project Imports
-import * as validate from '../../lib/validate.mjs';
+import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import { hash as getHash, signToken } from '../../lib/crypto.mjs';
