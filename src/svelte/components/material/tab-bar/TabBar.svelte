@@ -2,12 +2,13 @@
    import { createEventDispatcher, onDestroy, onMount } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCTabBar } from '@material/tab-bar';
-   import { forwardEvents } from '../../lib';
+   import { classList, forwardEvents } from '../../lib';
 
    // Components
    // Stores
    // Properties
    export let comps = [];
+   export let index = undefined;
 
    // Methods
    // Constants
@@ -21,6 +22,10 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: divClass = classList(['mdc-tab-bar', $$props.class]);
+
+   $: if (index !== undefined && TabBar) TabBar.activateTab(index);
+
    // Events
    const onActivated = (event) => {
       dispatch('activated', comps[event.detail.index]);
@@ -36,7 +41,7 @@
    });
 </script>
 
-<div bind:this={divEle} use:events on:MDCTabBar:activated={onActivated} class="mdc-tab-bar" role="tablist">
+<div bind:this={divEle} use:events on:MDCTabBar:activated={onActivated} class={divClass} role="tablist">
    <div class="mdc-tab-scroller">
       <div class="mdc-tab-scroller__scroll-area">
          <div class="mdc-tab-scroller__scroll-content">
