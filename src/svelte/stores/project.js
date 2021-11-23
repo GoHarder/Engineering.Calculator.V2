@@ -56,7 +56,7 @@ let user = undefined;
 userStore.subscribe((store) => (user = store));
 
 // Creates the custom store and sets up renewal loop
-const { subscribe, set: _set, update: _update } = writable(undefined);
+const { subscribe, set: _set, update: _update } = writable({});
 
 /** Clears the project from the store */
 const clear = async () => {
@@ -81,7 +81,7 @@ const clear = async () => {
       fetchStore.setError({ res, error });
    }
 
-   _set(undefined);
+   _set({});
 };
 
 /** Deletes the project and clears the store */
@@ -111,7 +111,7 @@ const destroy = () => {
          fetchStore.setError({ res, error });
       }
 
-      return undefined;
+      return {};
    });
 };
 
@@ -121,13 +121,15 @@ const destroy = () => {
  * @param {string} userId The user id
  */
 const save = async (project, userId = undefined) => {
-   // Set the store even though it may fail
-   _set(project);
+   let update = {};
 
-   // Send the request to save the project return if good
-   const update = await saveProject(project, userId);
+   _update((store) => {
+      update = { ...store, ...project };
 
-   if (update) _set(update);
+      return update;
+   });
+
+   return await saveProject(update, userId);
 };
 
 /**
@@ -172,6 +174,19 @@ const share = async (project, email) => {
  */
 const set = (project) => _set(project);
 
+/**
+ * Saves the project
+ * @param {object} project The project object
+ * @param {string} userId The user id
+ */
+const update = async (project) => {
+   _update((store) => {
+      const update = { ...store, ...project };
+
+      return update;
+   });
+};
+
 // export the store object
 export default {
    clear,
@@ -180,4 +195,5 @@ export default {
    set,
    share,
    subscribe,
+   update,
 };
