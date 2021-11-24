@@ -21,16 +21,22 @@
    // Events
    // Lifecycle
    afterUpdate(() => {
-      const svgs = liEle.querySelectorAll('svg');
+      // const svgs = liEle.querySelectorAll('svg');
 
-      if ($$slots.leadingIcon && svgs.length > 0) {
-         svgs[0].classList.add('material-icons');
-         svgs[0].classList.add('mdc-deprecated-list-item__graphic');
+      let icons = liEle.querySelectorAll('svg');
+
+      if (icons.length === 0) {
+         icons = liEle.querySelectorAll('i');
       }
 
-      if ($$slots.trailingIcon && svgs.length > 0) {
-         svgs[svgs.length - 1].classList.add('material-icons');
-         svgs[svgs.length - 1].classList.add('mdc-deprecated-list-item__meta');
+      if ($$slots.leadingIcon && icons.length > 0) {
+         icons[0].classList.add('material-icons');
+         icons[0].classList.add('mdc-deprecated-list-item__graphic');
+      }
+
+      if ($$slots.trailingIcon && icons.length > 0) {
+         icons[icons.length - 1].classList.add('material-icons');
+         icons[icons.length - 1].classList.add('mdc-deprecated-list-item__meta');
       }
    });
 </script>
