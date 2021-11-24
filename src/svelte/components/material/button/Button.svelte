@@ -31,7 +31,11 @@
    onMount(() => {
       ButtonRipple = new MDCRipple(buttonEle);
 
-      const icons = buttonEle.querySelectorAll('svg');
+      let icons = buttonEle.querySelectorAll('svg');
+
+      if (icons.length === 0) {
+         icons = buttonEle.querySelectorAll('i');
+      }
 
       icons.forEach((icon) => {
          icon.classList.add('material-icons');
@@ -53,10 +57,7 @@
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use "@material/theme" with (
-      $primary: vantage.$primary,
-      $secondary: vantage.$secondary,
-   );
+   @use '@material/theme' with ($primary: vantage.$primary, $secondary: vantage.$secondary);
    @use '@material/button';
    @use '@material/button/styles';
 
