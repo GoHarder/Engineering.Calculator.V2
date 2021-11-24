@@ -2,15 +2,20 @@
    import { onDestroy, onMount } from 'svelte';
    import { MDCRipple } from '@material/ripple';
    import { MDCIconButtonToggle } from '@material/icon-button';
-   import { classList, filterProps } from '../../lib';
+   import { classList, filterProps, randomId } from '../../lib';
 
    // Components
+   import ToolTip from '../tool-tip/ToolTip.svelte';
+
    // Stores
    // Properties
    export let toggle = false;
+   export let toolTip = undefined;
 
    // Methods
    // Constants
+   let id = `icon-button-${randomId()}`;
+
    // Variables
    let buttonEle;
    let ButtonRipple;
@@ -39,12 +44,16 @@
    });
 </script>
 
-<button bind:this={buttonEle} on:click class={buttonClass} {...props}>
+<button bind:this={buttonEle} on:click class={buttonClass} {...props} data-tooltip-id={id}>
    <div class="mdc-icon-button__ripple" />
    <slot />
 </button>
 
+{#if toolTip}
+   <ToolTip {id}>{toolTip}</ToolTip>
+{/if}
+
 <style lang="scss" global>
-   @use "@material/icon-button/_icon-button";
+   @use '@material/icon-button/_icon-button';
    @include icon-button.core-styles;
 </style>
