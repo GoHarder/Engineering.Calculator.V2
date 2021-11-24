@@ -5,7 +5,7 @@
 
    // Components
    import { Svg } from './components/common';
-   import { Button } from './components/material/button';
+   import { Button, Icon } from './components/material/button';
    import { Divider, Item, Menu } from './components/material/menu';
 
    // Stores
@@ -41,7 +41,7 @@
 {#if user}
    <Button on:click={() => (showMenu = !showMenu)}>
       <svelte:fragment slot="leadingIcon">
-         <Svg fileData={person_svg} />
+         <Icon>person</Icon>
       </svelte:fragment>
 
       {user.firstName}
@@ -50,13 +50,17 @@
 
    <Menu bind:show={showMenu}>
       <Item on:click={onAccountSettings}>
-         <svelte:fragment slot="leadingIcon"><Svg fileData={account_circle_svg} /></svelte:fragment>
+         <svelte:fragment slot="leadingIcon">
+            <Icon>account_circle</Icon>
+         </svelte:fragment>
          Account Settings
       </Item>
 
       {#if user.role !== 'user'}
          <Item on:click={onAdminTools}>
-            <svelte:fragment slot="leadingIcon"><Svg fileData={supervisor_account_svg} /></svelte:fragment>
+            <svelte:fragment slot="leadingIcon">
+               <Icon>supervisor_account</Icon>
+            </svelte:fragment>
             Admin Tools
          </Item>
       {/if}
@@ -64,7 +68,9 @@
       <Divider />
 
       <Item on:click={onLogout}>
-         <svelte:fragment slot="leadingIcon"><Svg fileData={logout_svg} /></svelte:fragment>
+         <svelte:fragment slot="leadingIcon">
+            <Icon>logout</Icon>
+         </svelte:fragment>
          Logout
       </Item>
    </Menu>
