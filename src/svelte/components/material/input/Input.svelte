@@ -1,12 +1,13 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { MDCTextField } from '@material/textfield';
-   import { classList, filterProps } from '../../lib';
+   import { classList, filterProps, randomId } from '../../lib';
 
-   import { link_svg } from 'img/icons';
+   // import { link_svg } from 'img/icons';
 
    // Components
-   import { Svg } from 'components/common';
+   // import { Svg } from 'components/common';
+   import { Icon } from '../common/Icon.svelte';
 
    // Stores
    // Properties
@@ -19,7 +20,7 @@
 
    // Methods
    // Constants
-   const id = Math.random().toString(36).substr(2, 9);
+   const id = `input-${randomId()}`;
 
    // Variables
    let labelEle;
@@ -34,7 +35,7 @@
       value ? 'mdc-text-field--label-floating' : '',
       fullWidth ? 'mdc-text-field--fullwidth' : '',
       $$slots.leadingIcon ? 'mdc-text-field--with-leading-icon' : '',
-      $$slots.trailingIcon ? 'mdc-text-field--with-trailing-icon' : '',
+      $$slots.trailingIcon || link ? 'mdc-text-field--with-trailing-icon' : '',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
@@ -47,7 +48,11 @@
       TextField = new MDCTextField(labelEle);
 
       // Inject icon classes to make the icon component more flexible
-      const icons = labelEle.querySelectorAll('svg');
+      let icons = labelEle.querySelectorAll('svg');
+
+      if (icons.length === 0) {
+         icons = labelEle.querySelectorAll('i');
+      }
 
       if ($$slots.leadingIcon && icons.length > 0) {
          icons[0].classList.add('material-icons');
@@ -70,18 +75,18 @@
 <label bind:this={labelEle} class={labelClass}>
    <span class="mdc-text-field__ripple" />
 
-   <span class={spanClass} id={`input-${id}`}>{label}</span>
+   <span class={spanClass} {id}>{label}</span>
 
    <slot name="leadingIcon" />
 
    {#if prefix}<span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>{/if}
 
-   <input bind:value on:search {...props} class="mdc-text-field__input" aria-labelledby={`input-${id}`} />
+   <input bind:value on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
    {#if suffix}<span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>{/if}
 
    {#if link}
-      <Svg fileData={link_svg} role="button" tabindex="0" title={link} />
+      <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
    {:else}
       <slot name="trailingIcon" />
    {/if}
