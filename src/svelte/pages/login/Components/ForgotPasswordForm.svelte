@@ -1,9 +1,7 @@
 <script>
-   import { email_svg } from 'img/icons';
-
    // Components
-   import { A, Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { A } from 'components/common';
+   import { Button, Icon } from 'components/material/button';
    import { HelperText, Input } from 'components/material/input';
 
    // Stores
@@ -62,7 +60,7 @@
          Send Reset Code
 
          <svelte:fragment slot="trailingIcon">
-            <Svg fileData={email_svg} />
+            <Icon>email</Icon>
          </svelte:fragment>
       </Button>
    </div>

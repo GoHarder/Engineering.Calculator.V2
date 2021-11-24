@@ -1,9 +1,7 @@
 <script>
-   import { login_svg } from 'img/icons';
-
    // Components
-   import { A, Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { A } from 'components/common';
+   import { Button, Icon } from 'components/material/button';
    import { Checkbox } from 'components/material/checkbox';
    import { HelperText, Input, InputPassword } from 'components/material/input';
 
@@ -79,7 +77,7 @@
          Sign In
 
          <svelte:fragment slot="trailingIcon">
-            <Svg fileData={login_svg} />
+            <Icon>login</Icon>
          </svelte:fragment>
       </Button>
    </div>
