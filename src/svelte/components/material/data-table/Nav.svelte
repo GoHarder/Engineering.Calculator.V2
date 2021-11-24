@@ -1,9 +1,6 @@
 <script>
-   import { chevron_left_svg, chevron_right_svg, first_page_svg, last_page_svg } from 'img/icons';
-
    // Components
-   import { IconButton } from '../button';
-   import { Svg } from 'components/common';
+   import { Icon, IconButton } from '../button';
 
    // Stores
    // Properties
@@ -65,19 +62,19 @@
 <div class="mdc-data-table__pagination-navigation">
    <div class="mdc-data-table__pagination-total">{minRange}‑{maxRange} of {numString}{units}</div>
 
-   <IconButton on:click={onFirst} disabled={page === 1} class="mdc-data-table__pagination-button">
-      <Svg fileData={first_page_svg} />
+   <IconButton on:click={onFirst} disabled={page === 1} class="mdc-data-table__pagination-button" toolTip="First Page">
+      <Icon class="material-icons">first_page</Icon>
    </IconButton>
 
-   <IconButton on:click={onPrev} disabled={page === 1} class="mdc-data-table__pagination-button">
-      <Svg fileData={chevron_left_svg} />
+   <IconButton on:click={onPrev} disabled={page === 1} class="mdc-data-table__pagination-button" toolTip="Previous Page">
+      <Icon class="material-icons">chevron_left</Icon>
    </IconButton>
 
-   <IconButton on:click={onNext} disabled={maxRange === total} class="mdc-data-table__pagination-button">
-      <Svg fileData={chevron_right_svg} />
+   <IconButton on:click={onNext} disabled={maxRange === total} class="mdc-data-table__pagination-button" toolTip="Next Page">
+      <Icon class="material-icons">chevron_right</Icon>
    </IconButton>
 
-   <IconButton on:click={onLast} disabled={maxRange === total} class="mdc-data-table__pagination-button">
-      <Svg fileData={last_page_svg} />
+   <IconButton on:click={onLast} disabled={maxRange === total} class="mdc-data-table__pagination-button" toolTip="Last Page">
+      <Icon class="material-icons">last_page</Icon>
    </IconButton>
 </div>
