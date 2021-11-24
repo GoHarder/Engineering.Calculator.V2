@@ -39,5 +39,11 @@
 </div>
 
 <style lang="scss" global>
+   @use './src/scss/theme' as vantage;
+   @use '@material/tooltip';
    @use '@material/tooltip/styles';
+
+   .mdc-tooltip {
+      @include tooltip.fill-color(vantage.$secondary);
+   }
 </style>
