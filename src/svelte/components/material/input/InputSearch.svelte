@@ -2,12 +2,9 @@
    import { createEventDispatcher } from 'svelte';
    import { filterProps } from '../../lib';
 
-   import { search_svg } from 'img/icons';
-
    // Components
    import Input from './Input.svelte';
-   import { Svg } from 'components/common';
-   // import { search, Svg } from '../svg';
+   import Icon from '../common/Icon.svelte';
 
    // Stores
    // Properties
@@ -41,7 +38,7 @@
 <form on:submit={onSubmit}>
    <Input bind:value on:search={test} type="search" {label} {...props}>
       <svelte:fragment slot="leadingIcon">
-         <Svg on:click={onSubmit} fileData={search_svg} role="button" tabindex="0" />
+         <Icon on:click={onSubmit} role="button" tabindex="0" toolTip="Search">search</Icon>
       </svelte:fragment>
    </Input>
 </form>
