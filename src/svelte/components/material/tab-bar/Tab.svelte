@@ -33,7 +33,12 @@
    // Lifecycle
    onMount(() => {
       if ($$slots.icon) {
-         const icon = spanEle.querySelector('svg');
+         let icon = spanEle.querySelector('svg');
+
+         if (!icon) {
+            icon = spanEle.querySelector('i');
+         }
+
          icon.classList.add('mdc-tab__icon');
          icon.classList.add('material-icons');
          icon.ariaHidden = true;
