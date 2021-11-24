@@ -3,11 +3,8 @@
    import { MDCTextField } from '@material/textfield';
    import { classList, filterProps, randomId } from '../../lib';
 
-   // import { link_svg } from 'img/icons';
-
    // Components
-   // import { Svg } from 'components/common';
-   import { Icon } from '../common/Icon.svelte';
+   import Icon from '../common/Icon.svelte';
 
    // Stores
    // Properties
