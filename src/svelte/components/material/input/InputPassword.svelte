@@ -29,24 +29,18 @@
    // Lifecycle
 </script>
 
-{#if showPassword}
-   <Input bind:value {...props} {pattern}>
-      <svelte:fragment slot="trailingIcon">
-         <Icon on:click={onToggle} role="button" tabindex="0" toolTip="Hide Password">visibility_off</Icon>
-      </svelte:fragment>
+<Input bind:value {...props} {pattern} type={showPassword ? 'text' : 'password'}>
+   <svelte:fragment slot="trailingIcon">
+      <Icon on:click={onToggle} role="button" tabindex="0" toolTip={showPassword ? 'Hide Password' : 'Show Password'}>
+         {#if showPassword}
+            visibility_off
+         {:else}
+            visibility
+         {/if}
+      </Icon>
+   </svelte:fragment>
 
-      <svelte:fragment slot="helperText">
-         <slot name="helperText" />
-      </svelte:fragment>
-   </Input>
-{:else}
-   <Input bind:value {...props} {pattern} type="password">
-      <svelte:fragment slot="trailingIcon">
-         <Icon on:click={onToggle} role="button" tabindex="0" toolTip="Show Password">visibility</Icon>
-      </svelte:fragment>
-
-      <svelte:fragment slot="helperText">
-         <slot name="helperText" />
-      </svelte:fragment>
-   </Input>
-{/if}
+   <svelte:fragment slot="helperText">
+      <slot name="helperText" />
+   </svelte:fragment>
+</Input>

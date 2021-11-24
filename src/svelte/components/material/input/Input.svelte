@@ -25,7 +25,6 @@
 
    // Subscriptions
    // Reactive Rules
-
    $: labelClass = classList([
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
@@ -37,9 +36,13 @@
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['fullWidth', 'label', 'value']);
+   $: props = filterProps($$props, ['gridArea', 'style', 'fullWidth', 'label', 'value']);
 
    // Events
+   const onInput = (event) => {
+      value = event.detail;
+   };
+
    // Lifecycle
    onMount(() => {
       TextField = new MDCTextField(labelEle);
@@ -78,7 +81,7 @@
 
    {#if prefix}<span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>{/if}
 
-   <input bind:value on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
+   <input {value} on:input={onInput} on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
    {#if suffix}<span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>{/if}
 
@@ -102,6 +105,8 @@
    @use '@material/textfield';
    @include textfield.core-styles;
 
+   $metric-width: 100px;
+
    .mdc-text-field {
       @include textfield.label-color(vantage.$secondary);
       @include textfield.shape-radius(0);
@@ -118,5 +123,54 @@
    input[type='number'] {
       text-align: right;
       -moz-appearance: textfield;
+   }
+
+   input::-webkit-outer-spin-button,
+   input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+   }
+
+   .mdc-number-field,
+   .mdc-length-field {
+      .mdc-text-field {
+         grid-area: field;
+      }
+      .mdc-text-field-helper-line {
+         grid-area: helper;
+      }
+
+      .metric-value {
+         grid-area: metric;
+         width: $metric-width;
+         color: gray;
+         font-size: 14px;
+         margin-top: 24px;
+      }
+   }
+   .mdc-number-field {
+      width: 250px;
+      display: grid;
+      grid-template: {
+         columns: 1fr;
+         rows: 56px 19px;
+         areas: 'field' 'helper';
+      }
+
+      &.metric {
+         width: calc(250px + 0.5em + $metric-width);
+         grid-template: {
+            columns: 1fr 0.5em $metric-width;
+            rows: 56px 19px;
+            areas: 'field . metric' 'helper helper helper';
+         }
+      }
+   }
+
+   .mdc-number-field,
+   .mdc-length-field {
+      &.full-width {
+         width: 100%;
+      }
    }
 </style>
