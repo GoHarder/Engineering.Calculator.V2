@@ -1,11 +1,10 @@
 <script>
    import { filterProps } from '../../lib';
 
-   import { visibility_off_svg, visibility_svg } from 'img/icons';
-
    // Components
    import Input from './Input.svelte';
-   import { Svg } from 'components/common';
+   import Icon from '../common/Icon.svelte';
+   import ToolTip from '../tool-tip/ToolTip.svelte';
 
    // Stores
    // Properties
@@ -13,6 +12,7 @@
 
    // Methods
    // Constants
+   const id = Math.random().toString(36).substr(2, 9);
    const regexString = /(?=.*[~!@#$%^&*\(\)_+-=])(?=.*\d)(?=.*[A-Z])(?=.*[a-z])\S{8,15}/.toString();
    const pattern = regexString.substring(1, regexString.length - 1);
 
@@ -32,7 +32,7 @@
 {#if showPassword}
    <Input bind:value {...props} {pattern}>
       <svelte:fragment slot="trailingIcon">
-         <Svg on:click={onToggle} fileData={visibility_off_svg} role="button" tabindex="0" title="Hide Password" />
+         <Icon on:click={onToggle} role="button" tabindex="0" toolTip="Hide Password">visibility_off</Icon>
       </svelte:fragment>
 
       <svelte:fragment slot="helperText">
@@ -42,7 +42,7 @@
 {:else}
    <Input bind:value {...props} {pattern} type="password">
       <svelte:fragment slot="trailingIcon">
-         <Svg on:click={onToggle} fileData={visibility_svg} role="button" tabindex="0" title="Show Password" />
+         <Icon on:click={onToggle} role="button" tabindex="0" toolTip="Show Password">visibility</Icon>
       </svelte:fragment>
 
       <svelte:fragment slot="helperText">
