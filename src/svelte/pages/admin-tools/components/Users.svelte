@@ -1,11 +1,8 @@
 <script>
    import { onMount } from 'svelte';
 
-   import { add_svg, engineering_svg, person_svg, supervisor_account_svg } from 'img/icons';
-
    // Components
-   import { Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { Icon, Button } from 'components/material/button';
    import { Dialog } from 'components/material/dialog';
    import { HelperText, Input } from 'components/material/input';
    import { Item, List } from 'components/material/list';
@@ -42,9 +39,9 @@
 
    const getIcon = (role) => {
       const icons = {
-         admin: supervisor_account_svg,
-         super: engineering_svg,
-         user: person_svg,
+         admin: 'supervisor_account',
+         super: 'account_box',
+         user: 'person',
       };
 
       return icons[role];
@@ -264,7 +261,7 @@
          <Button variant="contained" type="submit">
             Add
             <svelte:fragment slot="trailingIcon">
-               <Svg fileData={add_svg} />
+               <Icon>add</Icon>
             </svelte:fragment>
          </Button>
       </div>
@@ -286,7 +283,9 @@
                   {#each users as { _id, firstName, lastName, role } (_id)}
                      <Item role="option">
                         <svelte:fragment slot="leadingIcon">
-                           <Svg fileData={getIcon(role)} />
+                           <Icon>{getIcon(role)}</Icon>
+
+                           <!-- <Svg fileData={getIcon(role)} /> -->
                         </svelte:fragment>
 
                         {firstName}

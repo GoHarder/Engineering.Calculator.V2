@@ -1,9 +1,9 @@
 <script>
-   import { beam_svg, manage_accounts_svg, supervisor_account_svg } from 'img/icons';
+   import { beam_svg } from 'img/icons';
 
    // Components
    import { A, Svg } from 'components/common';
-   import { Tab, TabBar } from 'components/material/tab-bar';
+   import { Icon, Tab, TabBar } from 'components/material/tab-bar';
 
    import Steel from './components/Steel.svelte';
    import Users from './components/Users.svelte';
@@ -29,7 +29,7 @@
 <header>
    <A href="back">Back</A>
    <div class="title">
-      <Svg fileData={supervisor_account_svg} />
+      <Icon class="material-icons">supervisor_account</Icon>
       <h3>Admin Tools</h3>
    </div>
 </header>
@@ -38,7 +38,7 @@
    <TabBar on:activated={onActivated} {comps}>
       <Tab active>
          <svelte:fragment slot="icon">
-            <Svg fileData={manage_accounts_svg} />
+            <Icon>manage_accounts</Icon>
          </svelte:fragment>
          Users
       </Tab>

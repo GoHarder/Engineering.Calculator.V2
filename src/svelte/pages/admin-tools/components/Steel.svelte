@@ -4,7 +4,7 @@
    import { floor } from 'lib/math.mjs';
 
    // Components
-   import { Button } from 'components/material/button';
+   import { Button, Icon } from 'components/material/button';
    import { Cell, Nav, Table, Row } from 'components/material/data-table';
    import { HelperText, Input, InputSearch } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
@@ -196,7 +196,13 @@
             </Select>
 
             <div class="button-container">
-               <Button variant="contained" type="submit" disabled={!member}>Update</Button>
+               <Button variant="contained" type="submit" disabled={!member}>
+                  Update
+
+                  <svelte:fragment slot="trailingIcon">
+                     <Icon>sync_alt</Icon>
+                  </svelte:fragment>
+               </Button>
             </div>
          </form>
       {/if}
