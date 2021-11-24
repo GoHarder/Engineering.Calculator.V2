@@ -1,9 +1,6 @@
 <script>
-   import { check_svg } from 'img/icons';
-
    // Components
-   import Svg from 'components/common/Svg.svelte';
-   import { Item, List } from 'components/material/list';
+   import { Icon, Item, List } from 'components/material/list';
 
    // Stores
    // Properties
@@ -54,7 +51,7 @@
          {text}
          <svelte:fragment slot="trailingIcon">
             {#if test2}
-               <Svg fileData={check_svg} />
+               <Icon>check</Icon>
             {/if}
          </svelte:fragment>
       </Item>
