@@ -154,6 +154,15 @@
       .mdc-text-field {
          grid-area: field;
       }
+
+      .input-length-1 {
+         grid-area: field-1;
+      }
+
+      .input-length-2 {
+         grid-area: field-2;
+      }
+
       .mdc-text-field-helper-line {
          grid-area: helper;
       }
@@ -173,6 +182,25 @@
          columns: 1fr;
          rows: 56px 19px;
          areas: 'field' 'helper';
+      }
+
+      &.metric {
+         width: calc(250px + 0.5em + $metric-width);
+         grid-template: {
+            columns: 1fr 0.5em $metric-width;
+            rows: 56px 19px;
+            areas: 'field . metric' 'helper helper helper';
+         }
+      }
+   }
+
+   .input-length {
+      width: 250px;
+      display: grid;
+      grid-template: {
+         columns: 1fr 1fr;
+         rows: 56px 19px;
+         areas: 'field-1 field-2' 'helper helper';
       }
 
       &.metric {
