@@ -63,13 +63,9 @@
       metricValue = round(value * convert, roundTo);
    };
 
-   const onFocus = (event) => {
-      event.target.select();
-   };
+   const onFocus = (event) => event.target.select();
 
-   const onReset = () => {
-      override = false;
-   };
+   const onReset = () => (override = false);
 
    // Lifecycle
    onMount(() => {
