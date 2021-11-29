@@ -4,7 +4,6 @@
    // Components
    import Input from './Input.svelte';
    import Icon from '../common/Icon.svelte';
-   import ToolTip from '../tool-tip/ToolTip.svelte';
 
    // Stores
    // Properties
