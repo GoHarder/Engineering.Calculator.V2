@@ -13,29 +13,55 @@
    // Methods
    // Constants
    // Variables
-   let carNo = undefined;
-   let contract = undefined;
-   let customer = undefined;
-   let jobName = undefined;
-   let layout = undefined;
-   let metric = false;
-   let temp = false;
+
+   // - Project
+   let carNo;
+   let contract;
+   let created;
+   let creator;
+   let customer;
+   let globals;
+   let jobName;
+   let layout;
+   let metric;
+   let modules;
+   let notes;
+   let opened;
+   let temp;
+
+   // - User
    let user;
 
    // Subscriptions
-   const clearProject = projectStore.subscribe((store) => {
-      if (Object.keys(store).length !== 0) {
-         carNo = store.carNo;
-         contract = store.contract;
-         customer = store.customer;
-         jobName = store.jobName;
-         layout = store.layout;
-         metric = store.metric;
-         temp = store.temp;
-      }
-   });
-
    const clearUser = userStore.subscribe((store) => (user = store));
+   const clearProject = projectStore.subscribe((store) => {
+      const newCreator = {
+         _id: user._id,
+         firstName: user.firstName,
+         lastName: user.lastName,
+      };
+
+      const newOpened = [
+         {
+            _id: user._id,
+            date: Date.now(),
+         },
+      ];
+
+      carNo = store?.carNo;
+      contract = store?.contract;
+      created = store?.created ?? Date.now();
+      creator = store?.creator ?? newCreator;
+      customer = store?.customer;
+      globals = store?.globals ?? {};
+      jobName = store?.jobName;
+      layout = store?.layout;
+      metric = store?.metric ?? false;
+      modules = store?.modules ?? {};
+      notes = store?.notes ?? [];
+      opened = store?.opened ?? newOpened;
+      temp = store?.temp ?? false;
+   });
 
    // Contexts
    // Reactive Rules
@@ -45,25 +71,16 @@
       const project = {
          carNo,
          contract,
-         created: Date.now(),
-         creator: {
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-         },
+         created,
+         creator,
          customer,
-         globals: {},
+         globals,
          jobName,
          layout,
          metric,
-         modules: {},
-         notes: [],
-         opened: [
-            {
-               _id: user._id,
-               date: Date.now(),
-            },
-         ],
+         modules,
+         notes,
+         opened,
          temp,
       };
 
