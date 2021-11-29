@@ -13,6 +13,7 @@
    export let link = undefined;
    export let prefix = undefined;
    export let suffix = undefined;
+   export let type = undefined;
    export let value = undefined;
 
    // Methods
@@ -36,16 +37,29 @@
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['gridArea', 'style', 'fullWidth', 'label', 'value']);
+   $: props = filterProps($$props, ['fullWidth', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
 
    // Events
-   const onInput = (event) => {
-      value = event.detail;
+   const onChange = (event) => {
+      switch (type) {
+         case 'number':
+            value = parseFloat(event.target.value);
+            break;
+         default:
+            value = event.target.value;
+            break;
+      }
+   };
+
+   const onFocus = (event) => {
+      event.target.select();
    };
 
    // Lifecycle
    onMount(() => {
       TextField = new MDCTextField(labelEle);
+
+      if (value === undefined) value = '';
 
       // Inject icon classes to make the icon component more flexible
       let icons = labelEle.querySelectorAll('svg');
@@ -79,11 +93,15 @@
 
    <slot name="leadingIcon" />
 
-   {#if prefix}<span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>{/if}
+   {#if prefix}
+      <span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>
+   {/if}
 
-   <input {value} on:input={onInput} on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
+   <input {value} {type} on:change={onChange} on:focus={onFocus} on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
-   {#if suffix}<span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>{/if}
+   {#if suffix}
+      <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
+   {/if}
 
    {#if link}
       <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
@@ -131,8 +149,8 @@
       margin: 0;
    }
 
-   .mdc-number-field,
-   .mdc-length-field {
+   .input-number,
+   .input-length {
       .mdc-text-field {
          grid-area: field;
       }
@@ -148,7 +166,7 @@
          margin-top: 24px;
       }
    }
-   .mdc-number-field {
+   .input-number {
       width: 250px;
       display: grid;
       grid-template: {
@@ -167,8 +185,8 @@
       }
    }
 
-   .mdc-number-field,
-   .mdc-length-field {
+   .input-number,
+   .input-length {
       &.full-width {
          width: 100%;
       }
