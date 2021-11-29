@@ -3,11 +3,9 @@
    import { floor } from 'lib/math.mjs';
 
    import { clone } from 'lib/main.mjs';
-   import { add_svg } from 'img/icons';
 
    // Components
-   import { Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { Button, Icon } from 'components/material/button';
    import { Cell, Nav, Row, Table } from 'components/material/data-table';
    import { Dialog, Title } from 'components/material/dialog';
    import { HelperText, Input, InputSearch } from 'components/material/input';
@@ -156,7 +154,7 @@
       projectStore.clear();
    };
 
-   const onNew = () => history.pushState({ path: '/Project/Summary' }, '');
+   const onNew = () => history.pushState({ path: '/Project/Requirements' }, '');
 
    const onDelete1 = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
@@ -337,7 +335,7 @@
    <Button on:click={onNew} variant="contained" style="height: 56px; margin: 0; padding: 0 16px">
       Create New Workbook
       <svelte:fragment slot="trailingIcon">
-         <Svg fileData={add_svg} />
+         <Icon>add</Icon>
       </svelte:fragment>
    </Button>
 </div>

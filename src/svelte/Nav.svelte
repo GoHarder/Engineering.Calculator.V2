@@ -1,10 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
-   import { account_circle_svg, logout_svg, person_svg, supervisor_account_svg } from 'img/icons';
-
    // Components
-   import { Svg } from './components/common';
    import { Button, Icon } from './components/material/button';
    import { Divider, Item, Menu } from './components/material/menu';
 

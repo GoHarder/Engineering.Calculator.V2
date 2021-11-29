@@ -1,11 +1,8 @@
 <script>
    import { createEventDispatcher } from 'svelte';
 
-   import { delete_svg, file_copy_svg, more_vert_svg, share_svg } from 'img/icons';
-
    // Components
-   import { Svg } from 'components/common';
-   import { IconButton } from 'components/material/button';
+   import { Icon, IconButton } from 'components/material/button';
    import { Chip } from 'components/material/chip';
    import { Cell, Row } from 'components/material/data-table';
    import { Item, Menu } from 'components/material/menu';
@@ -58,22 +55,28 @@
    <Cell on:click={() => onClick('select')} class="workbook-row-cell__chip" data-tooltip-id="name-{workbook._id}" style="text-align: center;">
       <Chip>{initials}</Chip>
    </Cell>
-   <div class="mdc-menu-surface--anchor menu-cell" data-tooltip-id="menu-{workbook._id}">
-      <IconButton on:click={() => (open = !open)}>
-         <Svg fileData={more_vert_svg} />
+   <div class="mdc-menu-surface--anchor menu-cell">
+      <IconButton on:click={() => (open = !open)} toolTip="Menu">
+         <Icon>more_vert</Icon>
       </IconButton>
 
       <Menu bind:show={open} anchorCorner="top-right">
          <Item on:click={() => onClick('share')}>
-            <svelte:fragment slot="leadingIcon"><Svg fileData={share_svg} /></svelte:fragment>
+            <svelte:fragment slot="leadingIcon">
+               <Icon>share</Icon>
+            </svelte:fragment>
             Share
          </Item>
          <Item on:click={() => onClick('copy')}>
-            <svelte:fragment slot="leadingIcon"><Svg fileData={file_copy_svg} /></svelte:fragment>
+            <svelte:fragment slot="leadingIcon">
+               <Icon>file_copy</Icon>
+            </svelte:fragment>
             Copy
          </Item>
          <Item on:click={() => onClick('delete')}>
-            <svelte:fragment slot="leadingIcon"><Svg fileData={delete_svg} /></svelte:fragment>
+            <svelte:fragment slot="leadingIcon">
+               <Icon>delete</Icon>
+            </svelte:fragment>
             Delete
          </Item>
       </Menu>
@@ -81,7 +84,6 @@
 </Row>
 
 <ToolTip id="name-{workbook._id}">{creator}</ToolTip>
-<ToolTip id="menu-{workbook._id}">Menu</ToolTip>
 
 <style lang="scss">
    .menu-cell {

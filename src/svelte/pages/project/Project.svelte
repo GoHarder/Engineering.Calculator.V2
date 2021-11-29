@@ -2,11 +2,10 @@
    import { onDestroy, onMount } from 'svelte';
 
    import * as validate from 'lib/validate.mjs';
-   import { chevron_left_svg, chevron_right_svg, engineering_svg, looks_1_svg, looks_2_svg, looks_3_svg } from 'img/icons';
 
    // Components
-   import { A, Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { A } from 'components/common';
+   import { Button, Icon } from 'components/material/button';
    import { Tab, TabBar } from 'components/material/tab-bar';
 
    import Modules from './components/Modules.svelte';
@@ -86,7 +85,7 @@
 <header>
    <A href="/Home">Home</A>
    <div class="title">
-      <Svg fileData={engineering_svg} />
+      <Icon class="material-icons">engineering</Icon>
       <h3>Project Configuration</h3>
    </div>
 </header>
@@ -95,19 +94,19 @@
    <TabBar on:activated={onActivated} index={currentIndex} {comps}>
       <Tab active class="project-tab__button" stacked>
          <svelte:fragment slot="icon">
-            <Svg fileData={looks_1_svg} />
+            <Icon>looks_one</Icon>
          </svelte:fragment>
          Summary
       </Tab>
       <Tab class="project-tab__button" stacked disabled={!validSummary}>
          <svelte:fragment slot="icon">
-            <Svg fileData={looks_2_svg} />
+            <Icon>looks_two</Icon>
          </svelte:fragment>
          Requirements
       </Tab>
       <Tab class="project-tab__button" stacked disabled>
          <svelte:fragment slot="icon">
-            <Svg fileData={looks_3_svg} />
+            <Icon>looks_3</Icon>
          </svelte:fragment>
          Modules
       </Tab>
@@ -118,14 +117,14 @@
       <nav>
          <Button on:click={onBack} variant="contained" color="secondary" disabled={comp === Summary} type="button">
             <svelte:fragment slot="leadingIcon">
-               <Svg fileData={chevron_left_svg} />
+               <Icon>chevron_left</Icon>
             </svelte:fragment>
             Back
          </Button>
          <Button variant="contained" type="submit" form="project-form">
             Next
             <svelte:fragment slot="trailingIcon">
-               <Svg fileData={chevron_right_svg} />
+               <Icon>chevron_right</Icon>
             </svelte:fragment>
          </Button>
       </nav>
@@ -157,7 +156,7 @@
       section.project-form {
          border-top: 1px solid rgba($color: #000000, $alpha: 0.12);
          padding-top: 1em;
-         min-height: calc(100vh - 345px);
+         min-height: calc(100vh - 330px);
       }
    }
 

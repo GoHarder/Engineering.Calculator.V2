@@ -1,11 +1,9 @@
 <script>
    import { onDestroy } from 'svelte';
 
-   import { save_svg } from 'img/icons';
-
    // Components
-   import { PasswordRequire, Svg } from 'components/common';
-   import { Button } from 'components/material/button';
+   import { PasswordRequire } from 'components/common';
+   import { Button, Icon } from 'components/material/button';
    import { HelperText, Input, InputPassword } from 'components/material/input';
    import { Snackbar } from 'components/material/snackbar';
 
@@ -112,7 +110,7 @@
       <Button variant="contained" type="submit">
          Save
          <svelte:fragment slot="trailingIcon">
-            <Svg fileData={save_svg} />
+            <Icon>save</Icon>
          </svelte:fragment>
       </Button>
    </div>
