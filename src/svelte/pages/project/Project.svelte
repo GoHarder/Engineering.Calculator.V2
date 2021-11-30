@@ -8,7 +8,7 @@
    import { Button, Icon } from 'components/material/button';
    import { Tab, TabBar } from 'components/material/tab-bar';
 
-   import Modules from './components/Modules.svelte';
+   import Modules from './components/modules/Modules.svelte';
    import Requirements from './components/Requirements.svelte';
    import Summary from './components/Summary.svelte';
 
@@ -28,6 +28,12 @@
       jobName: (value) => validate.string(value),
    };
 
+   const requirementsSchema = {
+      capacity: (value) => value > 0,
+      speed: (value) => value > 0,
+      overallTravel: (value) => value > 0,
+   };
+
    // Variables
    let comp = Summary;
    let project = {};
@@ -44,6 +50,8 @@
    $: currentIndex = getCompIndex(comp.name);
 
    $: validSummary = validate.object(project, summarySchema).valid;
+
+   $: validRequirements = validate.object(project.globals, requirementsSchema).valid;
 
    // Events
    const onActivated = (event) => (comp = event.detail);
@@ -104,7 +112,7 @@
          </svelte:fragment>
          Requirements
       </Tab>
-      <Tab class="project-tab__button" stacked disabled>
+      <Tab class="project-tab__button" stacked disabled={!validSummary || !validRequirements}>
          <svelte:fragment slot="icon">
             <Icon>looks_3</Icon>
          </svelte:fragment>
