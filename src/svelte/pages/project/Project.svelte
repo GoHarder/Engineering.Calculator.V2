@@ -74,7 +74,7 @@
       if (newComp) {
          history.pushState({ path: `/Project/${newComp.name}` }, '');
       } else {
-         console.log('To workbook page');
+         history.pushState({ path: `/Calculator` }, '');
       }
    };
 

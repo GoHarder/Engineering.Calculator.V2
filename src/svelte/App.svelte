@@ -9,6 +9,7 @@
 
    import AccountSettings from './pages/account-settings/AccountSettings.svelte';
    import AdminTools from './pages/admin-tools/AdminTools.svelte';
+   import Calculator from './pages/calculator/Calculator.svelte';
    import Home from './pages/home/Home.svelte';
    import Login from './pages/login/Login.svelte';
    import Project from './pages/project/Project.svelte';
@@ -23,6 +24,7 @@
    const comps = {
       AccountSettings,
       AdminTools,
+      Calculator,
       Home,
       Login,
       Project,
