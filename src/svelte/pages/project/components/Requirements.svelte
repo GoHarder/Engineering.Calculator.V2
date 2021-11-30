@@ -115,8 +115,6 @@
       useIbc = globals?.seismic?.useIbc ?? false;
 
       metric = store?.metric ?? false;
-
-      console.log(store);
    });
 
    // Contexts
