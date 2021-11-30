@@ -29,6 +29,7 @@
 
    onDestroy(() => {
       ToolTip.destroy();
+      divEle.remove();
    });
 </script>
 
