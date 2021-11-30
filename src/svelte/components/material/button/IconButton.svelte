@@ -1,20 +1,23 @@
 <script>
    import { onDestroy, onMount } from 'svelte';
+   import { get_current_component } from 'svelte/internal';
    import { MDCRipple } from '@material/ripple';
    import { MDCIconButtonToggle } from '@material/icon-button';
-   import { classList, filterProps, randomId } from '../../lib';
+   import { classList, filterProps, forwardEvents, randomId } from '../../lib';
 
    // Components
    import ToolTip from '../tool-tip/ToolTip.svelte';
 
    // Stores
    // Properties
+   export let on = false;
    export let toggle = false;
    export let toolTip = undefined;
 
    // Methods
    // Constants
-   let id = `icon-button-${randomId()}`;
+   const id = `icon-button-${randomId()}`;
+   const events = forwardEvents(get_current_component(), toggle ? ['MDCIconButtonToggle:change'] : '');
 
    // Variables
    let buttonEle;
@@ -28,7 +31,15 @@
 
    $: props = filterProps($$props, ['class', 'toggle']);
 
+   $: if (ButtonToggle && on !== undefined) {
+      ButtonToggle.on = on;
+   }
+
    // Events
+   const onChange = (event) => {
+      on = event.detail.isOn;
+   };
+
    // Lifecycle
    onMount(() => {
       ButtonRipple = new MDCRipple(buttonEle);
@@ -36,6 +47,8 @@
       if (toggle) ButtonToggle = new MDCIconButtonToggle(buttonEle);
 
       ButtonRipple.unbounded = true;
+
+      // console.log(ButtonToggle);
    });
 
    onDestroy(() => {
@@ -44,7 +57,7 @@
    });
 </script>
 
-<button bind:this={buttonEle} on:click class={buttonClass} {...props} data-tooltip-id={id}>
+<button bind:this={buttonEle} use:events on:click on:MDCIconButtonToggle:change={onChange} class={buttonClass} {...props} data-tooltip-id={id}>
    <div class="mdc-icon-button__ripple" />
    <slot />
 </button>
