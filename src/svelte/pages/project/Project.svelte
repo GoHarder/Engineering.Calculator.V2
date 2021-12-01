@@ -60,6 +60,12 @@
       history.back();
    };
 
+   const onKeyPress = (event) => {
+      if (event.keyCode === 13) {
+         event.preventDefault();
+      }
+   };
+
    const onLocationChange = () => {
       const path = history.state.path.split('/').slice(1);
       const index = getCompIndex(path[1]);
@@ -119,7 +125,7 @@
          Modules
       </Tab>
    </TabBar>
-   <form id="project-form" on:submit={onSubmit}>
+   <form id="project-form" on:submit={onSubmit} on:keypress={onKeyPress}>
       <svelte:component this={comp} />
       <hr />
       <nav>
