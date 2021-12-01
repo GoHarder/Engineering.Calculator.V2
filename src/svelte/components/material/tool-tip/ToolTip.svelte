@@ -20,16 +20,15 @@
    // Events
    // Lifecycle
    onMount(() => {
-      ToolTip = new MDCTooltip(divEle);
-
       const body = document.querySelector('body');
 
-      body.appendChild(divEle);
+      // body.appendChild(divEle);
+
+      ToolTip = new MDCTooltip(divEle);
    });
 
    onDestroy(() => {
       ToolTip.destroy();
-      divEle.remove();
    });
 </script>
 
