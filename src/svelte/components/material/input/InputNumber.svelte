@@ -92,11 +92,11 @@
 
       {#if calc !== undefined}
          {#if override}
-            <Icon on:click={onReset} class="material-icons mdc-text-field__icon mdc-text-field__icon--leading" tabindex="0" role="button" toolTip="Reset To Calculation">
-               replay
+            <Icon on:click={onReset} class="material-icons mdc-text-field__icon mdc-text-field__icon--leading" tabindex="0" role="button" toolTip="Reset To Default">
+               edit_off
             </Icon>
          {:else}
-            <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--leading">create</Icon>
+            <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--leading">edit</Icon>
          {/if}
       {/if}
 
