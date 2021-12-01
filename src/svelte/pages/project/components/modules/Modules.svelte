@@ -87,6 +87,7 @@
          }
       });
 
+      projectStore.save({ modules });
       clearProject();
    });
 </script>
