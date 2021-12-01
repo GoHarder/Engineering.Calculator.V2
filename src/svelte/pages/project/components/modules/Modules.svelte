@@ -25,18 +25,20 @@
    const clearProject = projectStore.subscribe((store) => {
       modules = store.modules;
 
-      // Update what is selected
-      let update = clone(moduleCards);
+      // Update what is selected if existing file
+      if (Object.keys(modules) > 0) {
+         let update = clone(moduleCards);
 
-      Object.keys(update).forEach((key) => {
-         update[key].checked = false;
-      });
+         Object.keys(update).forEach((key) => {
+            update[key].checked = false;
+         });
 
-      Object.keys(modules).forEach((key) => {
-         update[key].checked = true;
-      });
+         Object.keys(modules).forEach((key) => {
+            update[key].checked = true;
+         });
 
-      moduleCards = update;
+         moduleCards = update;
+      }
    });
 
    // Contexts
