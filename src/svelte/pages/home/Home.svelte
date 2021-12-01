@@ -125,7 +125,6 @@
    $: if (page) onSearch();
 
    // Events
-   const onClear = () => fetchRecent(page, maxRows);
 
    const onCopy = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
@@ -154,7 +153,7 @@
       projectStore.clear();
    };
 
-   const onNew = () => history.pushState({ path: '/Project/Requirements' }, '');
+   const onNew = () => history.pushState({ path: '/Project/Modules' }, '');
 
    const onDelete1 = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
@@ -330,7 +329,7 @@
 </div>
 
 <div class="search-container">
-   <InputSearch on:search={onSearch} on:clear={onClear} bind:value={search} fullWidth />
+   <InputSearch on:search={onSearch} bind:value={search} fullWidth />
 
    <Button on:click={onNew} variant="contained" style="height: 56px; margin: 0; padding: 0 16px">
       Create New Workbook

@@ -97,7 +97,7 @@
       <span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>
    {/if}
 
-   <input {value} {type} on:change={onChange} on:focus={onFocus} on:search {...props} class="mdc-text-field__input" aria-labelledby={id} />
+   <input {value} {type} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
    {#if suffix}
       <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
