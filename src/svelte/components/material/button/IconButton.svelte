@@ -48,7 +48,16 @@
 
       ButtonRipple.unbounded = true;
 
-      // console.log(ButtonToggle);
+      let icon = buttonEle.querySelector('svg');
+
+      if (!icon) {
+         icon = buttonEle.querySelector('i');
+      }
+
+      if ($$slots.default && icon) {
+         icon.classList.add('material-icons');
+         icon.classList.add('mdc-icon-button__icon');
+      }
    });
 
    onDestroy(() => {
