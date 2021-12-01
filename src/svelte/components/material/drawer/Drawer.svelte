@@ -51,11 +51,11 @@
    @include drawer.dismissible-core-styles;
    @include drawer.modal-core-styles;
 
-   .mdc-drawer {
-      @include vantage.scrollbar(#ffffff);
-   }
-
+   @include vantage.scrollbar('.mdc-drawer__content', #ffffff);
    .mdc-drawer-app-content {
-      @include vantage.scrollbar(#ffffff);
+      position: relative;
+      height: 100%;
+      overflow: auto;
+      overflow: hidden;
    }
 </style>

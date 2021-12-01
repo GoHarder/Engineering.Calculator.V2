@@ -37,30 +37,32 @@ $elevation-3: 0 3px 3px -2px rgb(0 0 0 / 20%), 0 3px 4px 0 rgb(0 0 0 / 14%), 0 1
    border-top: 5px solid $primary;
 }
 
-@mixin scrollbar($background-color) {
-   ::-webkit-scrollbar {
-      width: 1em;
-      box-sizing: content-box;
-   }
+@mixin scrollbar($selector, $background-color) {
+   #{$selector} {
+      &::-webkit-scrollbar {
+         width: 1em;
+         box-sizing: content-box;
+      }
 
-   ::-webkit-scrollbar-track {
-      margin-block: 0.25em;
-   }
+      &::-webkit-scrollbar-track {
+         margin-block: 0.25em;
+      }
 
-   ::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.12);
-      border-radius: 1000px;
-      border: 0.25em solid $background-color;
-   }
+      &::-webkit-scrollbar-thumb {
+         background: rgba(0, 0, 0, 0.12);
+         border-radius: 1000px;
+         border: 0.25em solid $background-color;
+      }
 
-   &:hover {
-      ::-webkit-scrollbar-thumb {
-         background: rgba(0, 0, 0, 0.24);
+      &:hover {
+         &::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.24);
+         }
       }
    }
 
    @supports (scrollbar-color: rgba(0, 0, 0, 0.12) rgba(0, 0, 0, 0)) {
-      * {
+      #{$selector} {
          scrollbar-color: rgba(0, 0, 0, 0.12) rgba(0, 0, 0, 0);
          scrollbar-width: thin;
 
