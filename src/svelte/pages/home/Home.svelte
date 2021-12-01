@@ -153,7 +153,7 @@
       projectStore.clear();
    };
 
-   const onNew = () => history.pushState({ path: '/Project/Modules' }, '');
+   const onNew = () => history.pushState({ path: '/Project/Summary' }, '');
 
    const onDelete1 = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
@@ -189,8 +189,26 @@
       }
    };
 
-   const onSelect = (event) => {
-      console.log(event);
+   const onSelect = async (event) => {
+      const fetched = await fetchWorkbook(event.detail);
+
+      const opened = workbook.opened.filter((pastUser) => {
+         pastUser._id !== user._id;
+      });
+
+      const newOpened = [
+         {
+            _id: user._id,
+            date: Date.now(),
+         },
+      ];
+
+      opened.push(newOpened);
+
+      workbook.opened = opened;
+
+      projectStore.set(workbook);
+      history.pushState({ path: '/Calculator' }, '');
    };
 
    const onShare1 = async (event) => {
