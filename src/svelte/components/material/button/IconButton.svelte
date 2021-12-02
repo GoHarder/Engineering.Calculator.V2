@@ -66,7 +66,7 @@
    });
 </script>
 
-<button bind:this={buttonEle} use:events on:click on:MDCIconButtonToggle:change={onChange} class={buttonClass} {...props} data-tooltip-id={id}>
+<button bind:this={buttonEle} use:events on:MDCIconButtonToggle:change={onChange} class={buttonClass} {...props} data-tooltip-id={id}>
    <div class="mdc-icon-button__ripple" />
    <slot />
 </button>
