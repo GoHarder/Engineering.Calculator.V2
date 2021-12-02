@@ -196,12 +196,10 @@
          pastUser._id !== user._id;
       });
 
-      const newOpened = [
-         {
-            _id: user._id,
-            date: Date.now(),
-         },
-      ];
+      const newOpened = {
+         _id: user._id,
+         date: Date.now(),
+      };
 
       opened.push(newOpened);
 
