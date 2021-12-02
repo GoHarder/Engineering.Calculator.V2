@@ -33,12 +33,12 @@ export const bySearch = (search, skip, limit) => {
          $search: {
             compound: {
                should: [
-                  { autocomplete: { query: search, path: 'customer' } },
                   { autocomplete: { query: search, path: 'carNo' } },
-                  { autocomplete: { query: search, path: 'jobName' } },
                   { autocomplete: { query: search, path: 'contract' } },
                   { autocomplete: { query: search, path: 'creator.firstName' } },
                   { autocomplete: { query: search, path: 'creator.lastName' } },
+                  { autocomplete: { query: search, path: 'customer' } },
+                  { autocomplete: { query: search, path: 'jobName' } },
                   { autocomplete: { query: search, path: 'layout' } },
                ],
                minimumShouldMatch: 1,
