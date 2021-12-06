@@ -9,6 +9,7 @@
    import { A, ButtonNote, ShareDialog } from 'components/common';
    import { Icon, IconButton } from 'components/material/button';
    import { Content, Drawer, Item } from 'components/material/drawer';
+   import { Snackbar } from 'components/material/snackbar';
 
    import NotesDialog from './components/NotesDialog.svelte';
 
@@ -34,6 +35,7 @@
    let selectedIndex = -1;
    let shareDialog = false;
    let showDrawer = true;
+   let showSnackbar = false;
    let title;
    let maxIndex = 0;
    let tabTitle = 'HW Engineering Calculator';
@@ -72,8 +74,10 @@
    }
 
    // Events
+
    const onLocationChange = () => {
       const path = history.state.path.split('/').slice(1);
+
       if (path.length > 1) {
          const name = toCamelCase(path[1]);
          comp = moduleLibrary[name]?.comp;
@@ -82,14 +86,20 @@
       }
    };
 
+   const onNext = () => {
+      const key = Object.keys(moduleItems)[selectedIndex + 1];
+      history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+   };
+
    const onPrevious = () => {
       const key = Object.keys(moduleItems)[selectedIndex - 1];
       history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
    };
 
-   const onNext = () => {
-      const key = Object.keys(moduleItems)[selectedIndex + 1];
-      history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+   const onSave = async () => {
+      const saved = await projectStore.save(project);
+
+      if (saved) showSnackbar = true;
    };
 
    // Lifecycle
@@ -141,11 +151,11 @@
          </IconButton>
       </ButtonNote>
 
-      <IconButton toolTip="Save PDF">
-         <Icon>save_alt</Icon>
+      <IconButton toolTip="Download">
+         <Icon>download</Icon>
       </IconButton>
 
-      <IconButton toolTip="Save">
+      <IconButton on:click={onSave} toolTip="Save">
          <Icon>save</Icon>
       </IconButton>
    </div>
@@ -183,11 +193,13 @@
 
       <div class="comp">
          {#if comp}
-            <svelte:component this={comp} />
+            <svelte:component this={comp} bind:project />
          {/if}
       </div>
    </Content>
 </div>
+
+<Snackbar bind:show={showSnackbar}>Project Saved</Snackbar>
 
 <style lang="scss">
    @use 'src/scss/theme' as vantage;
