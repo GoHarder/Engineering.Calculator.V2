@@ -5,11 +5,11 @@
    import { clone } from 'lib/main.mjs';
 
    // Components
+   import { ShareDialog } from 'components/common';
    import { Button, Icon } from 'components/material/button';
    import { Cell, Nav, Row, Table } from 'components/material/data-table';
-   import { Dialog, Title } from 'components/material/dialog';
-   import { HelperText, Input, InputSearch } from 'components/material/input';
-   import { Snackbar } from 'components/material/snackbar';
+   import { Dialog } from 'components/material/dialog';
+   import { InputSearch } from 'components/material/input';
 
    import WorkbookRow from './components/WorkbookRow.svelte';
 
@@ -139,18 +139,16 @@
       };
       update.jobName = `Copy of ${update.jobName}`;
       update.notes = [];
-      update.opened = [{ userId: user._id, time: Date.now() }];
+      update.opened = [{ _id: user._id, date: Date.now() }];
       update.checkout = user._id;
 
       delete update._id;
 
       const saved = await projectStore.save(update);
 
-      console.log('Go to workbook');
-
-      console.log(update);
-
-      projectStore.clear();
+      if (saved) {
+         history.pushState({ path: '/Project/Summary' }, '');
+      }
    };
 
    const onNew = () => history.pushState({ path: '/Project/Summary' }, '');
@@ -209,51 +207,9 @@
       history.pushState({ path: '/Calculator' }, '');
    };
 
-   const onShare1 = async (event) => {
+   const onShare = async (event) => {
       const fetched = await fetchWorkbook(event.detail);
-
-      fetchStore.loading(true);
-      let res, body;
-
-      const token = localStorage.getItem('token');
-
-      try {
-         res = await fetch(`api/users/all`, {
-            headers: {
-               Authorization: `Bearer ${token}`,
-               'Content-Type': 'application/json',
-            },
-         });
-
-         if (res.body && res.status !== 204) body = await res.json();
-
-         if (!res.ok) throw new Error(body.message);
-
-         fetchStore.loading(false);
-         users = [...body];
-      } catch (error) {
-         fetchStore.setError({ res, error });
-      }
-
       if (fetched) shareDialog = true;
-   };
-
-   const onShare2 = async () => {
-      const user = users.find((nth) => nth.email === email);
-
-      // Create the payload
-      const update = clone(workbook);
-
-      update.opened = update.opened.filter((person) => person.userId !== user._id);
-
-      update.opened = [...update.opened, { userId: user._id, time: Date.now() }];
-
-      await projectStore.share(update, user.email);
-
-      await projectStore.clear();
-
-      shareDialog = false;
-      showSnackbar = true;
    };
 
    const onSort = (event) => {
@@ -285,6 +241,10 @@
 
 <svelte:window bind:innerHeight />
 
+<svelte:head>
+   <title>HW Engineering Calculator</title>
+</svelte:head>
+
 <Dialog bind:show={deleteDialog}>
    Delete Workbook?
 
@@ -294,32 +254,9 @@
    </svelte:fragment>
 </Dialog>
 
-<Dialog bind:show={shareDialog}>
-   <svelte:fragment slot="title">
-      <Title>Share Workbook</Title>
-   </svelte:fragment>
-
-   <span style="display:inline-block; margin-bottom: 0.5em;"> Enter the email of the user you want to share the workbook with </span>
-
-   <form id="share-form" on:submit={(event) => event.preventDefault()}>
-      <Input bind:value={email} label="Email" required type="email" list="user-list" fullWidth>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Invalid Email</HelperText>
-         </svelte:fragment>
-      </Input>
-
-      <datalist id="user-list">
-         {#each users as { _id, email, firstName, lastName } (_id)}
-            <option value={email}>{firstName} {lastName}</option>
-         {/each}
-      </datalist>
-   </form>
-
-   <svelte:fragment slot="actions">
-      <Button on:click={() => (shareDialog = false)} variant="outlined" color="secondary">Cancel</Button>
-      <Button on:click={onShare2} variant="outlined" color="secondary" type="submit" form="share-form">Ok</Button>
-   </svelte:fragment>
-</Dialog>
+{#if shareDialog}
+   <ShareDialog bind:show={shareDialog} {workbook} />
+{/if}
 
 <div class="title-container">
    <h2>
@@ -377,7 +314,7 @@
    {:then workbooks}
       {#if workbooks.length !== 0}
          {#each workbooks as workbook (workbook._id)}
-            <WorkbookRow userId={user._id} {workbook} on:delete={onDelete1} on:select={onSelect} on:copy={onCopy} on:share={onShare1} />
+            <WorkbookRow userId={user._id} {workbook} on:delete={onDelete1} on:select={onSelect} on:copy={onCopy} on:share={onShare} />
          {/each}
       {:else}
          <Row>
@@ -394,8 +331,6 @@
       <Nav bind:page length={workbooks.length} total={totalWorkbooks} {maxRows} />
    </svelte:fragment>
 </Table>
-
-<Snackbar bind:show={showSnackbar}>Workbook Share Sent</Snackbar>
 
 <style lang="scss">
    @use './src/scss/theme' as vantage;
