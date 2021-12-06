@@ -15,7 +15,7 @@
 
    // Properties
    export let show = false;
-   export let workbook = {};
+   export let project = {};
 
    // Methods
    // Constants
@@ -35,7 +35,7 @@
       const user = users.find((nth) => nth.email === email);
 
       // Create the payload
-      const update = clone(workbook);
+      const update = clone(project);
 
       update.opened = update.opened.filter((person) => person.userId !== user._id);
 
@@ -83,10 +83,10 @@
 
 <Dialog bind:show={showDialog}>
    <svelte:fragment slot="title">
-      <Title>Share Workbook</Title>
+      <Title>Share Project</Title>
    </svelte:fragment>
 
-   <span style="display:inline-block; margin-bottom: 0.5em;"> Enter the email of the user you want to share the workbook with </span>
+   <span style="display:inline-block; margin-bottom: 0.5em;"> Enter the email of the user you want to share the project with </span>
 
    <form id="share-form" on:submit={onSubmit}>
       <Input bind:value={email} label="Email" required type="email" list="user-list" fullWidth>
@@ -108,7 +108,7 @@
    </svelte:fragment>
 </Dialog>
 
-<Snackbar bind:show={showSnackbar}>Workbook Share Sent</Snackbar>
+<Snackbar bind:show={showSnackbar}>Project Share Sent</Snackbar>
 
 <style>
 </style>
