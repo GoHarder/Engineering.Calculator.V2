@@ -1,6 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { MDCTextField } from '@material/textfield';
+   import { filterProps } from '../../lib';
 
    // Components
    // Stores
@@ -16,6 +17,8 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: props = filterProps($$props, ['value']);
+
    // Events
    // Lifecycle
    onMount(() => {
@@ -27,10 +30,10 @@
    });
 </script>
 
-<label bind:this={labelEle} id="some-id" class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea mdc-text-field--no-label">
+<label bind:this={labelEle} for="test-id" class="mdc-text-field mdc-text-field--filled mdc-text-field--textarea mdc-text-field--no-label">
    <span class="mdc-text-field__ripple" />
    <span class="mdc-text-field__resizer">
-      <textarea bind:value class="mdc-text-field__input" rows="8" cols="40" aria-label="Label" aria-labelled-by="some-id" />
+      <textarea bind:value class="mdc-text-field__input" rows="8" cols="40" aria-label="Label" id="test-id" {...props} />
    </span>
    <span class="mdc-line-ripple" />
 </label>
