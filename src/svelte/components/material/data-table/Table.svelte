@@ -41,13 +41,13 @@
             cell.classList.remove('mdc-data-table__cell');
             cell.classList.add('mdc-data-table__header-cell');
          });
-      }
 
-      DataTable = new MDCDataTable(divEle);
+         DataTable = new MDCDataTable(divEle);
+      }
    });
 
    onDestroy(() => {
-      DataTable.destroy();
+      if (DataTable) DataTable.destroy();
    });
 </script>
 
