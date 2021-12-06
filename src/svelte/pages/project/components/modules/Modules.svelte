@@ -26,7 +26,7 @@
       modules = store.modules;
 
       // Update what is selected if existing file
-      if (Object.keys(modules) > 0) {
+      if (Object.keys(modules).length > 0) {
          let update = clone(moduleCards);
 
          Object.keys(update).forEach((key) => {
