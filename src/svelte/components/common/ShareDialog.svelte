@@ -14,6 +14,7 @@
    import projectStore from 'stores/project';
 
    // Properties
+   export let clear = false;
    export let show = false;
    export let project = {};
 
@@ -43,7 +44,7 @@
 
       await projectStore.share(update, user.email);
 
-      await projectStore.clear();
+      if (clear) await projectStore.clear();
 
       showDialog = false;
       showSnackbar = true;

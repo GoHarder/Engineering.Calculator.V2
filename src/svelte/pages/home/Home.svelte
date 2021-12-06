@@ -252,7 +252,7 @@
 </Dialog>
 
 {#if shareDialog}
-   <ShareDialog bind:show={shareDialog} {project} />
+   <ShareDialog bind:show={shareDialog} clear {project} />
 {/if}
 
 <div class="title-container">
