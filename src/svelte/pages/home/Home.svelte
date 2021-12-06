@@ -11,7 +11,7 @@
    import { Dialog } from 'components/material/dialog';
    import { InputSearch } from 'components/material/input';
 
-   import WorkbookRow from './components/WorkbookRow.svelte';
+   import ProjectRow from './components/ProjectRow.svelte';
 
    // Stores
    import fetchStore from 'stores/fetch';
@@ -39,8 +39,8 @@
          if (!res.ok) throw new Error(body.message);
 
          fetchStore.loading(false);
-         workbooks = [...body.docs];
-         totalWorkbooks = body.length;
+         projects = [...body.docs];
+         totalProjects = body.length;
       } catch (error) {
          fetchStore.setError({ res, error });
       }
@@ -65,14 +65,14 @@
          if (!res.ok) throw new Error(body.message);
 
          fetchStore.loading(false);
-         workbooks = [...body.docs];
-         totalWorkbooks = body.length;
+         projects = [...body.docs];
+         totalProjects = body.length;
       } catch (error) {
          fetchStore.setError({ res, error });
       }
    };
 
-   const fetchWorkbook = async (id) => {
+   const fetchProject = async (id) => {
       fetchStore.loading(true);
       let res, body;
 
@@ -91,7 +91,7 @@
          if (!res.ok) throw new Error(body.message);
 
          fetchStore.loading(false);
-         workbook = { ...body };
+         project = { ...body };
          return true;
       } catch (error) {
          fetchStore.setError({ res, error });
@@ -106,16 +106,13 @@
 
    let deleteDialog;
    let shareDialog;
-   let users = [];
-   let email;
-   let workbook = {};
-   let showSnackbar = false;
+   let project = {};
 
    let search = '';
    let user;
    let page = 1;
-   let totalWorkbooks = 0;
-   let workbooks = [];
+   let totalProjects = 0;
+   let projects = [];
 
    // Subscriptions
    const clearUser = userStore.subscribe((store) => (user = store));
@@ -127,10 +124,10 @@
    // Events
 
    const onCopy = async (event) => {
-      const fetched = await fetchWorkbook(event.detail);
+      const fetched = await fetchProject(event.detail);
 
       // Prep the update
-      const update = clone(workbook);
+      const update = clone(project);
       update.created = Date.now();
       update.creator = {
          firstName: user.firstName,
@@ -154,15 +151,15 @@
    const onNew = () => history.pushState({ path: '/Project/Summary' }, '');
 
    const onDelete1 = async (event) => {
-      const fetched = await fetchWorkbook(event.detail);
+      const fetched = await fetchProject(event.detail);
       if (fetched) deleteDialog = true;
    };
 
    const onDelete2 = async () => {
-      const update = clone(workbook);
+      const update = clone(project);
 
       // Check if user owns the project
-      if (user._id === workbook.creator._id) {
+      if (user._id === project.creator._id) {
          // If so delete
          projectStore.set(update);
          projectStore.destroy();
@@ -188,9 +185,9 @@
    };
 
    const onSelect = async (event) => {
-      const fetched = await fetchWorkbook(event.detail);
+      const fetched = await fetchProject(event.detail);
 
-      const opened = workbook.opened.filter((pastUser) => {
+      const opened = project.opened.filter((pastUser) => {
          pastUser._id !== user._id;
       });
 
@@ -201,19 +198,19 @@
 
       opened.push(newOpened);
 
-      workbook.opened = opened;
+      project.opened = opened;
 
-      projectStore.set(workbook);
+      projectStore.set(project);
       history.pushState({ path: '/Calculator' }, '');
    };
 
    const onShare = async (event) => {
-      const fetched = await fetchWorkbook(event.detail);
+      const fetched = await fetchProject(event.detail);
       if (fetched) shareDialog = true;
    };
 
    const onSort = (event) => {
-      workbooks = [...workbooks].sort((a, b) => {
+      projects = [...projects].sort((a, b) => {
          let direction = 0;
          const valueA = a[event.detail.columnId];
          const valueB = b[event.detail.columnId];
@@ -246,7 +243,7 @@
 </svelte:head>
 
 <Dialog bind:show={deleteDialog}>
-   Delete Workbook?
+   Delete Project?
 
    <svelte:fragment slot="actions">
       <Button on:click={() => (deleteDialog = false)} variant="outlined" color="secondary">Cancel</Button>
@@ -255,7 +252,7 @@
 </Dialog>
 
 {#if shareDialog}
-   <ShareDialog bind:show={shareDialog} {workbook} />
+   <ShareDialog bind:show={shareDialog} {project} />
 {/if}
 
 <div class="title-container">
@@ -266,18 +263,18 @@
 
    <p>
       Select an existing
-      <strong>Workbook</strong>
+      <strong>Project</strong>
       from the list below or click the
-      <strong>Create New Workbook</strong>
+      <strong>Create New Project</strong>
       button
    </p>
 
    <p>
       To find an existing
-      <strong>Workbook</strong>
+      <strong>Project</strong>
       use the
       <strong>Search Bar</strong>
-      below to find your specific workbook
+      below to find your specific project
    </p>
 </div>
 
@@ -285,7 +282,7 @@
    <InputSearch on:search={onSearch} bind:value={search} fullWidth />
 
    <Button on:click={onNew} variant="contained" style="height: 56px; margin: 0; padding: 0 16px">
-      Create New Workbook
+      Create New Project
       <svelte:fragment slot="trailingIcon">
          <Icon>add</Icon>
       </svelte:fragment>
@@ -295,26 +292,26 @@
 <Table on:sort={onSort} class="home-data-table" sticky>
    <svelte:fragment slot="head">
       <Row>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__contract" sort="contract">Contract #</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__job-name" sort="jobName">Job Name</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__car" sort="carNo">Car #</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__customer" sort="customer">Customer</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__layout" sort="layout">Layout #</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__date">Created</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__date">Last Opened</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__chip">Owned By</Cell>
-         <Cell scope="col" role="columnheader" class="workbook-row-cell__menu" />
+         <Cell scope="col" role="columnheader" class="project-row-cell__contract" sort="contract">Contract #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__job-name" sort="jobName">Job Name</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__car" sort="carNo">Car #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__customer" sort="customer">Customer</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__layout" sort="layout">Layout #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__date">Created</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__date">Last Opened</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__chip">Owned By</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell__menu" />
       </Row>
    </svelte:fragment>
 
-   {#await workbooks}
+   {#await projects}
       <Row>
          <Cell colspan="9">Loading...</Cell>
       </Row>
-   {:then workbooks}
-      {#if workbooks.length !== 0}
-         {#each workbooks as workbook (workbook._id)}
-            <WorkbookRow userId={user._id} {workbook} on:delete={onDelete1} on:select={onSelect} on:copy={onCopy} on:share={onShare} />
+   {:then projects}
+      {#if projects.length !== 0}
+         {#each projects as project (project._id)}
+            <ProjectRow userId={user._id} {project} on:delete={onDelete1} on:select={onSelect} on:copy={onCopy} on:share={onShare} />
          {/each}
       {:else}
          <Row>
@@ -328,7 +325,7 @@
    {/await}
 
    <svelte:fragment slot="pagination">
-      <Nav bind:page length={workbooks.length} total={totalWorkbooks} {maxRows} />
+      <Nav bind:page length={projects.length} total={totalProjects} {maxRows} />
    </svelte:fragment>
 </Table>
 
