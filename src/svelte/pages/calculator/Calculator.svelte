@@ -6,9 +6,11 @@
    import { capitalize, toCamelCase } from 'lib/string.mjs';
 
    // Components
-   import { A, ShareDialog } from 'components/common';
+   import { A, ButtonNote, ShareDialog } from 'components/common';
    import { Icon, IconButton } from 'components/material/button';
    import { Content, Drawer, Item } from 'components/material/drawer';
+
+   import NotesDialog from './components/NotesDialog.svelte';
 
    // Stores
    import projectStore from 'stores/project';
@@ -28,6 +30,7 @@
    let comp;
    let domTitle = 'Undefined Project';
    let moduleItems = clone(moduleLibrary);
+   let notesDialog = false;
    let selectedIndex = -1;
    let shareDialog = false;
    let showDrawer = true;
@@ -106,7 +109,11 @@
 <svelte:window on:locationchange={onLocationChange} />
 
 {#if shareDialog}
-   <ShareDialog bind:show={shareDialog} {project} />
+   <ShareDialog bind:show={shareDialog} bind:project />
+{/if}
+
+{#if notesDialog}
+   <NotesDialog bind:show={notesDialog} bind:project />
 {/if}
 
 <header>
@@ -128,9 +135,11 @@
          <Icon>share</Icon>
       </IconButton>
 
-      <IconButton toolTip="Notes">
-         <Icon>edit_note</Icon>
-      </IconButton>
+      <ButtonNote text={project.notes.length}>
+         <IconButton on:click={() => (notesDialog = true)} toolTip="Notes">
+            <Icon>edit_note</Icon>
+         </IconButton>
+      </ButtonNote>
 
       <IconButton toolTip="Save PDF">
          <Icon>save_alt</Icon>
@@ -228,7 +237,7 @@
    }
 
    .comp {
-      height: calc(100% - 50px);
+      height: calc(100% - 48px);
       overflow-x: hidden;
       overflow-y: scroll;
       padding: 0.5em 0 0.5em 0.5em;
