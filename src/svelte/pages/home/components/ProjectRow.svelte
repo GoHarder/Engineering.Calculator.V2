@@ -11,7 +11,7 @@
    // Stores
    // Properties
    export let userId;
-   export let workbook;
+   export let project;
 
    // Methods
    const getDateString = (number) => {
@@ -28,9 +28,9 @@
 
    // Constants
    const dispatch = createEventDispatcher();
-   const creator = `${workbook.creator.firstName} ${workbook.creator.lastName}`;
+   const creator = `${project.creator.firstName} ${project.creator.lastName}`;
    const initials = creator.replace(/(\b[a-zA-Z])[a-zA-Z]* ?/g, '$1');
-   const opened = workbook.opened.find((user) => user._id === userId)?.date;
+   const opened = project.opened.find((user) => user._id === userId)?.date;
 
    // Variables
    let open;
@@ -39,20 +39,20 @@
    // Contexts
    // Reactive Rules
    // Events
-   const onClick = (cmd) => dispatch(cmd, workbook._id);
+   const onClick = (cmd) => dispatch(cmd, project._id);
 
    // Lifecycle
 </script>
 
-<Row class="workbook-row">
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__contract" scope="row">{workbook.contract}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__job-name">{workbook.jobName}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__car">{workbook.carNo ? workbook.carNo : 'N/A'}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__customer">{workbook.customer}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__layout">{workbook.layout ? workbook.layout : 'N/A'}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(workbook.created)}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__date">{getDateString(opened)}</Cell>
-   <Cell on:click={() => onClick('select')} class="workbook-row-cell__chip" data-tooltip-id="name-{workbook._id}" style="text-align: center;">
+<Row class="project-row">
+   <Cell on:click={() => onClick('select')} class="project-row-cell__contract" scope="row">{project.contract}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__job-name">{project.jobName}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__car">{project.carNo ? project.carNo : 'N/A'}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__customer">{project.customer}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__layout">{project.layout ? project.layout : 'N/A'}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__date">{getDateString(project.created)}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__date">{getDateString(opened)}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell__chip" data-tooltip-id="name-{project._id}" style="text-align: center;">
       <Chip>{initials}</Chip>
    </Cell>
    <div class="mdc-menu-surface--anchor menu-cell">
@@ -83,7 +83,7 @@
    </div>
 </Row>
 
-<ToolTip id="name-{workbook._id}">{creator}</ToolTip>
+<ToolTip id="name-{project._id}">{creator}</ToolTip>
 
 <style lang="scss">
    .menu-cell {
@@ -95,11 +95,11 @@
    }
 
    :global {
-      .workbook-row {
+      .project-row {
          cursor: pointer;
       }
 
-      .workbook-row-cell {
+      .project-row-cell {
          &__contract {
             width: 135px;
          }
@@ -125,7 +125,7 @@
       }
 
       @media (min-width: 1000px) {
-         .workbook-row-cell {
+         .project-row-cell {
             &__layout {
                display: table-cell;
             }
@@ -133,7 +133,7 @@
       }
 
       @media (min-width: 1200px) {
-         .workbook-row-cell {
+         .project-row-cell {
             &__date {
                display: table-cell;
             }
