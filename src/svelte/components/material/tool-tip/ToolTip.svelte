@@ -11,6 +11,7 @@
    // Variables
    let divEle;
    let ToolTip;
+   let siblingEle;
 
    // Subscriptions
    // Contexts
@@ -22,13 +23,17 @@
    onMount(() => {
       const body = document.querySelector('body');
 
-      // body.appendChild(divEle);
+      siblingEle = divEle.previousElementSibling;
+
+      body.appendChild(divEle);
 
       ToolTip = new MDCTooltip(divEle);
    });
 
    onDestroy(() => {
       ToolTip.destroy();
+
+      siblingEle.after(divEle);
    });
 </script>
 
