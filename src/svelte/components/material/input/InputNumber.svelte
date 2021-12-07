@@ -65,6 +65,10 @@
 
    const onFocus = (event) => event.target.select();
 
+   const onLink = () => {
+      history.pushState({ path: link }, '');
+   };
+
    const onReset = () => (override = false);
 
    // Lifecycle
@@ -107,7 +111,7 @@
       {/if}
 
       {#if link}
-         <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
+         <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
       {/if}
 
       <span class="mdc-line-ripple" />
