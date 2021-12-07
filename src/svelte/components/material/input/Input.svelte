@@ -209,7 +209,7 @@
          width: calc(250px + 0.5em + $metric-width);
          grid-template: {
             columns: 1fr 1fr 0.5em $metric-width;
-            rows: 200px 19px;
+            rows: 56px 19px;
             areas: 'field-1 field-2 . metric' 'helper helper helper helper';
          }
       }
