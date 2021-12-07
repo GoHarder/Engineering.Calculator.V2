@@ -23,7 +23,7 @@
       if (path.length > 1) {
          const name = toCamelCase(path[1]);
          comp = moduleLibrary[name]?.comp;
-         title = moduleLibrary[name]?.title;
+         title = moduleLibrary[name]?.title ?? title;
          selectedIndex = moduleItems[name]?.index;
       }
    };
@@ -148,7 +148,7 @@
          </IconButton>
       </ButtonNote>
 
-      <IconButton toolTip="Download">
+      <IconButton toolTip="Download PDF">
          <Icon>download</Icon>
       </IconButton>
 
