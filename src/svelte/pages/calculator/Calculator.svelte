@@ -253,8 +253,8 @@
    .comp {
       height: calc(100% - 48px);
       overflow-x: hidden;
-      overflow-y: scroll;
-      padding: 0.5em 0 0.5em 0.5em;
+      overflow-y: auto;
+      padding: 0.5em;
       background-color: vantage.$gray-90;
    }
    @include vantage.scrollbar('.comp', vantage.$gray-90);
