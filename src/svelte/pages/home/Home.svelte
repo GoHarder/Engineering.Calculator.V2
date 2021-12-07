@@ -3,6 +3,7 @@
    import { floor } from 'lib/math.mjs';
 
    import { clone } from 'lib/main.mjs';
+   import { capitalize } from 'lib/string.mjs';
 
    // Components
    import { ShareDialog } from 'components/common';
@@ -200,8 +201,11 @@
 
       project.opened = opened;
 
+      // Get the next part of the path
+      const moduleName = capitalize(Object.keys(project.modules)[0]);
+
       projectStore.set(project);
-      history.pushState({ path: '/Calculator' }, '');
+      history.pushState({ path: `/Calculator/${moduleName}` }, '');
    };
 
    const onShare = async (event) => {
