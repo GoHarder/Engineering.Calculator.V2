@@ -2,6 +2,7 @@
    import { onDestroy } from 'svelte';
 
    import * as validate from 'lib/validate.mjs';
+   import { capitalize } from 'lib/string.mjs';
 
    // Components
    import { A } from 'components/common';
@@ -87,7 +88,11 @@
       if (newComp) {
          history.pushState({ path: `/Project/${newComp.name}` }, '');
       } else {
-         history.pushState({ path: `/Calculator` }, '');
+         const moduleName = capitalize(Object.keys(project.modules)[0]);
+
+         if (moduleName) {
+            history.pushState({ path: `/Calculator/${moduleName}` }, '');
+         }
       }
    };
 
