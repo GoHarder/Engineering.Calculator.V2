@@ -25,14 +25,16 @@
    const id = `input-${randomId()}`;
 
    const types = {
-      _default: { suffix: '', mSuffix: '', convert: 0, roundTo: 1 },
-      speed: { suffix: 'ft/min', mSuffix: 'm/sec', convert: 0.00508, roundTo: 4 },
-      weight: { suffix: 'lb', mSuffix: 'kg', convert: 0.453592, roundTo: 1 },
+      _default: { suffix: '', mSuffix: '', mConvert: 0, iConvert: 1, mRound: 1, iRound: 1 },
+      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, iConvert: 144, mRound: 4, iRound: 1 },
+      speed: { suffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, iConvert: 1, mRound: 4, iRound: 1 },
+      weight: { suffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, iConvert: 1, mRound: 1, iRound: 1 },
    };
 
-   const { suffix, mSuffix, convert, roundTo } = types[type] || types._default;
+   const { suffix, mSuffix, mConvert, iConvert, mRound, iRound } = types[type] || types._default;
 
    // Variables
+   let _value = 0;
    let divEle;
    let labelEle;
    let TextField;
@@ -55,12 +57,19 @@
 
    $: if (!override && calc !== undefined) value = calc;
 
+   $: if (value) {
+      _value = round(value * (1 / iConvert), iRound);
+      metricValue = round(value * mConvert, mRound);
+   }
+
    // Events
    const onChange = (event) => {
       override = calc !== event.target.value;
 
-      value = parseFloat(event.target.value) || 0;
-      metricValue = round(value * convert, roundTo);
+      console.log(iConvert);
+
+      value = round((parseFloat(event.target.value) || 0) * iConvert, iRound);
+      metricValue = round(value * mConvert, mRound);
    };
 
    const onFocus = (event) => event.target.select();
@@ -75,7 +84,7 @@
 
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
-      metricValue = round(value * convert, roundTo);
+      metricValue = round(value * mConvert, mRound);
 
       if (gridArea) {
          divEle.style.gridArea = gridArea;
@@ -103,7 +112,7 @@
          {/if}
       {/if}
 
-      <input {value} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input value={_value} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
       {#if suffix}
          <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
