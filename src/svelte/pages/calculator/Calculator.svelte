@@ -20,6 +20,8 @@
    // Properties
    // Methods
    const parsePath = (path) => {
+      updateModule = undefined;
+
       if (path.length > 1) {
          const name = toCamelCase(path[1]);
          comp = moduleLibrary[name]?.comp;
@@ -36,6 +38,7 @@
    let contract;
    let jobName;
    let project;
+   let updateModule;
 
    // - UI
    let comp;
@@ -67,7 +70,7 @@
          update[key].checked = false;
       });
 
-      Object.keys(project.modules).forEach((key, i) => {
+      Object.keys(project?.modules ?? {}).forEach((key, i) => {
          update[key].show = true;
          update[key].href = `/Calculator/${capitalize(key)}`;
          update[key].index = i;
@@ -99,6 +102,8 @@
    };
 
    const onSave = async () => {
+      updateModule();
+
       const saved = await projectStore.save(project);
 
       if (saved) showSnackbar = true;
@@ -142,7 +147,7 @@
          <Icon>share</Icon>
       </IconButton>
 
-      <ButtonNote text={project.notes.length}>
+      <ButtonNote text={project?.notes?.length ?? 0}>
          <IconButton on:click={() => (notesDialog = true)} toolTip="Notes">
             <Icon>edit_note</Icon>
          </IconButton>
@@ -190,7 +195,7 @@
 
       <div class="comp">
          {#if comp}
-            <svelte:component this={comp} bind:project />
+            <svelte:component this={comp} bind:project bind:updateModule />
          {/if}
       </div>
    </Content>
