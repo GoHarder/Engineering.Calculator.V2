@@ -51,6 +51,8 @@
       }
    };
 
+   const onLink = () => history.pushState({ path: link }, '');
+
    const onFocus = (event) => {
       event.target.select();
    };
@@ -104,7 +106,7 @@
    {/if}
 
    {#if link}
-      <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
+      <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link.match(/\w+$/)[0]}>link</Icon>
    {:else}
       <slot name="trailingIcon" />
    {/if}

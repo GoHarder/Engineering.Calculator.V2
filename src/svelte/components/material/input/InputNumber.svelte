@@ -65,9 +65,7 @@
 
    const onFocus = (event) => event.target.select();
 
-   const onLink = () => {
-      history.pushState({ path: link }, '');
-   };
+   const onLink = () => history.pushState({ path: link }, '');
 
    const onReset = () => (override = false);
 
