@@ -22,6 +22,8 @@
 
    const parsePath = (path) => {
       const index = getCompIndex(path[1]);
+      currentIndex = index;
+
       comp = comps[index];
    };
 
