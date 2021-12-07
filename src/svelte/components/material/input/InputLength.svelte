@@ -92,6 +92,7 @@
 
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
+      metricValue = round(value * 0.0254, 2);
 
       if (gridArea) {
          divEle.style.gridArea = gridArea;

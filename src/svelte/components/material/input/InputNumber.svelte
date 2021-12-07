@@ -77,6 +77,7 @@
 
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
+      metricValue = round(value * convert, roundTo);
 
       if (gridArea) {
          divEle.style.gridArea = gridArea;
@@ -111,7 +112,9 @@
       {/if}
 
       {#if link}
-         <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
+         <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link.match(/\w+$/)[0]}>
+            link
+         </Icon>
       {/if}
 
       <span class="mdc-line-ripple" />
