@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy, onMount } from 'svelte';
+   import { onDestroy } from 'svelte';
 
    import * as validate from 'lib/validate.mjs';
 
@@ -13,11 +13,17 @@
    import Summary from './components/Summary.svelte';
 
    // Stores
+   import pathStore from 'stores/path';
    import projectStore from 'stores/project';
 
    // Properties
    // Methods
    const getCompIndex = (name) => comps.findIndex((comp) => comp.name === name);
+
+   const parsePath = (path) => {
+      const index = getCompIndex(path[1]);
+      comp = comps[index];
+   };
 
    // Constants
    const comps = [Summary, Requirements, Modules];
@@ -36,9 +42,12 @@
 
    // Variables
    let comp = Summary;
+   let path = [];
    let project = {};
 
    // Subscriptions
+   const clearPath = pathStore.subscribe((store) => (path = store));
+
    const clearProject = projectStore.subscribe((store) => {
       if (Object.keys(store).length !== 0) {
          project = store;
@@ -53,6 +62,8 @@
 
    $: validRequirements = validate.object(project.globals, requirementsSchema).valid;
 
+   $: parsePath(path);
+
    // Events
    const onActivated = (event) => (comp = event.detail);
 
@@ -64,12 +75,6 @@
       if (event.keyCode === 13) {
          event.preventDefault();
       }
-   };
-
-   const onLocationChange = () => {
-      const path = history.state.path.split('/').slice(1);
-      const index = getCompIndex(path[1]);
-      comp = comps[index];
    };
 
    const onSubmit = (event) => {
@@ -85,16 +90,11 @@
    };
 
    // Lifecycle
-   onMount(() => {
-      onLocationChange();
-   });
-
    onDestroy(() => {
+      clearPath();
       clearProject();
    });
 </script>
-
-<svelte:window on:locationchange={onLocationChange} />
 
 <header>
    <A href="/Home">Home</A>

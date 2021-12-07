@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy, onMount } from 'svelte';
+   import { onDestroy } from 'svelte';
    import moduleLibrary from './modules/modules';
 
    import { clone } from 'lib/main.mjs';
@@ -14,10 +14,20 @@
    import NotesDialog from './components/NotesDialog.svelte';
 
    // Stores
+   import pathStore from 'stores/path';
    import projectStore from 'stores/project';
 
    // Properties
    // Methods
+   const parsePath = (path) => {
+      if (path.length > 1) {
+         const name = toCamelCase(path[1]);
+         comp = moduleLibrary[name]?.comp;
+         title = moduleLibrary[name]?.title;
+         selectedIndex = moduleItems[name]?.index;
+      }
+   };
+
    // Constants
    // Variables
 
@@ -32,15 +42,18 @@
    let domTitle = 'Undefined Project';
    let moduleItems = clone(moduleLibrary);
    let notesDialog = false;
+   let path = [];
    let selectedIndex = -1;
    let shareDialog = false;
    let showDrawer = true;
    let showSnackbar = false;
-   let title;
+   let title = '';
    let maxIndex = 0;
    let tabTitle = 'HW Engineering Calculator';
 
    // Subscriptions
+   const clearPath = pathStore.subscribe((store) => (path = store));
+
    const clearProject = projectStore.subscribe((store) => {
       carNo = store.carNo;
       contract = store.contract;
@@ -59,7 +72,6 @@
          update[key].href = `/Calculator/${capitalize(key)}`;
          update[key].index = i;
          update[key].checked = i === 0;
-         if (i === 0) history.pushState({ path: update[key].href }, '');
          maxIndex = i;
       });
 
@@ -73,19 +85,9 @@
       tabTitle = domTitle;
    }
 
+   $: parsePath(path);
+
    // Events
-
-   const onLocationChange = () => {
-      const path = history.state.path.split('/').slice(1);
-
-      if (path.length > 1) {
-         const name = toCamelCase(path[1]);
-         comp = moduleLibrary[name]?.comp;
-         title = moduleLibrary[name]?.title;
-         selectedIndex = moduleItems[name]?.index;
-      }
-   };
-
    const onNext = () => {
       const key = Object.keys(moduleItems)[selectedIndex + 1];
       history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
@@ -103,11 +105,8 @@
    };
 
    // Lifecycle
-   onMount(() => {
-      onLocationChange();
-   });
-
    onDestroy(() => {
+      clearPath();
       clearProject();
    });
 </script>
@@ -115,8 +114,6 @@
 <svelte:head>
    <title>{tabTitle}</title>
 </svelte:head>
-
-<svelte:window on:locationchange={onLocationChange} />
 
 {#if shareDialog}
    <ShareDialog bind:show={shareDialog} bind:project />

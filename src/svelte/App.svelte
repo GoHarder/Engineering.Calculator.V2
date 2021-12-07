@@ -3,9 +3,9 @@
    import { fade } from 'svelte/transition';
 
    // Components
-   import { Button } from './components/material/button';
-   import { Dialog, Title } from './components/material/dialog';
-   import { LinearProgress } from './components/material/progress';
+   import { Button } from 'components/material/button';
+   import { Dialog, Title } from 'components/material/dialog';
+   import { LinearProgress } from 'components/material/progress';
 
    import AccountSettings from './pages/account-settings/AccountSettings.svelte';
    import AdminTools from './pages/admin-tools/AdminTools.svelte';
@@ -15,8 +15,9 @@
    import Project from './pages/project/Project.svelte';
 
    // Stores
-   import fetchStore from './stores/fetch';
-   import userStore from './stores/user';
+   import fetchStore from 'stores/fetch';
+   import pathStore from 'stores/path';
+   import userStore from 'stores/user';
 
    // Properties
    // Methods
@@ -33,6 +34,7 @@
    // Variables
    let comp = Login;
    let errorData = undefined;
+   let path = [];
    let showApp = false;
    let showError = false;
    let showLoading = false;
@@ -45,6 +47,8 @@
    });
 
    const clearUser = userStore.subscribe((store) => (user = store));
+
+   const clearPath = pathStore.subscribe((store) => (path = store));
 
    // Contexts
    // Reactive Rules
@@ -62,7 +66,8 @@
    const onCloseError = () => fetchStore.clearError();
 
    const onLocationChange = () => {
-      const path = history.state.path.split('/').slice(1);
+      pathStore.set(history.state.path.split('/').slice(1));
+
       comp = comps[path[0]];
    };
 
@@ -73,6 +78,7 @@
 
    onDestroy(() => {
       clearFetch();
+      clearPath();
       clearUser();
    });
 </script>
