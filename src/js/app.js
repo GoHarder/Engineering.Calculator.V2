@@ -23,8 +23,8 @@ window.addEventListener('popstate', () => {
    window.dispatchEvent(new Event('locationchange'));
 });
 
-/** Svelte application instance */
-const svelteApp = new App({ target: document.querySelector('main') });
-
 /** Svelte navigation instance */
 const svelteNav = new Nav({ target: document.querySelector('nav') });
+
+/** Svelte application instance */
+const svelteApp = new App({ target: document.querySelector('main') });
