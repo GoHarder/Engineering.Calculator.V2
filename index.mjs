@@ -6,8 +6,9 @@
 import { getEnv } from './server/lib/env.mjs';
 import { hr, style } from './server/lib/terminal.mjs';
 
-import { init as server } from './server/server.mjs';
 import { init as mongodb } from './server/data/mongodb/mongodb.mjs';
+import { init as redis } from './server/data/redis/redis.mjs';
+import { init as server } from './server/server.mjs';
 
 const { protocol, host, name, port } = getEnv();
 
@@ -17,6 +18,7 @@ const init = async () => {
 
    try {
       await mongodb();
+      await redis();
       await server();
    } catch (error) {
       console.log(error);

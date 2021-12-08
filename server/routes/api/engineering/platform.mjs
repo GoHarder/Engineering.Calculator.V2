@@ -6,15 +6,16 @@
 import express from 'express';
 
 // Project Imports
-import { checkAuth } from '../../../middleware/lib.mjs';
+import { checkAuth, checkCache } from '../../../middleware/lib.mjs';
 import { _angle } from '../../../data/mongodb/pipelines/platform.mjs';
 import { eng as engDB } from '../../../data/mongodb/mongodb.mjs';
+import { setEx } from '../../../data/redis/redis.mjs';
 
 /** The router for the module */
 export const router = express.Router();
 
 // Middleware
-router.use(checkAuth);
+router.use([checkAuth, checkCache]);
 
 // Routes
 
@@ -27,6 +28,8 @@ router.get('/wood', async (req, res) => {
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
+
+   await setEx(req.originalUrl, JSON.stringify(docs));
 
    res.status(200).json(docs);
 });

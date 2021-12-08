@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb';
 
 // Project Imports
 import { verifyToken } from '../lib/crypto.mjs';
+import { expire, get } from '../data/redis/redis.mjs';
 
 /**
  * Checks the authorization header for a valid token
@@ -29,6 +30,18 @@ export const checkAuth = (req, res, next) => {
    }
 
    req.token = token;
+
+   next();
+};
+
+export const checkCache = async (req, res, next) => {
+   let cache = await get(req.originalUrl);
+
+   if (cache) {
+      await expire(req.originalUrl);
+      cache = JSON.parse(cache);
+      return res.status(200).json(cache);
+   }
 
    next();
 };

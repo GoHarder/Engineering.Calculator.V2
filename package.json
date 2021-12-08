@@ -17,7 +17,8 @@
       "form-data": "^4.0.0",
       "jsonwebtoken": "^8.5.1",
       "mailgun.js": "^3.7.3",
-      "mongodb": "^4.1.4"
+      "mongodb": "^4.1.4",
+      "redis": "^4.0.0"
    },
    "devDependencies": {
       "@rollup/plugin-commonjs": "^21.0.1",
