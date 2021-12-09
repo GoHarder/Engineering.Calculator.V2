@@ -176,7 +176,6 @@
 
       section.project-form {
          border-top: 1px solid rgba($color: #000000, $alpha: 0.12);
-         padding-top: 1em;
          min-height: calc(100vh - 330px);
       }
    }
