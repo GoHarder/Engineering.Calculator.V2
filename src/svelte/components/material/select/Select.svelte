@@ -9,7 +9,6 @@
    // Properties
    export let label = '';
    export let disabled = false;
-   export let gridArea = undefined;
    export let options = undefined;
    export let required = false;
    export let selected = undefined;
@@ -77,11 +76,6 @@
       Select = new MDCSelect(divEle);
 
       updateSelected(value);
-
-
-      if (gridArea) {
-         divEle.style.gridArea = gridArea;
-      }
    });
 
    onDestroy(() => {

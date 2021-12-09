@@ -12,7 +12,6 @@
    // Properties
    export let calc = undefined;
    export let fullWidth = undefined;
-   export let gridArea = undefined;
    export let label = '';
    export let link = undefined;
    export let metric = false;
@@ -35,7 +34,6 @@
 
    // Variables
    let _value = 0;
-   let divEle;
    let labelEle;
    let TextField;
    let metricValue = 0;
@@ -85,10 +83,6 @@
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
       metricValue = round(value * mConvert, mRound);
-
-      if (gridArea) {
-         divEle.style.gridArea = gridArea;
-      }
    });
 
    onDestroy(() => {
@@ -96,7 +90,7 @@
    });
 </script>
 
-<div bind:this={divEle} class="input-number" class:metric class:full-width={fullWidth}>
+<div class="input-number" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle} class={labelClass}>
       <span class="mdc-text-field__ripple" />
 

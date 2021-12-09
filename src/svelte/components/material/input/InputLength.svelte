@@ -12,7 +12,6 @@
    // Properties
    export let calc = undefined;
    export let fullWidth = undefined;
-   export let gridArea = undefined;
    export let label = '';
    export let link = undefined;
    export let metric = false;
@@ -30,7 +29,6 @@
    const id = `input-${randomId()}`;
 
    // Variables
-   let divEle;
    let feet = 0;
    let inches = 0;
    let labelEle1;
@@ -93,10 +91,6 @@
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
       metricValue = round(value * 0.0254, 2);
-
-      if (gridArea) {
-         divEle.style.gridArea = gridArea;
-      }
    });
 
    onDestroy(() => {
@@ -105,7 +99,7 @@
    });
 </script>
 
-<div bind:this={divEle} class="input-length" class:metric class:full-width={fullWidth}>
+<div class="input-length" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle1} class={labelClass1}>
       <span class="mdc-text-field__ripple" />
 
