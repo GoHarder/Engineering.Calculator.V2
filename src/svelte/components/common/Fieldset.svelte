@@ -1,5 +1,6 @@
 <script>
    import { fade } from 'svelte/transition';
+   import { filterProps } from '../lib';
 
    // Components
    // Stores
@@ -12,11 +13,13 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: props = filterProps($$props, ['title']);
+
    // Events
    // Lifecycle
 </script>
 
-<fieldset transition:fade>
+<fieldset transition:fade {...props}>
    <legend>{title}</legend>
    <hr />
    <slot />
