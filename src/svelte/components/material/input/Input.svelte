@@ -197,7 +197,7 @@
             areas: 'field . metric' 'helper helper helper';
          }
          &.full-width {
-            grid-template-columns: vantage.$input-width-2 0.25em $metric-width;
+            grid-template-columns: minmax(vantage.$input-width-2, 1fr) 0.25em $metric-width;
          }
       }
    }
