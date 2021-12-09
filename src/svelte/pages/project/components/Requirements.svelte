@@ -169,7 +169,7 @@
 <section class="project-form">
    <p>Enter the project requirements and proceed to the next step</p>
 
-   <div class="grid-1">
+   <div class="grid">
       <InputNumber bind:value={capacity} label="Capacity" max="30000" min="1" {metric} type="weight">
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Capacity</HelperText>
@@ -244,7 +244,7 @@
 
       <p>IBC/ASCE 7 Seismic Parameters</p>
 
-      <div class="grid-2">
+      <div class="grid">
          <Select bind:value={ibcCategory} gridArea="category" label="Design Category">
             <Option value="A">A</Option>
             <Option value="B">B</Option>
@@ -275,8 +275,7 @@
 </section>
 
 <style lang="scss">
-   .grid-1,
-   .grid-2 {
+   .grid {
       width: 412px;
       margin: 0 auto;
    }
@@ -287,8 +286,7 @@
          margin: 1em auto;
       }
 
-      .grid-1,
-      .grid-2 {
+      .grid {
          width: 832px;
          display: grid;
          grid: {
@@ -304,8 +302,7 @@
          margin: 1em auto;
       }
 
-      .grid-1,
-      .grid-2 {
+      .grid {
          width: 1252px;
          display: grid;
          grid: {
