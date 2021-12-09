@@ -90,7 +90,7 @@
    });
 </script>
 
-<div class="input-number" class:metric class:full-width={fullWidth}>
+<div class="input" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle} class={labelClass}>
       <span class="mdc-text-field__ripple" />
 

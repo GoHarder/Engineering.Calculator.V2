@@ -43,18 +43,18 @@
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      'mdc-text-field--fullwidth',
+      // 'mdc-text-field--fullwidth',
       calc !== undefined ? 'mdc-text-field--with-leading-icon' : '',
-      'input-length-1',
+      'input-1',
    ]);
 
    $: labelClass2 = classList([
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      'mdc-text-field--fullwidth',
+      // 'mdc-text-field--fullwidth',
       link ? 'mdc-text-field--with-trailing-icon' : '',
-      'input-length-2',
+      'input-2',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
@@ -99,7 +99,7 @@
    });
 </script>
 
-<div class="input-length" class:metric class:full-width={fullWidth}>
+<div class="input length" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle1} class={labelClass1}>
       <span class="mdc-text-field__ripple" />
 

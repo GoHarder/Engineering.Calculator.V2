@@ -30,14 +30,14 @@
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      fullWidth ? 'mdc-text-field--fullwidth' : '',
+      // 'mdc-text-field--fullwidth',
       $$slots.leadingIcon ? 'mdc-text-field--with-leading-icon' : '',
       $$slots.trailingIcon || link ? 'mdc-text-field--with-trailing-icon' : '',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['fullWidth', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
+   $: props = filterProps($$props, ['fullWidth', 'grid', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
 
    // Events
    const onChange = (event) => {
@@ -88,33 +88,37 @@
    });
 </script>
 
-<label bind:this={labelEle} class={labelClass}>
-   <span class="mdc-text-field__ripple" />
+<div class="input" class:full-width={fullWidth}>
+   <label bind:this={labelEle} class={labelClass}>
+      <span class="mdc-text-field__ripple" />
 
-   <span class={spanClass} {id}>{label}</span>
+      <span class={spanClass} {id}>{label}</span>
 
-   <slot name="leadingIcon" />
+      <slot name="leadingIcon" />
 
-   {#if prefix}
-      <span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>
-   {/if}
+      {#if prefix}
+         <span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>
+      {/if}
 
-   <input {value} {type} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input {value} {type} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
-   {#if suffix}
-      <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
-   {/if}
+      {#if suffix}
+         <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
+      {/if}
 
-   {#if link}
-      <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link.match(/\w+$/)[0]}>link</Icon>
-   {:else}
-      <slot name="trailingIcon" />
-   {/if}
+      {#if link}
+         <Icon on:click={onLink} class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link.match(/\w+$/)[0]}>
+            link
+         </Icon>
+      {:else}
+         <slot name="trailingIcon" />
+      {/if}
 
-   <span class="mdc-line-ripple" />
-</label>
+      <span class="mdc-line-ripple" />
+   </label>
 
-<slot name="helperText" />
+   <slot name="helperText" />
+</div>
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
@@ -151,74 +155,73 @@
       margin: 0;
    }
 
-   .input-number,
-   .input-length {
-      .mdc-text-field {
-         grid-area: field;
-      }
-
-      .input-length-1 {
-         grid-area: field-1;
-      }
-
-      .input-length-2 {
-         grid-area: field-2;
-      }
-
-      .mdc-text-field-helper-line {
-         grid-area: helper;
-      }
-
-      .metric-value {
-         grid-area: metric;
-         width: $metric-width;
-         color: gray;
-         font-size: 14px;
-         margin-top: 24px;
-      }
+   .mdc-text-field {
+      grid-area: field;
    }
-   .input-number {
-      width: 250px;
+
+   .mdc-text-field.input-1 {
+      grid-area: field-1;
+   }
+
+   .mdc-text-field.input-2 {
+      grid-area: field-2;
+   }
+
+   .mdc-text-field-helper-line {
+      grid-area: helper;
+   }
+
+   .metric-value {
+      grid-area: metric;
+      width: $metric-width;
+      color: gray;
+      font-size: 14px;
+      margin-top: 24px;
+   }
+
+   .input {
       display: grid;
       grid-template: {
-         columns: 1fr;
+         columns: vantage.$input-width-2;
          rows: 56px 19px;
          areas: 'field' 'helper';
       }
+      &.full-width {
+         grid-template-columns: minmax(vantage.$input-width-2, 1fr);
+      }
 
       &.metric {
-         width: calc(250px + 0.5em + $metric-width);
          grid-template: {
-            columns: 1fr 0.5em $metric-width;
+            columns: vantage.$input-width-2 0.25em $metric-width;
             rows: 56px 19px;
             areas: 'field . metric' 'helper helper helper';
+         }
+         &.full-width {
+            grid-template-columns: vantage.$input-width-2 0.25em $metric-width;
          }
       }
    }
 
-   .input-length {
-      width: 250px;
-      display: grid;
+   .input.length {
       grid-template: {
-         columns: 1fr 1fr;
+         columns: repeat(2, vantage.$input-width-1);
          rows: 56px 19px;
          areas: 'field-1 field-2' 'helper helper';
       }
 
+      &.full-width {
+         grid-template-columns: repeat(2, minmax(vantage.$input-width-1, 1fr));
+      }
+
       &.metric {
-         width: calc(250px + 0.5em + $metric-width);
          grid-template: {
-            columns: 1fr 1fr 0.5em $metric-width;
+            columns: repeat(2, vantage.$input-width-1) 0.25em $metric-width;
             rows: 56px 19px;
             areas: 'field-1 field-2 . metric' 'helper helper helper helper';
          }
-      }
-   }
-
-   .input-number,
-   .input-length {
-      &.full-width {
-         width: 100%;
+         &.full-width {
+            grid-template-columns: repeat(2, minmax(vantage.$input-width-1, 1fr)) 0.25em $metric-width;
+         }
       }
    }
 </style>

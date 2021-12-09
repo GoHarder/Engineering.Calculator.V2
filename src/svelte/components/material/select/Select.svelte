@@ -46,7 +46,7 @@
    // Reactive Rules
    $: props = filterProps($$props, ['class', 'options', 'selected', 'fullWidth', 'label', 'value', 'type']);
 
-   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class, fullWidth ? 'mdc-select--fullwidth' : '']);
+   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class]);
 
    $: if (Select) {
       Select.disabled = disabled;
@@ -83,27 +83,31 @@
    });
 </script>
 
-<div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
-   <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
-      <span class="mdc-select__ripple" />
-      <span {id} class="mdc-floating-label">{label}</span>
-      <span class="mdc-select__selected-text-container">
-         <span id="demo-selected-text" class="mdc-select__selected-text" />
-      </span>
-      <span class="mdc-select__dropdown-icon">
-         <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
-            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none" fill-rule="evenodd" points="7 10 12 15 17 10" />
-            <polygon class="mdc-select__dropdown-icon-active" stroke="none" fill-rule="evenodd" points="7 15 12 10 17 15" />
-         </svg>
-      </span>
-      <span class="mdc-line-ripple" />
+<div class="input" class:full-width={fullWidth}>
+   <div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
+      <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
+         <span class="mdc-select__ripple" />
+         <span {id} class="mdc-floating-label">{label}</span>
+         <span class="mdc-select__selected-text-container">
+            <span id="demo-selected-text" class="mdc-select__selected-text" />
+         </span>
+         <span class="mdc-select__dropdown-icon">
+            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
+               <polygon class="mdc-select__dropdown-icon-inactive" stroke="none" fill-rule="evenodd" points="7 10 12 15 17 10" />
+               <polygon class="mdc-select__dropdown-icon-active" stroke="none" fill-rule="evenodd" points="7 15 12 10 17 15" />
+            </svg>
+         </span>
+         <span class="mdc-line-ripple" />
+      </div>
+
+      <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+         <ul class="mdc-deprecated-list" role="listbox" aria-label={id}>
+            <slot />
+         </ul>
+      </div>
    </div>
 
-   <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-      <ul class="mdc-deprecated-list" role="listbox" aria-label={id}>
-         <slot />
-      </ul>
-   </div>
+   <slot name="helperText" />
 </div>
 
 <style lang="scss" global>
@@ -115,9 +119,6 @@
    .mdc-select {
       @include select.label-color(vantage.$secondary);
       @include select.filled-shape-radius(0);
-   }
-
-   .mdc-select--fullwidth {
       width: 100%;
    }
 </style>
