@@ -96,53 +96,84 @@
 <section class="project-form">
    <p>Enter the project details and proceed to the next step</p>
 
-   <div class="contract-number">
-      <Input bind:value={contract} label="Contract Number" required pattern={'\\d{6,}'} fullWidth>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Invalid Contract Number</HelperText>
-         </svelte:fragment>
-      </Input>
-   </div>
+   <div class="grid">
+      <div class="grid-1">
+         <Input bind:value={contract} label="Contract Number" fullWidth required pattern={'\\d{6,}'}>
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Invalid Contract Number</HelperText>
+            </svelte:fragment>
+         </Input>
 
-   <div class="job-name">
-      <Input bind:value={jobName} label="Job Name" required fullWidth>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Invalid Job Name</HelperText>
-         </svelte:fragment>
-      </Input>
-   </div>
+         <Input bind:value={jobName} label="Job Name" fullWidth required>
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Invalid Job Name</HelperText>
+            </svelte:fragment>
+         </Input>
 
-   <div class="car-number">
-      <Input bind:value={carNo} label="Car Number" fullWidth />
-   </div>
+         <Input bind:value={carNo} label="Car Number" fullWidth />
 
-   <div class="customer-name">
-      <Input bind:value={customer} label="Customer Name" required fullWidth>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Invalid Cusomter Name</HelperText>
-         </svelte:fragment>
-      </Input>
-   </div>
+         <Input bind:value={customer} label="Customer Name" fullWidth required>
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Invalid Cusomter Name</HelperText>
+            </svelte:fragment>
+         </Input>
 
-   <div class="layout-number">
-      <Input bind:value={layout} label="Layout Number" pattern="^(?:(L|l)-[\d-]+)$" fullWidth>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Invalid Layout Number</HelperText>
-         </svelte:fragment>
-      </Input>
-   </div>
+         <Input bind:value={layout} label="Layout Number" fullWidth pattern="^(?:(L|l)-[\d-]+)$">
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Invalid Layout Number</HelperText>
+            </svelte:fragment>
+         </Input>
+      </div>
 
-   <div class="metric checkbox">
-      <Checkbox bind:checked={metric} label="Display Metric Values" />
-   </div>
+      <div class="grid-2">
+         <Checkbox bind:checked={metric} label="Display Metric Values" />
 
-   <div class="temp checkbox">
-      <Checkbox bind:checked={temp} label="Temporary Workbook" />
+         <Checkbox bind:checked={temp} label="Temporary Workbook" />
+      </div>
    </div>
 </section>
 
-<style>
-   section {
+<style lang="scss">
+   .grid {
+      display: grid;
+      grid: {
+         column-gap: 0.5em;
+         template-columns: 1fr 300px;
+      }
+   }
+
+   @media (min-width: 900px) {
+      .grid {
+         grid-template: {
+            columns: 1fr;
+            rows: auto auto;
+         }
+      }
+
+      .grid-1 {
+         display: grid;
+         grid: {
+            column-gap: 0.5em;
+            template: {
+               columns: 1fr 1fr;
+               rows: repeat(auto, 75px);
+            }
+         }
+      }
+   }
+
+   @media (min-width: 1024px) {
+      .project-form {
+         width: 960px;
+         margin: 0 auto;
+      }
+
+      .grid-1 {
+         grid-template-columns: 1fr 1fr 1fr;
+      }
+   }
+
+   /* section {
       display: grid;
       grid-template-columns: auto 300px;
       grid-template-rows: 30px 75px 75px 75px 75px;
@@ -154,9 +185,9 @@
          'car .'
          'customer .'
          'layout .';
-   }
+   } */
 
-   p {
+   /* p {
       margin: 0;
       grid-area: p;
    }
@@ -191,9 +222,9 @@
 
    .checkbox {
       margin: 0.5em 0 0;
-   }
+   } */
 
-   @media (min-width: 900px) {
+   /* @media (min-width: 900px) {
       section {
          grid-template-columns: 1fr 1fr;
          grid-template-areas:
@@ -203,27 +234,27 @@
             'layout .'
             'metric temp';
       }
-   }
+   } */
 
-   @media (min-width: 1100px) {
-      section {
-         grid-template-columns: 1fr 1fr 1fr;
-         grid-template-areas:
-            'p p p'
-            'contract job car'
-            'customer layout .'
-            'metric temp .';
-      }
-   }
+   // @media (min-width: 1100px) {
+   //    /* section {
+   //       grid-template-columns: 1fr 1fr 1fr;
+   //       grid-template-areas:
+   //          'p p p'
+   //          'contract job car'
+   //          'customer layout .'
+   //          'metric temp .';
+   //    } */
+   // }
 
-   @media (min-width: 1400px) {
-      section {
-         grid-template-columns: 0.25fr 1fr 1fr 1fr 0.25fr;
-         grid-template-areas:
-            '. p p p .'
-            '. contract job car. '
-            '. customer layout . .'
-            '. metric temp . .';
-      }
-   }
+   // @media (min-width: 1400px) {
+   //    /* section {
+   //       grid-template-columns: 0.25fr 1fr 1fr 1fr 0.25fr;
+   //       grid-template-areas:
+   //          '. p p p .'
+   //          '. contract job car. '
+   //          '. customer layout . .'
+   //          '. metric temp . .';
+   //    } */
+   // }
 </style>

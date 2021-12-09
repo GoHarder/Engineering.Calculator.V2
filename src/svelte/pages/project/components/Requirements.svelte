@@ -167,53 +167,51 @@
 </script>
 
 <section class="project-form">
-   <div class="main-grid">
-      <p>Enter the project requirements and proceed to the next step</p>
+   <p>Enter the project requirements and proceed to the next step</p>
 
-      <InputNumber bind:value={capacity} fullWidth gridArea="capacity" label="Capacity" max="30000" min="1" {metric} type="weight">
+   <div class="grid-1">
+      <InputNumber bind:value={capacity} label="Capacity" max="30000" min="1" {metric} type="weight">
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Capacity</HelperText>
          </svelte:fragment>
       </InputNumber>
 
-      <div class="counterbalance">
-         <Input bind:value={counterbalance} fullWidth label="Counterbalance" list="counterbalance" max="50" min="40" {metric} step="2.5" suffix="%" type="number">
-            <svelte:fragment slot="helperText">
-               <HelperText validation>Invalid Counterbalance %</HelperText>
-               <datalist id="counterbalance">
-                  <option value="40" />
-                  <option value="45" />
-                  <option value="42.5" />
-                  <option value="50" />
-               </datalist>
-            </svelte:fragment>
-         </Input>
-      </div>
+      <Input bind:value={counterbalance} label="Counterbalance" list="counterbalance" max="50" min="40" {metric} step="2.5" suffix="%" type="number">
+         <svelte:fragment slot="helperText">
+            <HelperText validation>Invalid Counterbalance %</HelperText>
+            <datalist id="counterbalance">
+               <option value="40" />
+               <option value="45" />
+               <option value="42.5" />
+               <option value="50" />
+            </datalist>
+         </svelte:fragment>
+      </Input>
 
-      <InputNumber bind:value={speed} fullWidth gridArea="speed" label="Car Speed" max="1500" min="1" {metric} type="speed">
+      <InputNumber bind:value={speed} label="Car Speed" max="1500" min="1" {metric} type="speed">
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Car Speed</HelperText>
          </svelte:fragment>
       </InputNumber>
 
-      <InputLength bind:value={overallTravel} fullWidth gridArea="travel" label="Overall Travel" {metric}>
+      <InputLength bind:value={overallTravel} label="Overall Travel" {metric}>
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Overall Travel</HelperText>
          </svelte:fragment>
       </InputLength>
 
-      <Select bind:value={code} bind:selected={codeObj} gridArea="code" label="Governing Code" options={codeOpts}>
+      <Select bind:value={code} bind:selected={codeObj} label="Governing Code" options={codeOpts}>
          {#each codeOpts as { name } (name)}
             <Option value={name}>{name}</Option>
          {/each}
       </Select>
 
-      <Select bind:value={loadingType} gridArea="type" label="Loading Type">
+      <Select bind:value={loadingType} label="Loading Type">
          <Option value="Passenger">Passenger</Option>
          <Option value="Freight">Freight</Option>
       </Select>
 
-      <Select bind:value={freightClass} gridArea="class" label="Freight Class">
+      <Select bind:value={freightClass} label="Freight Class">
          {#each freightClassOpts as { name, types } (name)}
             {#if types.includes(loadingType)}
                <Option value={name}>{name}</Option>
@@ -221,12 +219,12 @@
          {/each}
       </Select>
 
-      <Select bind:value={roping} gridArea="roping" label="Roping" type="number">
+      <Select bind:value={roping} label="Roping" type="number">
          <Option value="1">1:1</Option>
          <Option value="2">2:1</Option>
       </Select>
 
-      <Select bind:value={seismicZone} disabled={useIbc} gridArea="zone" label="Seismic Zone" type="number">
+      <Select bind:value={seismicZone} disabled={useIbc} label="Seismic Zone" type="number">
          <Option value="0">0</Option>
          <Option value="1">1</Option>
          <Option value="2">2</Option>
@@ -244,9 +242,9 @@
    {#if useIbc}
       <hr />
 
-      <div class="ibc-grid">
-         <p>IBC/ASCE 7 Seismic Parameters</p>
+      <p>IBC/ASCE 7 Seismic Parameters</p>
 
+      <div class="grid-2">
          <Select bind:value={ibcCategory} gridArea="category" label="Design Category">
             <Option value="A">A</Option>
             <Option value="B">B</Option>
@@ -265,7 +263,7 @@
 
          {#if ibcObj.maxSDS}
             <div class="sds">
-               <Input bind:value={sds} fullWidth label="SDS" min={0} max={5} step={0.001} type="number">
+               <Input bind:value={sds} label="SDS" min={0} max={5} step={0.001} type="number">
                   <span slot="helperText">
                      <HelperText validation>Invalid SDS</HelperText>
                   </span>
@@ -277,88 +275,41 @@
 </section>
 
 <style lang="scss">
-   .main-grid {
-      display: grid;
-      gap: 0.5em;
-      grid-template: {
-         columns: 1fr 1fr;
-         rows: 30px 70px 70px 70px 70px 70px;
-         areas: 'p p' 'capacity counter' 'speed travel' 'code type' 'class roping' 'zone ibc';
+   .grid-1,
+   .grid-2 {
+      width: 412px;
+      margin: 0 auto;
+   }
+
+   @media (min-width: 900px) {
+      p {
+         width: 832px;
+         margin: 1em auto;
       }
-   }
 
-   .ibc-grid {
-      margin: 1em 0 0;
-      display: grid;
-      gap: 0.5em;
-      grid-template: {
-         columns: 1fr 1fr;
-         rows: 30px 70px 70px;
-         areas: 'p p' 'category ip' 'sds .';
-      }
-   }
-
-   p {
-      grid-area: p;
-      margin: 0;
-   }
-
-   .counterbalance {
-      grid-area: counter;
-   }
-
-   .ibc {
-      grid-area: ibc;
-   }
-
-   .checkbox {
-      margin: 0.5em 0 0;
-   }
-
-   .sds {
-      grid-area: sds;
-   }
-
-   @media (min-width: 1100px) {
-      .main-grid {
+      .grid-1,
+      .grid-2 {
+         width: 832px;
          display: grid;
-         gap: 0.5em;
-         grid-template: {
-            columns: 1fr 1fr 1fr;
-            rows: 30px 70px 70px 70px 70px;
-            areas: 'p p p' 'capacity counter speed' 'travel code type' 'class roping zone' 'ibc . .';
-         }
-      }
-
-      .ibc-grid {
-         display: grid;
-         gap: 0.5em;
-         grid-template: {
-            columns: 1fr 1fr 1fr;
-            rows: 30px 70px;
-            areas: 'p p p' 'category ip sds';
+         grid: {
+            column-gap: 0.5em;
+            template-columns: repeat(2, 1fr);
          }
       }
    }
 
-   @media (min-width: 1400px) {
-      .main-grid {
-         display: grid;
-         gap: 0.5em;
-         grid-template: {
-            columns: 0.25fr 1fr 1fr 1fr 0.25fr;
-            rows: 30px 70px 70px 70px 70px;
-            areas: '. p p p .' '. capacity counter speed .' '. travel code type .' '. class roping zone .' '. ibc . . .';
-         }
+   @media (min-width: 1440px) {
+      p {
+         width: 1252px;
+         margin: 1em auto;
       }
 
-      .ibc-grid {
+      .grid-1,
+      .grid-2 {
+         width: 1252px;
          display: grid;
-         gap: 0.5em;
-         grid-template: {
-            columns: 0.25fr 1fr 1fr 1fr 0.25fr;
-            rows: 30px 70px;
-            areas: '. p p p .' '. category ip sds .';
+         grid: {
+            template-columns: repeat(3, 1fr);
          }
       }
    }
