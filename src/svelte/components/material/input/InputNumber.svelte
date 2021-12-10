@@ -12,11 +12,12 @@
    // Properties
    export let calc = undefined;
    export let fullWidth = undefined;
+   export let invalid = undefined;
    export let label = '';
    export let link = undefined;
-   export let readonly = undefined;
    export let metric = false;
    export let override = true;
+   export let readonly = undefined;
    export let type = undefined;
    export let value = undefined;
 
@@ -38,6 +39,7 @@
    let labelEle;
    let TextField;
    let metricValue = 0;
+   let useNativeValidation = true;
 
    // Subscriptions
    // Reactive Rules
@@ -53,7 +55,7 @@
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['calc', 'fullWidth', 'label', 'link', 'metric', 'override', 'type', 'value']);
+   $: props = filterProps($$props, ['calc', 'fullWidth', 'invalid', 'label', 'link', 'metric', 'override', 'type', 'value']);
 
    $: if (!override && calc !== undefined) value = calc;
 
@@ -62,11 +64,18 @@
       metricValue = round(value * mConvert, mRound);
    }
 
+   $: if (TextField) {
+      if (useNativeValidation) {
+         invalid = !TextField.valid;
+      } else {
+         TextField.valid = !invalid;
+      }
+   }
+
    // Events
    const onChange = (event) => {
       override = calc !== event.target.value;
       value = round((parseFloat(event.target.value) || 0) * iConvert, iRound);
-      metricValue = round(value * mConvert, mRound);
    };
 
    const onFocus = (event) => event.target.select();
@@ -81,12 +90,23 @@
 
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
-      metricValue = round(value * mConvert, mRound);
+
+      if (invalid !== undefined) {
+         useNativeValidation = false;
+      }
 
       if (readonly) {
          const input = labelEle.querySelector('input');
          input.tabIndex = -1;
+
+         TextField.foundation.autoCompleteFocus();
+
+         setTimeout(() => {
+            TextField.foundation.deactivateFocus();
+         }, 0);
       }
+
+      TextField.useNativeValidation = useNativeValidation;
    });
 
    onDestroy(() => {
