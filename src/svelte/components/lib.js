@@ -99,7 +99,7 @@ export const filterProps = (props, filter) => {
  * Creates a class string from an array
  * @param {[string]} classes An array of class string
  */
-export const classList = (classes) => classes.join(' ').trim();
+export const classList = (classes) => classes.join(' ').replace(/\s{2,}/g, ' ');
 
 /** Creates a random id string  */
 export const randomId = () => Math.random().toString(36).substr(2, 10);
