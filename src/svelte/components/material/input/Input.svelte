@@ -9,6 +9,8 @@
    // Stores
    // Properties
    export let fullWidth = undefined;
+   export let disabled = undefined;
+   export let display = false;
    export let label = '';
    export let link = undefined;
    export let prefix = undefined;
@@ -27,17 +29,20 @@
    // Subscriptions
    // Reactive Rules
    $: labelClass = classList([
-      $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
       // 'mdc-text-field--fullwidth',
       $$slots.leadingIcon ? 'mdc-text-field--with-leading-icon' : '',
       $$slots.trailingIcon || link ? 'mdc-text-field--with-trailing-icon' : '',
+      display ? 'mdc-text-field--display' : '',
+      $$props.class,
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['fullWidth', 'grid', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
+   $: props = filterProps($$props, ['disabled', 'display', 'fullWidth', 'grid', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
+
+   $: if (display) disabled = true;
 
    // Events
    const onChange = (event) => {
@@ -100,7 +105,7 @@
          <span class="mdc-text-field__affix mdc-text-field__affix--prefix">{prefix}</span>
       {/if}
 
-      <input {value} {type} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input {value} {type} {disabled} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
       {#if suffix}
          <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
@@ -134,9 +139,34 @@
    .mdc-text-field {
       @include textfield.label-color(vantage.$secondary);
       @include textfield.shape-radius(0);
+      grid-area: field;
+
+      &.input-1 {
+         grid-area: field-1;
+      }
+
+      &.input-2 {
+         grid-area: field-2;
+      }
 
       &.mdc-text-field--fullwidth {
          width: 100%;
+      }
+
+      &.mdc-text-field--display {
+         background-color: rgba($color: #000000, $alpha: 0.06);
+
+         .mdc-floating-label,
+         .mdc-text-field__input,
+         .mdc-text-field__affix--suffix {
+            color: vantage.$secondary;
+         }
+
+         .mdc-text-field__icon {
+            color: rgba($color: #000000, $alpha: 0.54);
+            cursor: pointer;
+            pointer-events: auto;
+         }
       }
    }
 
@@ -153,18 +183,6 @@
    input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
-   }
-
-   .mdc-text-field {
-      grid-area: field;
-   }
-
-   .mdc-text-field.input-1 {
-      grid-area: field-1;
-   }
-
-   .mdc-text-field.input-2 {
-      grid-area: field-2;
    }
 
    .mdc-text-field-helper-line {
