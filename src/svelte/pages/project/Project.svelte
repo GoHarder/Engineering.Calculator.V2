@@ -9,7 +9,7 @@
    import { Button, Icon } from 'components/material/button';
    import { Tab, TabBar } from 'components/material/tab-bar';
 
-   import Modules from './components/modules/Modules.svelte';
+   import Modules, { getModules } from './components/modules/Modules.svelte';
    import Requirements from './components/Requirements.svelte';
    import Summary from './components/Summary.svelte';
 
@@ -52,9 +52,7 @@
    const clearPath = pathStore.subscribe((store) => (path = store));
 
    const clearProject = projectStore.subscribe((store) => {
-      if (Object.keys(store).length !== 0) {
-         project = store;
-      }
+      if (Object.keys(store).length !== 0) project = store;
    });
 
    // Contexts
@@ -75,7 +73,7 @@
    };
 
    const onKeyPress = (event) => {
-      if (event.keyCode === 13) {
+      if (event.keyCode === 13 && comp === Modules) {
          event.preventDefault();
       }
    };
@@ -88,6 +86,8 @@
       if (newComp) {
          history.pushState({ path: `/Project/${newComp.name}` }, '');
       } else {
+         getModules();
+
          const moduleName = capitalize(Object.keys(project.modules)[0]);
 
          if (moduleName) {
@@ -133,7 +133,9 @@
       </Tab>
    </TabBar>
    <form id="project-form" on:submit={onSubmit} on:keypress={onKeyPress}>
-      <svelte:component this={comp} />
+      {#if comp}
+         <svelte:component this={comp} />
+      {/if}
       <hr />
       <nav>
          <Button on:click={onBack} variant="contained" color="secondary" disabled={comp === Summary} type="button">

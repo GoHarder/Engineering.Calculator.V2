@@ -1,5 +1,13 @@
+<script context="module">
+   let run;
+
+   export const getModules = () => {
+      run();
+   };
+</script>
+
 <script>
-   import { onDestroy } from 'svelte';
+   import { onMount } from 'svelte';
    import moduleLibrary from '../../../calculator/modules/modules';
 
    import { clone } from 'lib/main.mjs';
@@ -14,6 +22,19 @@
    import projectStore from 'stores/project';
 
    // Properties
+   const getModules = () => {
+      Object.keys(moduleCards).forEach((key) => {
+         if (moduleCards[key].checked) {
+            modules[key] = { ...modules[key], ...{} };
+         } else {
+            delete modules[key];
+         }
+      });
+
+      projectStore.save({ modules });
+      clearProject();
+   };
+
    // Methods
    // Constants
    // Variables
@@ -80,17 +101,8 @@
    };
 
    // Lifecycle
-   onDestroy(() => {
-      Object.keys(moduleCards).forEach((key) => {
-         if (moduleCards[key].checked) {
-            modules[key] = { ...modules[key], ...{} };
-         } else {
-            delete modules[key];
-         }
-      });
-
-      projectStore.save({ modules });
-      clearProject();
+   onMount(() => {
+      run = getModules;
    });
 </script>
 
