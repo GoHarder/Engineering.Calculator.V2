@@ -14,6 +14,7 @@
    export let fullWidth = undefined;
    export let label = '';
    export let link = undefined;
+   export let readonly = undefined;
    export let metric = false;
    export let override = true;
    export let type = undefined;
@@ -47,11 +48,12 @@
       'mdc-text-field--fullwidth',
       calc !== undefined ? 'mdc-text-field--with-leading-icon' : '',
       link ? 'mdc-text-field--with-trailing-icon' : '',
+      readonly ? 'mdc-text-field--read-only' : '',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['calc', 'fullWidth', 'gridArea', 'label', 'link', 'metric', 'override', 'type', 'value']);
+   $: props = filterProps($$props, ['calc', 'fullWidth', 'label', 'link', 'metric', 'override', 'type', 'value']);
 
    $: if (!override && calc !== undefined) value = calc;
 
@@ -63,9 +65,6 @@
    // Events
    const onChange = (event) => {
       override = calc !== event.target.value;
-
-      console.log(iConvert);
-
       value = round((parseFloat(event.target.value) || 0) * iConvert, iRound);
       metricValue = round(value * mConvert, mRound);
    };
@@ -83,6 +82,11 @@
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
       metricValue = round(value * mConvert, mRound);
+
+      if (readonly) {
+         const input = labelEle.querySelector('input');
+         input.tabIndex = -1;
+      }
    });
 
    onDestroy(() => {

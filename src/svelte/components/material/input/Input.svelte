@@ -11,6 +11,7 @@
    export let fullWidth = undefined;
    export let label = '';
    export let link = undefined;
+   export let readonly = undefined;
    export let prefix = undefined;
    export let suffix = undefined;
    export let type = undefined;
@@ -30,14 +31,14 @@
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      // 'mdc-text-field--fullwidth',
       $$slots.leadingIcon ? 'mdc-text-field--with-leading-icon' : '',
       $$slots.trailingIcon || link ? 'mdc-text-field--with-trailing-icon' : '',
+      readonly ? 'mdc-text-field--read-only' : '',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['fullWidth', 'grid', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
+   $: props = filterProps($$props, ['fullWidth', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
 
    // Events
    const onChange = (event) => {
@@ -62,6 +63,11 @@
       TextField = new MDCTextField(labelEle);
 
       if (value === undefined) value = '';
+
+      if (readonly) {
+         const input = labelEle.querySelector('input');
+         input.tabIndex = -1;
+      }
 
       // Inject icon classes to make the icon component more flexible
       let icons = labelEle.querySelectorAll('svg');
@@ -134,9 +140,25 @@
    .mdc-text-field {
       @include textfield.label-color(vantage.$secondary);
       @include textfield.shape-radius(0);
+      grid-area: field;
+
+      &.input-1 {
+         grid-area: field-1;
+      }
+
+      &.input-2 {
+         grid-area: field-2;
+      }
 
       &.mdc-text-field--fullwidth {
          width: 100%;
+      }
+
+      &.mdc-text-field--read-only {
+         pointer-events: none;
+         .mdc-text-field__icon {
+            pointer-events: all;
+         }
       }
    }
 
@@ -153,18 +175,6 @@
    input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
-   }
-
-   .mdc-text-field {
-      grid-area: field;
-   }
-
-   .mdc-text-field.input-1 {
-      grid-area: field-1;
-   }
-
-   .mdc-text-field.input-2 {
-      grid-area: field-2;
    }
 
    .mdc-text-field-helper-line {

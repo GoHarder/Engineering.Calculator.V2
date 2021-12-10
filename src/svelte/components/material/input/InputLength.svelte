@@ -14,6 +14,7 @@
    export let fullWidth = undefined;
    export let label = '';
    export let link = undefined;
+   export let readonly = undefined;
    export let metric = false;
    export let override = true;
    export let value = undefined;
@@ -43,8 +44,8 @@
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      // 'mdc-text-field--fullwidth',
       calc !== undefined ? 'mdc-text-field--with-leading-icon' : '',
+      readonly ? 'mdc-text-field--read-only' : '',
       'input-1',
    ]);
 
@@ -52,14 +53,14 @@
       $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      // 'mdc-text-field--fullwidth',
       link ? 'mdc-text-field--with-trailing-icon' : '',
+      readonly ? 'mdc-text-field--read-only' : '',
       'input-2',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['calc', 'fullWidth', 'gridArea', 'label', 'link', 'metric', 'override', 'type', 'value', 'step']);
+   $: props = filterProps($$props, ['calc', 'fullWidth', 'label', 'link', 'metric', 'override', 'type', 'value', 'step']);
 
    $: if (!override && calc !== undefined) value = calc;
 
@@ -91,6 +92,13 @@
       if (value === undefined) value = '';
       if (calc !== undefined) value = calc;
       metricValue = round(value * 0.0254, 2);
+
+      if (readonly) {
+         const input1 = labelEle1.querySelector('input');
+         const input2 = labelEle2.querySelector('input');
+         input1.tabIndex = -1;
+         input2.tabIndex = -1;
+      }
    });
 
    onDestroy(() => {
