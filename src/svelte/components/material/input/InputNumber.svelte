@@ -11,8 +11,6 @@
    // Stores
    // Properties
    export let calc = undefined;
-   export let disabled = undefined;
-   export let display = false;
    export let fullWidth = undefined;
    export let label = '';
    export let link = undefined;
@@ -43,18 +41,17 @@
    // Subscriptions
    // Reactive Rules
    $: labelClass = classList([
+      $$props.class,
       'mdc-text-field mdc-text-field--filled',
       value ? 'mdc-text-field--label-floating' : '',
-      // 'mdc-text-field--fullwidth',
+      'mdc-text-field--fullwidth',
       calc !== undefined ? 'mdc-text-field--with-leading-icon' : '',
       link ? 'mdc-text-field--with-trailing-icon' : '',
-      display ? 'mdc-text-field--display' : '',
-      $$props.class,
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['calc', 'disabled', 'display', 'fullWidth', 'gridArea', 'label', 'link', 'metric', 'override', 'type', 'value']);
+   $: props = filterProps($$props, ['calc', 'fullWidth', 'gridArea', 'label', 'link', 'metric', 'override', 'type', 'value']);
 
    $: if (!override && calc !== undefined) value = calc;
 
@@ -62,8 +59,6 @@
       _value = round(value * (1 / iConvert), iRound);
       metricValue = round(value * mConvert, mRound);
    }
-
-   $: if (display) disabled = true;
 
    // Events
    const onChange = (event) => {
@@ -111,7 +106,7 @@
          {/if}
       {/if}
 
-      <input value={_value} {disabled} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input value={_value} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
       {#if suffix}
          <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
