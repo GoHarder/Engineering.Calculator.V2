@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy, onMount } from 'svelte';
+   import { afterUpdate, onDestroy, onMount } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
    import { classList, filterProps, forwardEvents, randomId } from '../../lib';
@@ -67,15 +67,18 @@
             value = event.detail.value;
             break;
       }
-
       if (options) selected = options[event.detail.index];
    };
 
    // Lifecycle
    onMount(() => {
       Select = new MDCSelect(divEle);
-
       updateSelected(value);
+   });
+
+   afterUpdate(() => {
+      // This syncs the code with the DOM
+      Select.layoutOptions();
    });
 
    onDestroy(() => {
