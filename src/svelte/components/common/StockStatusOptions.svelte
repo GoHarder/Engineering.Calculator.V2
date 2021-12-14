@@ -22,24 +22,24 @@
 
 {#if stockedOptions.length > 0}
    <OptGroup label="Stocked">
-      {#each stockedOptions as { name } (name)}
-         <Option value={name}>{name}</Option>
+      {#each stockedOptions as { disabled, name } (name)}
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
 
 {#if availableOptions.length > 0}
    <OptGroup label="Available">
-      {#each availableOptions as { name } (name)}
-         <Option value={name}>{name}</Option>
+      {#each availableOptions as { disabled, name } (name)}
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
 
 {#if checkOptions.length > 0}
    <OptGroup label="Check">
-      {#each checkOptions as { name } (name)}
-         <Option value={name}>{name}</Option>
+      {#each checkOptions as { disabled, name } (name)}
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
