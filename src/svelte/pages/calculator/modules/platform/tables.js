@@ -1,4 +1,6 @@
-const maxPlatformTable = [
+import { round } from 'lib/math.mjs';
+
+const maxPlatformArea = [
    { capacity: 30000, area: 33264 },
    { capacity: 25000, area: 28296 },
    { capacity: 20000, area: 23212.8 },
@@ -27,8 +29,40 @@ const maxPlatformTable = [
    { capacity: 0, area: 0 },
 ];
 
+const frontChannelFormula1 = {
+   for: ['None', 'A'],
+   sX: (load, length, ratio) => round((load * length) / (14000 * 8 * ratio), 2),
+   iX: (load, length, elasticModulus) => round((960 * load * length ** 2) / (192 * elasticModulus), 1),
+};
+
+const frontChannelFormula2 = {
+   for: ['B-Auto', 'B-Truck'],
+   sX: (load, length, ratio) => round((load * (length - 60)) / (14000 * 2 * ratio), 2),
+   iX: (load, length, elasticModulus) => round((960 * load * ((length - 60) / 2) * (3 * length ** 2 - 4 * ((length - 60) / 2) ** 2)) / (24 * elasticModulus * length), 1),
+};
+
+const frontChannelFormula3 = {
+   for: ['C1', 'C2', 'C3'],
+   sX: (load, length, ratio) => round((load * (length - 30)) / (14000 * 2 * ratio), 2),
+   iX: (load, length, elasticModulus) => round((960 * load * ((length - 30) / 2) * (3 * length ** 2 - 4 * ((length - 30) / 2) ** 2)) / (24 * elasticModulus * length), 1),
+};
+
+const load1 = (capacity) => capacity * 0.3;
+const load2 = (capacity) => capacity * 0.5;
+const load3 = (capacity) => capacity * 0.5 * 1.6;
+
+export const freight = {
+   None: { capacityRatio: 0, load: load1, frontChannelFormula: frontChannelFormula1 },
+   A: { capacityRatio: 0.347222, load: load1, frontChannelFormula: frontChannelFormula1 },
+   'B-Auto': { capacityRatio: 0.208333, load: load2, frontChannelFormula: frontChannelFormula2 },
+   'B-Truck': { capacityRatio: 0.208333, load: load2, frontChannelFormula: frontChannelFormula2 },
+   C1: { capacityRatio: 0.347222, load: load2, frontChannelFormula: frontChannelFormula3 },
+   C2: { capacityRatio: 0.347222, load: load3, frontChannelFormula: frontChannelFormula3 },
+   C3: { capacityRatio: 0.347222, load: load2, frontChannelFormula: frontChannelFormula3 },
+};
+
 // NOTE: 10-20-2021 8:58 AM - light isolators can support 925 heavy isolators can support 1425 (25lbs less that on part drawing)
-export const isolatorCombos = [
+const isolatorCombos = [
    { name: '4 light @ 3700#', load: 3700 },
    { name: '6 light @ 5550#', load: 5550 },
    { name: '4 heavy @ 5700#', load: 5700 },
@@ -41,9 +75,11 @@ export const isolatorCombos = [
    { name: '12 heavy @ 17100#', load: 17100 },
 ];
 
-export const getMaxPlatformArea = (capacity) => maxPlatformTable.find((row) => row.capacity <= capacity).area;
-
 export const steelTypes = [
    { name: 'ASTM A36', elasticModulus: 29000000, tensileStrength: 58 }, // 58ksi = 58000psi
    { name: 'Stainless Steel', elasticModulus: 28000000, tensileStrength: 73.2 }, // 72.2ksi = 37200psi
 ];
+
+export const getIsolatorCombos = (platformWeight) => isolatorCombos.filter((combo) => combo.load >= platformWeight);
+
+export const getMaxPlatformArea = (capacity) => maxPlatformArea.find((row) => row.capacity <= capacity).area;
