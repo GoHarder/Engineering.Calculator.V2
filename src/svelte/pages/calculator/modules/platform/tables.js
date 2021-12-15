@@ -75,6 +75,23 @@ const isolatorCombos = [
    { name: '12 heavy @ 17100#', load: 17100 },
 ];
 
+export const steelPlate = [
+   { type: 'Smooth', thickness: 0.1875 },
+   { type: 'Smooth', thickness: 0.25 },
+   { type: 'Smooth', thickness: 0.3125 },
+   { type: 'Smooth', thickness: 0.375 },
+   { type: 'Smooth', thickness: 0.5 },
+   { type: 'Smooth', thickness: 0.625 },
+   { type: 'Smooth', thickness: 0.75 },
+   { type: 'Checkered', thickness: 0.1875 },
+   { type: 'Checkered', thickness: 0.25 },
+   { type: 'Checkered', thickness: 0.3125 },
+   { type: 'Checkered', thickness: 0.375 },
+   { type: 'Checkered', thickness: 0.5 },
+   { type: 'Checkered', thickness: 0.625 },
+   { type: 'Checkered', thickness: 0.75 },
+];
+
 export const steelTypes = [
    { name: 'ASTM A36', elasticModulus: 29000000, tensileStrength: 58 }, // 58ksi = 58000psi
    { name: 'Stainless Steel', elasticModulus: 28000000, tensileStrength: 73.2 }, // 72.2ksi = 37200psi
