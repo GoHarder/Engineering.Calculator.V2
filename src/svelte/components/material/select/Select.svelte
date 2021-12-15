@@ -2,14 +2,19 @@
    import { afterUpdate, onDestroy, onMount } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
+   import { MDCSelectIcon } from '@material/select/icon';
    import { classList, filterProps, forwardEvents, randomId } from '../../lib';
 
    // Components
+   import Icon from '../common/Icon.svelte';
+
    // Stores
    // Properties
+   export let calc = undefined;
    export let label = '';
    export let disabled = false;
    export let options = undefined;
+   export let override = false;
    export let required = false;
    export let selected = undefined;
    export let type = undefined;
@@ -18,19 +23,7 @@
 
    // Methods
    const updateSelected = (value) => {
-      const liEles = divEle.querySelectorAll('.mdc-deprecated-list-item');
-
-      let index;
-
-      liEles.forEach((item, i) => {
-         if (item.dataset.value === `${value}`) index = i;
-      });
-
-      if (index !== undefined) {
-         Select.selectedIndex = index;
-      } else {
-         Select.selectedIndex = -1;
-      }
+      Select.value = value;
    };
 
    // Constants
@@ -39,6 +32,7 @@
 
    // Variables
    let divEle;
+   let SelectIcon;
    let Select;
 
    // Subscriptions
@@ -46,12 +40,14 @@
    // Reactive Rules
    $: props = filterProps($$props, ['class', 'options', 'selected', 'fullWidth', 'label', 'value', 'type']);
 
-   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class]);
+   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class, calc !== undefined ? 'mdc-select--with-leading-icon' : '']);
 
    $: if (Select) {
       Select.disabled = disabled;
       Select.required = required;
    }
+
+   $: if (!override && calc !== undefined) value = calc;
 
    $: if (Select && value) {
       updateSelected(value);
@@ -67,22 +63,33 @@
             value = event.detail.value;
             break;
       }
+
+      override = calc !== value;
+
       if (options) selected = options[event.detail.index];
    };
+
+   const onReset = () => (override = false);
 
    // Lifecycle
    onMount(() => {
       Select = new MDCSelect(divEle);
-      updateSelected(value);
+
+      if (calc !== undefined) {
+         const icon = divEle.querySelector('.mdc-select__icon');
+         SelectIcon = new MDCSelectIcon(icon);
+      }
    });
 
    afterUpdate(() => {
       // This syncs the code with the DOM
       Select.layoutOptions();
+      updateSelected(value);
    });
 
    onDestroy(() => {
       Select.destroy();
+      SelectIcon?.destory();
    });
 </script>
 
@@ -91,6 +98,13 @@
       <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
          <span class="mdc-select__ripple" />
          <span {id} class="mdc-floating-label">{label}</span>
+
+         {#if calc !== undefined}
+            <Icon on:click={onReset} class="material-icons mdc-select__icon" tabindex="0" role="button" toolTip={override ? 'Reset To Default' : ''}>
+               {override ? 'edit_off' : 'edit'}
+            </Icon>
+         {/if}
+
          <span class="mdc-select__selected-text-container">
             <span id="demo-selected-text" class="mdc-select__selected-text" />
          </span>
@@ -124,4 +138,6 @@
       @include select.filled-shape-radius(0);
       width: 100%;
    }
+
+   @include vantage.scrollbar('.mdc-select__menu', vantage.$white);
 </style>
