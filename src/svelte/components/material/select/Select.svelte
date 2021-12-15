@@ -23,7 +23,7 @@
 
    // Methods
    const updateSelected = (value) => {
-      Select.value = value;
+      Select.value = `${value}`;
    };
 
    // Constants
