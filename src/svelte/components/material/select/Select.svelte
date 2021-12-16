@@ -97,7 +97,8 @@
 
    onDestroy(() => {
       Select.destroy();
-      SelectIcon?.destory();
+
+      SelectIcon?.destroy();
    });
 </script>
 
