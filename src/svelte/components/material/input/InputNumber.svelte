@@ -26,16 +26,17 @@
    const id = `input-${randomId()}`;
 
    const types = {
-      _default: { suffix: '', mSuffix: '', mConvert: 0, iConvert: 1, mRound: 1, iRound: 1 },
-      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, iConvert: 144, mRound: 4, iRound: 1 },
-      speed: { suffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, iConvert: 1, mRound: 4, iRound: 1 },
-      weight: { suffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, iConvert: 1, mRound: 1, iRound: 1 },
+      _default: { suffix: '', mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
+      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 4), toDisplay: (x) => round(x / 144, 2) },
+      pressure: { suffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 4), toDisplay: (x) => round(x * 144, 2) },
+      speed: { suffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, mRound: 4, toValue: (x) => x, toDisplay: (x) => x },
+      weight: { suffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, mRound: 1, toValue: (x) => x, toDisplay: (x) => x },
    };
 
-   const { suffix, mSuffix, mConvert, iConvert, mRound, iRound } = types[type] || types._default;
+   const { suffix, mSuffix, mConvert, mRound, toValue, toDisplay } = types[type] || types._default;
 
    // Variables
-   let _value = 0;
+   let displayValue = 0;
    let labelEle;
    let TextField;
    let metricValue = 0;
@@ -60,7 +61,7 @@
    $: if (!override && calc !== undefined) value = calc;
 
    $: if (value) {
-      _value = round(value * (1 / iConvert), iRound);
+      displayValue = toDisplay(value);
       metricValue = round(value * mConvert, mRound);
    }
 
@@ -75,7 +76,7 @@
    // Events
    const onChange = (event) => {
       override = calc !== event.target.value;
-      value = round((parseFloat(event.target.value) || 0) * iConvert, iRound);
+      value = toValue(parseFloat(event.target.value) || 0);
    };
 
    const onFocus = (event) => event.target.select();
@@ -130,7 +131,7 @@
          {/if}
       {/if}
 
-      <input value={_value} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input value={displayValue} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
       {#if suffix}
          <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
