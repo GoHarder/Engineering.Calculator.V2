@@ -88,8 +88,8 @@
    onMount(() => {
       TextField = new MDCTextField(labelEle);
 
-      if (value === undefined) value = '';
-      if (calc !== undefined) value = calc;
+      if (value === undefined) value = 0;
+      override = calc !== value;
 
       if (invalid !== undefined) {
          useNativeValidation = false;
