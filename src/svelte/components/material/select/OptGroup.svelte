@@ -15,12 +15,12 @@
 </script>
 
 <h3 class="mdc-deprecated-list-group__optgroup mdc-deprecated-list-group__subheader">{label}</h3>
-<div>
-   <slot />
-</div>
+
+<slot />
 
 <style>
-   div {
-      margin-left: 1em;
+   h3 {
+      font-weight: 600;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
    }
 </style>

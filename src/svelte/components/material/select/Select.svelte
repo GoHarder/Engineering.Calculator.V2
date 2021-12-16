@@ -1,6 +1,6 @@
 <script>
-   import { afterUpdate, onDestroy, onMount } from 'svelte';
-   import { get_current_component } from 'svelte/internal';
+   import { afterUpdate, beforeUpdate, onDestroy, onMount } from 'svelte';
+   import { get_current_component, select_value } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
    import { MDCSelectIcon } from '@material/select/icon';
    import { classList, filterProps, forwardEvents, randomId } from '../../lib';
@@ -22,8 +22,16 @@
    export let fullWidth = false;
 
    // Methods
-   const updateSelected = (value) => {
-      Select.value = `${value}`;
+   const syncSelect = (i = 0) => {
+      if (Select.menuItemValues.length === 0 && i < 10) {
+         Select?.layoutOptions();
+         Select.value = `${value}`;
+         i++;
+
+         setTimeout(() => {
+            syncSelect(i);
+         }, 100);
+      }
    };
 
    // Constants
@@ -38,7 +46,7 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: props = filterProps($$props, ['class', 'options', 'selected', 'fullWidth', 'label', 'value', 'type']);
+   $: props = filterProps($$props, ['calc', 'class', 'options', 'override', 'selected', 'fullWidth', 'label', 'value', 'type']);
 
    $: divClass = classList(['mdc-select mdc-select--filled', $$props.class, calc !== undefined ? 'mdc-select--with-leading-icon' : '']);
 
@@ -50,7 +58,8 @@
    $: if (!override && calc !== undefined) value = calc;
 
    $: if (Select && value) {
-      updateSelected(value);
+      Select.layoutOptions();
+      Select.value = `${value}`;
    }
 
    // Events
@@ -83,8 +92,7 @@
 
    afterUpdate(() => {
       // This syncs the code with the DOM
-      Select.layoutOptions();
-      updateSelected(value);
+      syncSelect();
    });
 
    onDestroy(() => {
@@ -96,6 +104,7 @@
 <div class="input" class:full-width={fullWidth}>
    <div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
       <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
+         <input type="hidden" />
          <span class="mdc-select__ripple" />
          <span {id} class="mdc-floating-label">{label}</span>
 
@@ -106,7 +115,7 @@
          {/if}
 
          <span class="mdc-select__selected-text-container">
-            <span id="demo-selected-text" class="mdc-select__selected-text" />
+            <span id="selected-text" class="mdc-select__selected-text" />
          </span>
          <span class="mdc-select__dropdown-icon">
             <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
