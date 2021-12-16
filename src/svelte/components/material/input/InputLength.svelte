@@ -116,7 +116,7 @@
       {#if calc !== undefined}
          {#if override}
             <Icon on:click={onReset} class="material-icons mdc-text-field__icon mdc-text-field__icon--leading" tabindex="0" role="button" toolTip="Reset To Calculation">
-               replay
+               edit_off
             </Icon>
          {:else}
             <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--leading">create</Icon>
