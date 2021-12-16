@@ -45,14 +45,14 @@
 </script>
 
 <Row class="project-row">
-   <Cell on:click={() => onClick('select')} class="project-row-cell__contract" scope="row">{project.contract}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__job-name">{project.jobName}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__car">{project.carNo ? project.carNo : 'N/A'}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__customer">{project.customer}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__layout">{project.layout ? project.layout : 'N/A'}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__date">{getDateString(project.created)}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__date">{getDateString(opened)}</Cell>
-   <Cell on:click={() => onClick('select')} class="project-row-cell__chip" data-tooltip-id="name-{project._id}" style="text-align: center;">
+   <Cell on:click={() => onClick('select')} class="project-row-cell contract" scope="row">{project.contract}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell job-name">{project.jobName}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell car">{project.carNo ? project.carNo : 'N/A'}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell customer">{project.customer}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell layout">{project.layout ? project.layout : 'N/A'}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell date">{getDateString(project.created)}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell date">{getDateString(opened)}</Cell>
+   <Cell on:click={() => onClick('select')} class="project-row-cell chip" data-tooltip-id="name-{project._id}" style="text-align: center;">
       <Chip>{initials}</Chip>
    </Cell>
    <div class="mdc-menu-surface--anchor menu-cell">
@@ -92,52 +92,5 @@
       align-items: center;
       height: 52px;
       border-bottom: 1px solid rgba($color: #000000, $alpha: 0.12);
-   }
-
-   :global {
-      .project-row {
-         cursor: pointer;
-      }
-
-      .project-row-cell {
-         &__contract {
-            width: 135px;
-         }
-         &__car {
-            width: 100px;
-         }
-
-         &__layout {
-            display: none;
-            width: 125px;
-         }
-         &__date {
-            display: none;
-            width: 120px;
-         }
-         &__chip {
-            width: 105px;
-         }
-         &__menu {
-            width: 52px;
-            padding: 0;
-         }
-      }
-
-      @media (min-width: 1000px) {
-         .project-row-cell {
-            &__layout {
-               display: table-cell;
-            }
-         }
-      }
-
-      @media (min-width: 1200px) {
-         .project-row-cell {
-            &__date {
-               display: table-cell;
-            }
-         }
-      }
    }
 </style>

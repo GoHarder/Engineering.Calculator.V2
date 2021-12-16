@@ -293,18 +293,18 @@
    </Button>
 </div>
 
-<Table on:sort={onSort} class="home-data-table" sticky>
+<Table on:sort={onSort} class="home-data-table">
    <svelte:fragment slot="head">
       <Row>
-         <Cell scope="col" role="columnheader" class="project-row-cell__contract" sort="contract">Contract #</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__job-name" sort="jobName">Job Name</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__car" sort="carNo">Car #</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__customer" sort="customer">Customer</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__layout" sort="layout">Layout #</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__date">Created</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__date">Last Opened</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__chip">Owned By</Cell>
-         <Cell scope="col" role="columnheader" class="project-row-cell__menu" />
+         <Cell scope="col" role="columnheader" class="project-row-cell contract" sort="contract">Contract #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell job-name" sort="jobName">Job Name</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell car" sort="carNo">Car #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell customer" sort="customer">Customer</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell layout" sort="layout">Layout #</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell date">Created</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell date">Last Opened</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell chip">Owned By</Cell>
+         <Cell scope="col" role="columnheader" class="project-row-cell menu" />
       </Row>
    </svelte:fragment>
 
@@ -340,7 +340,63 @@
       .home-data-table.mdc-data-table {
          @include vantage.border-top;
          @include vantage.paper;
-         width: 100%;
+
+         .mdc-data-table__table {
+            width: 100%;
+         }
+      }
+
+      .project-row {
+         cursor: pointer;
+      }
+
+      .project-row-cell {
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         overflow: hidden;
+
+         &.contract {
+            width: 135px;
+         }
+
+         &.car {
+            width: 100px;
+         }
+
+         &.layout {
+            display: none;
+            width: 125px;
+         }
+
+         &.date {
+            display: none;
+            width: 120px;
+         }
+
+         &.chip {
+            width: 105px;
+         }
+
+         &.menu {
+            width: 52px;
+            padding: 0;
+         }
+      }
+
+      @media (min-width: 1024px) {
+         .project-row-cell {
+            &.layout {
+               display: table-cell;
+            }
+         }
+      }
+
+      @media (min-width: 1200px) {
+         .project-row-cell {
+            &.date {
+               display: table-cell;
+            }
+         }
       }
    }
    .title-container {
