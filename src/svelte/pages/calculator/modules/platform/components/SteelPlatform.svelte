@@ -233,8 +233,8 @@
    </Select>
 
    <Select bind:value={platformFloorPlate} bind:selected={floorPlateObj} label="Floor Plate" options={floorPlates}>
-      {#each floorPlates as { name } (name)}
-         <Option value={name}>{name}</Option>
+      {#each floorPlates as { disabled, name } (name)}
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </Select>
 </Fieldset>
