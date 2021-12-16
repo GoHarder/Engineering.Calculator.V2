@@ -260,13 +260,15 @@
    });
 </script>
 
-<div class="platform">
+<div class="container">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} readonly type="weight" />
 
       <Input value={loadingValue} label="Loading" link="/Project/Requirements" readonly />
    </Fieldset>
+</div>
 
+<div class="container">
    <Fieldset title="Properties">
       <Select bind:value={material} label="Material">
          <Option value="Wood">Wood</Option>
@@ -285,9 +287,11 @@
 
       <InputNumber value={platformWeight} label="Weight" {metric} readonly type="weight" />
 
-      <Checkbox bind:checked={apta} label="APTA" />
+      <div class="checkboxes">
+         <Checkbox bind:checked={apta} label="APTA" />
 
-      <Checkbox bind:checked={isolation} label="Isolation" disabled={disableIsolation} />
+         <Checkbox bind:checked={isolation} label="Isolation" disabled={disableIsolation} />
+      </div>
 
       {#if isolation}
          <Select bind:value={isolatorCombo} label="Isolators">
@@ -323,7 +327,9 @@
          {platformWidth}
       />
    {/if}
+</div>
 
+<div class="container">
    <Fieldset title="Cab">
       <InputLength bind:value={cabHeight} label="Height" {metric} />
 
@@ -376,7 +382,9 @@
          />
       </Fieldset>
    {/if}
+</div>
 
+<div class="container">
    <Fieldset title="Finished Flooring">
       <InputLength bind:value={finFloorThickness} label="Thickness" {metric} />
 
@@ -407,7 +415,9 @@
          <InputNumber value={plywoodWeight} label="Weight" readonly step="0.1" type="weight" />
       {/if}
    </Fieldset>
+</div>
 
+<div class="container">
    <Fieldset title="Code Requirements">
       {#if loadingType === 'Passenger'}
          <InputNumber value={maxPlatformArea} label="Max Inside Platform Area" {metric} readonly step="0.1" type="area" />
@@ -429,5 +439,20 @@
    </Fieldset>
 </div>
 
-<style>
+<style lang="scss">
+   .container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin: 0.25em;
+      gap: 0.25em;
+   }
+
+   .checkboxes {
+      width: 300px;
+      height: 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 19px;
+   }
 </style>

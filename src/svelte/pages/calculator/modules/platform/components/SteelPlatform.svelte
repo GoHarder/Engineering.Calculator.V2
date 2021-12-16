@@ -190,9 +190,11 @@
       {/each}
    </Select>
 
-   <Checkbox bind:checked={split} disabled={disableSplit} label="Split" />
+   <div class="checkboxes">
+      <Checkbox bind:checked={split} disabled={disableSplit} label="Split" />
 
-   <Checkbox bind:checked={useSillChannel} label="Sill Channel" />
+      <Checkbox bind:checked={useSillChannel} label="Sill Channel" />
+   </div>
 
    <Select bind:value={platformStringer} bind:selected={stringerChannelObj} label="Stringer" options={stringerChannels}>
       <StockStatusOptions options={stringerChannels} />
@@ -240,4 +242,11 @@
 </Fieldset>
 
 <style>
+   .checkboxes {
+      width: 300px;
+      height: 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 19px;
+   }
 </style>
