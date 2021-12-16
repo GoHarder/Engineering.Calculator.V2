@@ -244,6 +244,7 @@
 
    // - Isolation
    $: isolationWeight = isolation ? round((platformDepth - 3) * 0.55 + platformWidth * 0.34167, 2) : 0;
+   $: isolatorCombos = tables.getIsolatorCombos(platformWeight);
 
    // - Totals
    $: platformThickness = assemblyThickness + finFloorThickness + plywoodThickness * plywoodQty;
@@ -251,11 +252,6 @@
 
    // - UI
    $: disableIsolation = ['None', 'A'].includes(freightClass) === false || split;
-
-   // - Options
-   $: isolatorCombos = tables.getIsolatorCombos(platformWeight);
-   $: console.log(platformWeight);
-   $: console.table(isolatorCombos);
 
    // Events
    // Lifecycle
