@@ -79,7 +79,7 @@ $input-width-2: calc($input-width-1 * 2);
 @mixin fieldset {
    @include paper;
    border: none;
-   margin: 6px;
+   margin: 0;
 
    legend {
       font-size: 1.1rem;
