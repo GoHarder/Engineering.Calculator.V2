@@ -17,7 +17,6 @@
    // Variables
    let divEle;
    let headEle;
-   let bodyEle;
    let DataTable;
 
    // Subscriptions
@@ -60,7 +59,7 @@
             </thead>
          {/if}
 
-         <tbody bind:this={bodyEle} class="mdc-data-table__content">
+         <tbody class="mdc-data-table__content">
             <slot />
          </tbody>
       </table>
