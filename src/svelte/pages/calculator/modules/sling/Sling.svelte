@@ -3,10 +3,13 @@
 
    import { SlingLinks } from '../links';
 
+   import * as gTables from '../tables';
+
    // Components
    import { Fieldset, ShoeInput } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
    import { Input, InputNumber, InputLength } from 'components/material/input';
+   import { Option, Select } from 'components/material/select';
 
    // Stores
    // Properties
@@ -36,13 +39,18 @@
    let door1Weight = globals?.doors?.door1?.weight ?? 0;
    let door2Weight = globals?.doors?.door2?.weight ?? 0;
 
-   let carRailSize = '15#';
+   let railSize = '15#';
 
    // -- Equipment
    let carTopWeight = 150;
    let doorOperatorWeight = door2Weight ? 300 : 150;
    let miscEquipmentWeight = 200;
    let railLock = false;
+
+   // - Shoe
+   let shoeModel = 'Other';
+   let shoeHeight = 0;
+   let shoeWeight = 0;
 
    // Subscriptions
    // Contexts
@@ -91,17 +99,45 @@
 
    <!-- <Input value={ceil(balanceWeight / rowBalanceWeight)} display label="Balance Weight Rows" type="number" /> -->
 
-   {#if ['12#', '15#'].includes(carRailSize)}
+   {#if ['12#', '15#'].includes(railSize)}
       <Checkbox bind:checked={railLock} label="Rail Locks" />
    {/if}
 
-   <ShoeInput {capacity} {speed} />
-
-   <!-- <SelectShoe bind:shoe bind:shoeHeight bind:shoeModel bind:shoeWeight {metric} railSize={carRailSize} {shoes} /> -->
+   <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
 
    <!-- <SelectSafety bind:safety bind:safetyHeight bind:safetyModel bind:safetyWeight {metric} railSize={carRailSize} {safeties} /> -->
 
    <!-- <InputWeight value={carWeight} display label="Car Weight" {metric} /> -->
+</Fieldset>
+
+<Fieldset title="Properties">
+   <!-- <Select bind:value={slingModel} label="Model">
+      {#each slingModelOptions as { disabled, text } (text)}
+         <Option {disabled} {text} selected={slingModel === text} />
+      {/each}
+   </Select> -->
+
+   <!-- <Checkbox bind:checked={apta} on:link={onLink} link={{ cmd: 'changeModule', location: SlingLinks.get('apta') }} label="APTA" /> -->
+
+   <Select bind:value={railSize} label="Rail Size">
+      {#each gTables.railSizes as { name } (name)}
+         <Option value={name}>{name}</Option>
+      {/each}
+   </Select>
+
+   <!-- <InputLength bind:value={carDBG} label="D.B.G." {metric} /> -->
+
+   <!-- <InputLength bind:value={stilesBackToBack} bind:override={stilesBackToBackOverride} bind:calc={stilesBackToBackCalc} label="Back to Back of Stiles" reset {metric} /> -->
+
+   <!-- <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} /> -->
+
+   <!-- <Select bind:value={compType} label="Compensation" on:link={onLink} link={{ cmd: 'changeModule', location: SlingLinks.get('compType') }}>
+      {#each gTables.compensation as { name } (name)}
+         <Option text={name} />
+      {/each}
+   </Select> -->
+
+   <!-- <InputWeight value={slingWeight} display label="Total Weight" {metric} /> -->
 </Fieldset>
 
 <style>
