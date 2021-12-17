@@ -7,6 +7,7 @@ import express from 'express';
 
 // Project Imports
 import { router as platform } from './platform.mjs';
+import { router as shoes } from './shoes.mjs';
 import { router as steel } from './steel.mjs';
 
 /** The router for the module */
@@ -16,5 +17,7 @@ export const router = express.Router();
 
 // - API
 router.use('/platform', platform);
+
+router.use('/shoes', shoes);
 
 router.use('/steel', steel);
