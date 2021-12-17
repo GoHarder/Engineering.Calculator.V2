@@ -6,7 +6,7 @@
    import { capitalize, toCamelCase } from 'lib/string.mjs';
 
    // Components
-   import { A, ButtonNote, ShareDialog } from 'components/common';
+   import { A, Badge, ShareDialog } from 'components/common';
    import { Icon, IconButton } from 'components/material/button';
    import { Content, Drawer, Item } from 'components/material/drawer';
    import { Snackbar } from 'components/material/snackbar';
@@ -147,11 +147,11 @@
          <Icon>share</Icon>
       </IconButton>
 
-      <ButtonNote text={project?.notes?.length ?? 0}>
+      <Badge text={project?.notes?.length ?? 0}>
          <IconButton on:click={() => (notesDialog = true)} toolTip="Notes">
             <Icon>edit_note</Icon>
          </IconButton>
-      </ButtonNote>
+      </Badge>
 
       <IconButton toolTip="Download PDF">
          <Icon>download</Icon>
