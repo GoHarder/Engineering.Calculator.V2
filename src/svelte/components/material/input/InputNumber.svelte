@@ -73,6 +73,8 @@
       }
    }
 
+   $: if (link) readonly = true;
+
    // Events
    const onChange = (event) => {
       override = calc !== event.target.value;

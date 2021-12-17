@@ -69,6 +69,8 @@
       inches = round(value % 12, 4);
    }
 
+   $: if (link) readonly = true;
+
    // Events
    const onChange1 = (event) => {
       feet = parseFloat(event.target.value) || 0;
@@ -151,7 +153,7 @@
       <span class="mdc-text-field__affix mdc-text-field__affix--suffix">in</span>
 
       {#if link}
-         <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link}>link</Icon>
+         <Icon class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" role="button" tabindex="0" toolTip={link.match(/\w+$/)[0]}>link</Icon>
       {/if}
 
       <span class="mdc-line-ripple" />
