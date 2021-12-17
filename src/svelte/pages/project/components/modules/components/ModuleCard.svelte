@@ -48,9 +48,9 @@
       </div>
       <div class="mdc-card__ripple" />
    </div>
-   <div class="mdc-card__actions">
+   <div class="mdc-card__actions" style="cursor: pointer;" on:click={onSelected}>
       <div class="mdc-card__action-icons">
-         <span class:checked style="cursor: pointer;" on:click={onSelected}>
+         <span class:checked>
             {checked ? 'Added to workbook' : 'Add to workbook'}
          </span>
 
