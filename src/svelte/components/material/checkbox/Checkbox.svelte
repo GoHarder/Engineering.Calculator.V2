@@ -4,11 +4,14 @@
    import { MDCCheckbox } from '@material/checkbox';
 
    // Components
+   import { IconButton, Icon } from '../button';
+
    // Stores
    // Properties
    export let checked = false;
    export let disabled = undefined;
    export let group = undefined;
+   export let link = undefined;
    export let label = '';
    export let name = undefined;
    export let value = undefined;
@@ -34,7 +37,7 @@
    };
 
    // Constants
-   const id = Math.random().toString(36).substr(2, 9);
+   const id = Math.random().toString(36).substring(2, 9);
 
    // Variables
    let divEle1;
@@ -46,8 +49,11 @@
    // Reactive Rules
    $: if (group) updateChekbox(group);
    $: if (group) updateGroup(checked);
+   $: if (link) disabled = true;
 
    // Events
+   const onLink = () => history.pushState({ path: link }, '');
+
    // Lifecycle
    onMount(() => {
       FormField = new MDCFormField(divEle1);
@@ -61,33 +67,48 @@
    });
 </script>
 
-<div bind:this={divEle1} class="mdc-form-field">
-   <div bind:this={divEle2} class="mdc-checkbox">
-      <input bind:checked {disabled} {name} {value} type="checkbox" class="mdc-checkbox__native-control" id="checkbox-{id}" />
+<div class="checkbox">
+   <div bind:this={divEle1} class="mdc-form-field" class:mdc-checkbox--disabled={disabled}>
+      <div bind:this={divEle2} class="mdc-checkbox">
+         <input bind:checked {disabled} {name} {value} type="checkbox" class="mdc-checkbox__native-control" id="checkbox-{id}" />
 
-      <div class="mdc-checkbox__background">
-         <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-         </svg>
+         <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+               <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+            </svg>
 
-         <div class="mdc-checkbox__mixedmark" />
+            <div class="mdc-checkbox__mixedmark" />
+         </div>
+
+         <div class="mdc-checkbox__ripple" />
       </div>
 
-      <div class="mdc-checkbox__ripple" />
+      <label for="checkbox-{id}">{label}</label>
    </div>
 
-   <label for="checkbox-{id}">{label}</label>
+   {#if link}
+      <IconButton on:click={onLink} toolTip={link.match(/\w+$/)[0]}>
+         <Icon>link</Icon>
+      </IconButton>
+   {/if}
 </div>
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use "@material/theme" with (
-      $primary:  vantage.$secondary,
-      $secondary: vantage.$primary,
+   @use '@material/theme' with (
+      $primary: vantage.$secondary,
+      $secondary: vantage.$primary
    );
-   @use "@material/checkbox";
-   @use "@material/form-field";
+   @use '@material/checkbox';
+   @use '@material/form-field';
 
    @include checkbox.core-styles;
    @include form-field.core-styles;
+
+   .checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 19px;
+      gap: 4px;
+   }
 </style>

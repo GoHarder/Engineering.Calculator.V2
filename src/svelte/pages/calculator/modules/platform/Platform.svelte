@@ -453,6 +453,5 @@
       height: 56px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      margin-bottom: 19px;
    }
 </style>
