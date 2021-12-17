@@ -1,5 +1,5 @@
 export { default as A } from './A.svelte';
-export { default as ButtonNote } from './ButtonNote.svelte';
+export { default as Badge } from './Badge.svelte';
 export { default as Fieldset } from './Fieldset.svelte';
 export { default as PasswordRequire } from './PasswordRequire.svelte';
 export { default as ShareDialog } from './ShareDialog.svelte';
