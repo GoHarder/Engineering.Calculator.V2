@@ -1,4 +1,6 @@
 <script>
+   import { getContext, onMount } from 'svelte';
+
    import { classList } from '../../lib';
 
    // Components
@@ -11,6 +13,8 @@
    // Methods
    // Constants
    // Variables
+   const getValue = getContext('select.getValue');
+
    // Subscriptions
    // Contexts
    // Reactive Rules
@@ -18,6 +22,9 @@
 
    // Events
    // Lifecycle
+   onMount(() => {
+      getValue(value);
+   });
 </script>
 
 <li class={liClass} aria-selected={selected} aria-disabled={disabled} data-value={value} role="option">

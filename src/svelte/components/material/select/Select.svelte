@@ -1,6 +1,6 @@
 <script>
-   import { afterUpdate, beforeUpdate, onDestroy, onMount } from 'svelte';
-   import { get_current_component, select_value } from 'svelte/internal';
+   import { onDestroy, onMount, setContext } from 'svelte';
+   import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
    import { MDCSelectIcon } from '@material/select/icon';
    import { classList, filterProps, forwardEvents, randomId } from '../../lib';
@@ -22,18 +22,6 @@
    export let fullWidth = false;
 
    // Methods
-   const syncSelect = (i = 0) => {
-      if (Select.menuItemValues.length === 0 && i < 10) {
-         Select?.layoutOptions();
-         Select.value = `${value}`;
-         i++;
-
-         setTimeout(() => {
-            syncSelect(i);
-         }, 100);
-      }
-   };
-
    // Constants
    const events = forwardEvents(get_current_component(), ['MDCSelect:change']);
    const id = `select-${randomId()}`;
@@ -42,9 +30,14 @@
    let divEle;
    let SelectIcon;
    let Select;
+   let menuItemValues = [];
 
    // Subscriptions
    // Contexts
+   setContext('select.getValue', (value) => {
+      menuItemValues = [...menuItemValues, value];
+   });
+
    // Reactive Rules
    $: props = filterProps($$props, ['calc', 'class', 'options', 'override', 'selected', 'fullWidth', 'label', 'value', 'type']);
 
@@ -58,6 +51,10 @@
    $: if (!override && calc !== undefined) value = calc;
 
    $: if (Select && value) {
+      Select.value = `${value}`;
+   }
+
+   $: if (menuItemValues && Select) {
       Select.layoutOptions();
       Select.value = `${value}`;
    }
@@ -88,11 +85,6 @@
          const icon = divEle.querySelector('.mdc-select__icon');
          SelectIcon = new MDCSelectIcon(icon);
       }
-   });
-
-   afterUpdate(() => {
-      // This syncs the code with the DOM
-      syncSelect();
    });
 
    onDestroy(() => {
@@ -139,7 +131,10 @@
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use '@material/theme' with ($primary: vantage.$primary, $secondary: vantage.$secondary);
+   @use '@material/theme' with (
+      $primary: vantage.$primary,
+      $secondary: vantage.$secondary
+   );
    @use '@material/select';
    @use '@material/select/styles';
 
