@@ -2,6 +2,7 @@ export { default as A } from './A.svelte';
 export { default as Badge } from './Badge.svelte';
 export { default as Fieldset } from './Fieldset.svelte';
 export { default as PasswordRequire } from './PasswordRequire.svelte';
+export { default as RopesInput } from './RopesInput.svelte';
 export { default as SafetyInput } from './SafetyInput.svelte';
 export { default as ShareDialog } from './ShareDialog.svelte';
 export { default as ShoeInput } from './ShoeInput.svelte';
