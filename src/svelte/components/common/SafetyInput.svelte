@@ -61,7 +61,7 @@
       options = [...options, { name: 'Other' }];
    }
 
-   $: if (shoeObj.weight) {
+   $: if (safetyObj.weight) {
       height = safetyObj.height;
       weight = safetyObj.weight;
    }
