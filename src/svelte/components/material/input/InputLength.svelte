@@ -29,8 +29,8 @@
    const id = `input-length-${randomId()}`;
 
    // Variables
-   let feet;
-   let inches;
+   let feet = 0;
+   let inches = 0;
    let labelEle;
    let metricValue = 0;
    let TextField;
