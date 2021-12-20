@@ -63,7 +63,7 @@
    }
 
    $: if (shoeObj.weight) {
-      height = showObj.height;
+      height = shoeObj.height;
       weight = shoeObj.weight;
    }
 

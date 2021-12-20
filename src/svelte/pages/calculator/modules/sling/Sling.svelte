@@ -3,10 +3,12 @@
 
    import { SlingLinks } from '../links';
 
+   import { ceil } from 'lib/math.mjs';
+
    import * as gTables from '../tables';
 
    // Components
-   import { Fieldset, ShoeInput } from 'components/common';
+   import { Fieldset, SafetyInput, ShoeInput } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
    import { Input, InputNumber, InputLength } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
@@ -33,12 +35,15 @@
 
    // Variables
    // - Saved
+   let apta = false;
+
    let platformThickness = globals?.platform?.thickness ?? 0;
    let platformWeight = globals?.platform?.weight ?? 0;
 
    let door1Weight = globals?.doors?.door1?.weight ?? 0;
    let door2Weight = globals?.doors?.door2?.weight ?? 0;
 
+   let dbg = 0;
    let railSize = '15#';
 
    // -- Equipment
@@ -47,10 +52,22 @@
    let miscEquipmentWeight = 200;
    let railLock = false;
 
+   // - Safety
+   let safetyHeight = 0;
+   let safetyModel = 'Other';
+   let safetyWeight = 0;
+
    // - Shoe
-   let shoeModel = 'Other';
    let shoeHeight = 0;
+   let shoeModel = 'Other';
    let shoeWeight = 0;
+
+   // NOTE: Threw these for busy work
+   let underBeamHeight = 0;
+   let slingWeight = 0;
+   let carWeight = 0;
+   let balanceWeight = 0;
+   let rowBalanceWeight = 1;
 
    // Subscriptions
    // Contexts
@@ -97,7 +114,7 @@
       {metric}
    /> -->
 
-   <!-- <Input value={ceil(balanceWeight / rowBalanceWeight)} display label="Balance Weight Rows" type="number" /> -->
+   <InputNumber value={ceil(balanceWeight / rowBalanceWeight)} label="Balance Weight Rows" readonly />
 
    {#if ['12#', '15#'].includes(railSize)}
       <Checkbox bind:checked={railLock} label="Rail Locks" />
@@ -105,9 +122,9 @@
 
    <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
 
-   <!-- <SelectSafety bind:safety bind:safetyHeight bind:safetyModel bind:safetyWeight {metric} railSize={carRailSize} {safeties} /> -->
+   <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
 
-   <!-- <InputWeight value={carWeight} display label="Car Weight" {metric} /> -->
+   <InputNumber value={carWeight} label="Car Weight" {metric} readonly type="weight" />
 </Fieldset>
 
 <Fieldset title="Properties">
@@ -117,7 +134,7 @@
       {/each}
    </Select> -->
 
-   <!-- <Checkbox bind:checked={apta} on:link={onLink} link={{ cmd: 'changeModule', location: SlingLinks.get('apta') }} label="APTA" /> -->
+   <Checkbox bind:checked={apta} label="APTA" link={SlingLinks.get('apta')} />
 
    <Select bind:value={railSize} label="Rail Size">
       {#each gTables.railSizes as { name } (name)}
@@ -125,11 +142,11 @@
       {/each}
    </Select>
 
-   <!-- <InputLength bind:value={carDBG} label="D.B.G." {metric} /> -->
+   <InputLength bind:value={dbg} label="D.B.G." {metric} />
 
    <!-- <InputLength bind:value={stilesBackToBack} bind:override={stilesBackToBackOverride} bind:calc={stilesBackToBackCalc} label="Back to Back of Stiles" reset {metric} /> -->
 
-   <!-- <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} /> -->
+   <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} />
 
    <!-- <Select bind:value={compType} label="Compensation" on:link={onLink} link={{ cmd: 'changeModule', location: SlingLinks.get('compType') }}>
       {#each gTables.compensation as { name } (name)}
@@ -137,7 +154,7 @@
       {/each}
    </Select> -->
 
-   <!-- <InputWeight value={slingWeight} display label="Total Weight" {metric} /> -->
+   <InputNumber value={slingWeight} label="Total Weight" {metric} readonly type="weight" />
 </Fieldset>
 
 <style>
