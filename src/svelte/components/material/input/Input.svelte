@@ -128,7 +128,10 @@
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use '@material/theme' with ($primary: vantage.$primary, $secondary: vantage.$secondary);
+   @use '@material/theme' with (
+      $primary: vantage.$primary,
+      $secondary: vantage.$secondary
+   );
    @use '@material/floating-label/mdc-floating-label';
    @use '@material/line-ripple/mdc-line-ripple';
    @use '@material/notched-outline/mdc-notched-outline';
@@ -141,14 +144,6 @@
       @include textfield.label-color(vantage.$secondary);
       @include textfield.shape-radius(0);
       grid-area: field;
-
-      &.input-1 {
-         grid-area: field-1;
-      }
-
-      &.input-2 {
-         grid-area: field-2;
-      }
 
       &.mdc-text-field--fullwidth {
          width: 100%;
@@ -192,45 +187,22 @@
    .input {
       display: grid;
       grid-template: {
-         columns: vantage.$input-width-2;
+         columns: vantage.$input-width;
          rows: 56px 19px;
          areas: 'field' 'helper';
       }
       &.full-width {
-         grid-template-columns: minmax(vantage.$input-width-2, 1fr);
+         grid-template-columns: minmax(vantage.$input-width, 1fr);
       }
 
       &.metric {
          grid-template: {
-            columns: vantage.$input-width-2 0.25em $metric-width;
+            columns: vantage.$input-width 0.25em $metric-width;
             rows: 56px 19px;
             areas: 'field . metric' 'helper helper helper';
          }
          &.full-width {
-            grid-template-columns: minmax(vantage.$input-width-2, 1fr) 0.25em $metric-width;
-         }
-      }
-   }
-
-   .input.length {
-      grid-template: {
-         columns: repeat(2, vantage.$input-width-1);
-         rows: 56px 19px;
-         areas: 'field-1 field-2' 'helper helper';
-      }
-
-      &.full-width {
-         grid-template-columns: repeat(2, minmax(vantage.$input-width-1, 1fr));
-      }
-
-      &.metric {
-         grid-template: {
-            columns: repeat(2, vantage.$input-width-1) 0.25em $metric-width;
-            rows: 56px 19px;
-            areas: 'field-1 field-2 . metric' 'helper helper helper helper';
-         }
-         &.full-width {
-            grid-template-columns: repeat(2, minmax(vantage.$input-width-1, 1fr)) 0.25em $metric-width;
+            grid-template-columns: minmax(vantage.$input-width, 1fr) 0.25em $metric-width;
          }
       }
    }

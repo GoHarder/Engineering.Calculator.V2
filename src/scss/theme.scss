@@ -28,8 +28,7 @@ $elevation-1: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1
 $elevation-2: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%);
 $elevation-3: 0 3px 3px -2px rgb(0 0 0 / 20%), 0 3px 4px 0 rgb(0 0 0 / 14%), 0 1px 8px 0 rgb(0 0 0 / 12%);
 
-$input-width-1: 150px;
-$input-width-2: calc($input-width-1 * 2);
+$input-width: 300px;
 
 @mixin paper {
    box-shadow: $elevation-3;
