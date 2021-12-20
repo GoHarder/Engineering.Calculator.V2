@@ -247,7 +247,7 @@
    $: isolatorCombos = tables.getIsolatorCombos(platformWeight);
 
    // - Totals
-   $: platformThickness = assemblyThickness + finFloorThickness + plywoodThickness * plywoodQty;
+   $: platformThickness = assemblyThickness + finFloorThickness + plywoodThickness * plywoodQty + (isolation ? 2 : 0);
    $: platformWeight = assemblyWeight + isolationWeight + plywoodWeight + finFloorWeight;
 
    // - UI
