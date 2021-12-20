@@ -27,7 +27,7 @@
       let res, body;
 
       try {
-         res = await fetch(`api/engineering/safeties?speed=${speed}`, {
+         res = await fetch(`api/engineering/safety?speed=${speed}`, {
             method: 'GET',
             headers: {
                Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@
 
          fetchStore.loading(false);
 
-         shoes = [...body];
+         safeties = [...body];
       } catch (error) {
          fetchStore.setError({ res, error });
       }
