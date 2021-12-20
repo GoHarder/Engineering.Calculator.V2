@@ -9,6 +9,7 @@ import express from 'express';
 import { router as platform } from './platform.mjs';
 import { router as safety } from './safety.mjs';
 import { router as shoes } from './shoes.mjs';
+import { router as sling } from './sling.mjs';
 import { router as steel } from './steel.mjs';
 
 /** The router for the module */
@@ -22,5 +23,7 @@ router.use('/platform', platform);
 router.use('/safety', safety);
 
 router.use('/shoes', shoes);
+
+router.use('/sling', sling);
 
 router.use('/steel', steel);
