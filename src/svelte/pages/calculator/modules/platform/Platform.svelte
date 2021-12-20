@@ -420,9 +420,9 @@
 <div class="container">
    <Fieldset title="Code Requirements">
       {#if loadingType === 'Passenger'}
-         <InputNumber value={maxPlatformArea} label="Max Inside Platform Area" {metric} readonly step="0.1" type="area" />
+         <InputNumber value={maxPlatformArea} label="Max Inside Platform Area" {metric} readonly step="0.01" type="area" />
 
-         <InputNumber value={maxPlatformAreaPlus} label="Max Inside Platform Area + 5%" invalid={cabArea > maxPlatformAreaPlus} {metric} readonly step="0.1" type="area">
+         <InputNumber value={maxPlatformAreaPlus} label="Max Inside Platform Area + 5%" invalid={cabArea > maxPlatformAreaPlus} {metric} readonly step="0.01" type="area">
             <svelte:fragment slot="helperText">
                <HelperText validation>Interior area exceeds max area + 5%</HelperText>
             </svelte:fragment>
