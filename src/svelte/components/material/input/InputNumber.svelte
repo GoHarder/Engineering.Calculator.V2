@@ -27,8 +27,8 @@
 
    const types = {
       _default: { suffix: '', mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
-      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 4), toDisplay: (x) => round(x / 144, 2) },
-      pressure: { suffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 4), toDisplay: (x) => round(x * 144, 2) },
+      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 6), toDisplay: (x) => round(x / 144, 2) },
+      pressure: { suffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 6), toDisplay: (x) => round(x * 144, 2) },
       speed: { suffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, mRound: 4, toValue: (x) => x, toDisplay: (x) => x },
       weight: { suffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, mRound: 1, toValue: (x) => x, toDisplay: (x) => x },
    };
