@@ -12,6 +12,7 @@
    // Properties
    export let calc = undefined;
    export let label = '';
+   export let link = undefined;
    export let disabled = false;
    export let options = undefined;
    export let override = false;
@@ -39,9 +40,14 @@
    });
 
    // Reactive Rules
-   $: props = filterProps($$props, ['calc', 'class', 'options', 'override', 'selected', 'fullWidth', 'label', 'value', 'type']);
+   $: props = filterProps($$props, ['calc', 'class', 'options', 'override', 'selected', 'fullWidth', 'label', 'link', 'value', 'type']);
 
-   $: divClass = classList(['mdc-select mdc-select--filled', $$props.class, calc !== undefined ? 'mdc-select--with-leading-icon' : '']);
+   $: divClass = classList([
+      'mdc-select mdc-select--filled',
+      $$props.class,
+      calc !== undefined ? 'mdc-select--with-leading-icon' : '',
+      link !== undefined ? 'mdc-select--with-link' : '',
+   ]);
 
    $: if (Select) {
       Select.disabled = disabled;
@@ -75,6 +81,8 @@
       if (options) selected = options[event.detail.index];
    };
 
+   const onLink = () => history.pushState({ path: link }, '');
+
    const onReset = () => (override = false);
 
    // Lifecycle
@@ -88,7 +96,7 @@
    });
 
    onDestroy(() => {
-      Select.destroy();
+      Select?.destroy();
 
       SelectIcon?.destroy();
    });
@@ -110,12 +118,27 @@
          <span class="mdc-select__selected-text-container">
             <span id="selected-text" class="mdc-select__selected-text" />
          </span>
-         <span class="mdc-select__dropdown-icon">
-            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
-               <polygon class="mdc-select__dropdown-icon-inactive" stroke="none" fill-rule="evenodd" points="7 10 12 15 17 10" />
-               <polygon class="mdc-select__dropdown-icon-active" stroke="none" fill-rule="evenodd" points="7 15 12 10 17 15" />
-            </svg>
-         </span>
+
+         {#if link}
+            <Icon
+               on:click={onLink}
+               class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing"
+               style="color: rgba(0, 0, 0, 0.56);"
+               role="button"
+               tabindex="0"
+               toolTip={link.match(/\w+$/)[0]}
+            >
+               link
+            </Icon>
+         {:else}
+            <span class="mdc-select__dropdown-icon">
+               <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
+                  <polygon class="mdc-select__dropdown-icon-inactive" stroke="none" fill-rule="evenodd" points="7 10 12 15 17 10" />
+                  <polygon class="mdc-select__dropdown-icon-active" stroke="none" fill-rule="evenodd" points="7 15 12 10 17 15" />
+               </svg>
+            </span>
+         {/if}
+
          <span class="mdc-line-ripple" />
       </div>
 
@@ -142,6 +165,18 @@
       @include select.label-color(vantage.$secondary);
       @include select.filled-shape-radius(0);
       width: 100%;
+
+      &.mdc-select--with-link {
+         pointer-events: none;
+
+         .mdc-text-field__icon {
+            pointer-events: all;
+         }
+
+         .mdc-select__menu {
+            opacity: 0;
+         }
+      }
    }
 
    @include vantage.scrollbar('.mdc-select__menu', vantage.$white);
