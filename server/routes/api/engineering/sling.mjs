@@ -7,6 +7,7 @@ import express from 'express';
 
 // Project Imports
 import { checkAuth, checkCache } from '../../../middleware/lib.mjs';
+import { _topChannels } from '../../../data/mongodb/pipelines/sling.mjs';
 import { eng as engDB } from '../../../data/mongodb/mongodb.mjs';
 import { setEx } from '../../../data/redis/redis.mjs';
 
@@ -22,6 +23,7 @@ router.use([checkAuth, checkCache]);
 router.get('/', async (req, res) => {
    let models = [];
    let shoePlates = [];
+   let topChannels = [];
 
    try {
       models = await engDB
@@ -29,12 +31,17 @@ router.get('/', async (req, res) => {
          .find({}, { projection: { _id: 0, _sort: 0 }, sort: { _sort: 1 } })
          .toArray();
 
-      shoePlates = await engDB.collection('shoe_plates').find().toArray();
+      shoePlates = await engDB
+         .collection('shoe_plates')
+         .find({}, { projection: { _id: 0 } })
+         .toArray();
+
+      topChannels = await engDB.collection('steel').aggregate(_topChannels).toArray();
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
 
    // await setEx(req.originalUrl, JSON.stringify(docs));
 
-   res.status(200).json({ models, shoePlates });
+   res.status(200).json({ models, shoePlates, topChannels });
 });
