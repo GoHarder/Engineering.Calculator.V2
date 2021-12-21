@@ -1,6 +1,6 @@
 /**
  * @store path
- * TODO: Add me
+ * This store holds the path used in the history API
  */
 
 // Imports
