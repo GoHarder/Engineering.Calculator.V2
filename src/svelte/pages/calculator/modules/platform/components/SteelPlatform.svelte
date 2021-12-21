@@ -186,7 +186,7 @@
 <Fieldset title="Steel">
    <Select bind:value={steelType} bind:selected={steelTypeObj} label="Type" options={tables.steelTypes}>
       {#each tables.steelTypes as { name } (name)}
-         <Option>{name}</Option>
+         <Option value={name}>{name}</Option>
       {/each}
    </Select>
 
@@ -236,7 +236,7 @@
 
    <Select bind:value={platformFloorPlate} bind:selected={floorPlateObj} label="Floor Plate" options={floorPlates}>
       {#each floorPlates as { disabled, name } (name)}
-         <Option {disabled}>{name}</Option>
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </Select>
 </Fieldset>

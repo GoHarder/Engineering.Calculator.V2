@@ -271,8 +271,8 @@
 <div class="container">
    <Fieldset title="Properties">
       <Select bind:value={material} label="Material">
-         <Option>Wood</Option>
-         <Option>Steel</Option>
+         <Option value="Wood">Wood</Option>
+         <Option value="Steel">Steel</Option>
       </Select>
 
       <InputLength bind:value={platformWidth} label="Width" {metric} />
@@ -296,7 +296,7 @@
       {#if isolation}
          <Select bind:value={isolatorCombo} label="Isolators">
             {#each isolatorCombos as { name } (name)}
-               <Option>{name}</Option>
+               <Option {name}>{name}</Option>
             {/each}
          </Select>
       {/if}
@@ -342,8 +342,8 @@
       <InputNumber bind:value={cabWeight} bind:override={o_cabWeight} label="Weight" calc={cabWeightCalc} {metric} type="weight" />
 
       <Select bind:value={doorQty} label="Door Quantity" type="number">
-         <Option>1</Option>
-         <Option>2</Option>
+         <Option value="1">1</Option>
+         <Option value="2">2</Option>
       </Select>
    </Fieldset>
 
@@ -364,9 +364,9 @@
    {#if doorQty === 2}
       <Fieldset title="{door2Location} Door">
          <Select bind:value={door2Location} label="Location">
-            <Option>Back</Option>
-            <Option>Left</Option>
-            <Option>Right</Option>
+            <Option value="Back">Back</Option>
+            <Option value="Left">Left</Option>
+            <Option value="Right">Right</Option>
          </Select>
 
          <Door
@@ -392,8 +392,8 @@
          <InputNumber bind:value={finFloorMaterialWeight} label="Material Weight" {metric} step="0.01" type="pressure" />
 
          <Select bind:value={finFloorArea} label="Area">
-            <Option>Inside Cab</Option>
-            <Option>Full Platform</Option>
+            <Option value="Inside Cab">Inside Cab</Option>
+            <Option value="Full Platform">Full Platform</Option>
          </Select>
       {/if}
 

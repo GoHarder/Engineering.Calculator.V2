@@ -23,7 +23,7 @@
 {#if stockedOptions.length > 0}
    <OptGroup label="Stocked">
       {#each stockedOptions as { disabled, name } (name)}
-         <Option {disabled}>{name}</Option>
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
@@ -31,7 +31,7 @@
 {#if availableOptions.length > 0}
    <OptGroup label="Available">
       {#each availableOptions as { disabled, name } (name)}
-         <Option {disabled}>{name}</Option>
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
@@ -39,7 +39,7 @@
 {#if checkOptions.length > 0}
    <OptGroup label="Check">
       {#each checkOptions as { disabled, name } (name)}
-         <Option {disabled}>{name}</Option>
+         <Option {disabled} value={name}>{name}</Option>
       {/each}
    </OptGroup>
 {/if}
