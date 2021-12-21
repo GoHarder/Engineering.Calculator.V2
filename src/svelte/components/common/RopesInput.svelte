@@ -2,7 +2,7 @@
    import * as gTables from '../../pages/calculator/modules/tables';
 
    // Components
-   import { Fieldset } from 'components/common';
+   import Fieldset from 'components/common/Fieldset.svelte';
    import { InputLength, InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
 
@@ -31,8 +31,7 @@
 <Fieldset title="Ropes">
    <InputNumber bind:value={qty} label="Quantity" {link} min="4" />
 
-   <!-- TODO: 12-20-2021 9:28 AM - Add link -->
-   <Select bind:value={size} label="Size" type="number">
+   <Select bind:value={size} label="Size" {link} type="number">
       {#each gTables.ropeSizes as { name, value } (name)}
          <Option {value}>{name}</Option>
       {/each}
