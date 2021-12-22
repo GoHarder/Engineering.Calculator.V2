@@ -1,5 +1,5 @@
 <script>
-   import { onMount, onDestroy } from 'svelte';
+   import { getContext, onMount, onDestroy } from 'svelte';
    import { MDCTextField } from '@material/textfield';
    import { classList, filterProps, randomId } from '../../lib';
 
@@ -30,6 +30,9 @@
 
    // Variables
    let feet = 0;
+   let focused = false;
+   let focusedFt = false;
+   let focusedIn = false;
    let inches = 0;
    let labelEle;
    let metricValue = 0;
@@ -37,6 +40,8 @@
 
    // Subscriptions
    // Contexts
+   const getFocused = getContext('InputImg')?.getFocused;
+
    // Reactive Rules
    $: labelClass = classList([
       $$props.class,
@@ -62,18 +67,48 @@
 
    $: if (link) readonly = true;
 
+   $: focused = focusedFt || focusedIn;
+
+   $: if (focused !== undefined) getFocused?.(focused);
+
    // Events
-   const onChange1 = (event) => {
-      feet = parseFloat(event.target.value) || 0;
+   const onBlur = (event) => {
+      const { units } = event.target.dataset;
+
+      setTimeout(() => {
+         if (units === 'ft') focusedFt = false;
+         if (units === 'in') focusedIn = false;
+      }, 100);
+   };
+
+   const onChange = (event) => {
+      const { dataset, value } = event.target;
+
+      if (dataset.units === 'ft') feet = parseFloat(value) || 0;
+      if (dataset.units === 'in') inches = parseFloat(value) || 0;
+
       updateValue();
    };
 
-   const onChange2 = (event) => {
-      inches = parseFloat(event.target.value) || 0;
-      updateValue();
-   };
+   // const onChange1 = (event) => {
+   //    feet = parseFloat(event.target.value) || 0;
+   //    updateValue();
+   // };
 
-   const onFocus = (event) => event.target.select();
+   // const onChange2 = (event) => {
+   //    inches = parseFloat(event.target.value) || 0;
+   //    updateValue();
+   // };
+
+   const onFocus = (event) => {
+      const { target } = event;
+      const { units } = target.dataset;
+
+      target.select();
+
+      if (units === 'ft') focusedFt = true;
+      if (units === 'in') focusedIn = true;
+   };
 
    const onLink = () => history.pushState({ path: link }, '');
 
@@ -116,16 +151,29 @@
          {/if}
       {/if}
 
-      <input value={feet} type="number" on:change={onChange1} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} min="0" />
+      <input
+         value={feet}
+         type="number"
+         on:blur={onBlur}
+         on:change={onChange}
+         on:focus={onFocus}
+         {...props}
+         data-units="ft"
+         class="mdc-text-field__input"
+         aria-labelledby={id}
+         min="0"
+      />
 
       <span class="mdc-text-field__affix mdc-text-field__affix--suffix">ft</span>
 
       <input
          value={inches}
          type="number"
-         on:change={onChange2}
+         on:blur={onBlur}
+         on:change={onChange}
          on:focus={onFocus}
          {...props}
+         data-units="in"
          class="mdc-text-field__input"
          aria-labelledby={id}
          step="0.0001"
