@@ -35,8 +35,8 @@
 
    // Subscriptions
    // Contexts
-   setContext('select.getValue', (value) => {
-      menuItemValues = [...menuItemValues, value];
+   setContext('Select', {
+      getValue: (value) => (menuItemValues = [...menuItemValues, value]),
    });
 
    // Reactive Rules

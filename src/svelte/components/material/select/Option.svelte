@@ -13,7 +13,7 @@
    // Methods
    // Constants
    // Variables
-   const getValue = getContext('select.getValue');
+   const { getValue } = getContext('Select');
 
    // Subscriptions
    // Contexts
