@@ -2,7 +2,7 @@
    import { onDestroy, onMount } from 'svelte';
 
    import { clone } from 'lib/main.mjs';
-   import { ceil, round, roundInc } from 'lib/math.mjs';
+   import { ceil, floor, round, roundInc } from 'lib/math.mjs';
    import { toCamelCase } from 'lib/string.mjs';
 
    import * as gTables from '../tables';
@@ -10,7 +10,7 @@
    import { SlingLinks } from '../links';
 
    // Components
-   import { Fieldset, RopesInput, SafetyInput, StockStatusOptions, ShoeInput } from 'components/common';
+   import { Fieldset, InputImg, RopesInput, SafetyInput, StockStatusOptions, ShoeInput } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
    import { Input, InputNumber, InputLength } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
@@ -38,9 +38,25 @@
 
       const moduleData = {
          dbg,
-         model,
+         model: slingModel,
          railSize,
+         sheaves: {
+            arrangement: sheaveArrangement,
+            location: sheaveLocation,
+            model: sheaveModel,
+            mounting: sheaveMounting,
+            offset: sheaveOffset,
+            qty: sheaveQty,
+         },
       };
+
+      if (roping === 1) {
+         delete moduleData.sheaves;
+
+         if (project.modules.sling.sheaves) {
+            delete project.modules.sling.sheaves;
+         }
+      }
 
       project.globals = { ...project.globals, ...globalData };
       project.modules.sling = { ...project.modules.sling, ...moduleData };
@@ -68,10 +84,11 @@
 
          fetchStore.loading(false);
 
+         channels = [...body.channels];
+         sheaves = [...body.sheaves];
          shoePlates = [...body.shoePlates];
          slingModels = [...body.models];
          topChannels = [...body.topChannels];
-         channels = [...body.channels];
       } catch (error) {
          fetchStore.setError({ res, error });
       }
@@ -139,7 +156,7 @@
    // -- General
    let dbg = module?.dbg ?? 0;
    let railSize = module?.railsize ?? '15#';
-   let stileModel = module?.model ?? '';
+   let slingModel = module?.model ?? '';
 
    // -- Dimensions
    let stilesBackToBack = 0;
@@ -164,12 +181,12 @@
    let shoeWeight = 0;
 
    // -- Sheaves
-   let sheaveQty = 1;
-   let sheaveModel = '';
-   let sheaveArrangement = 'Parallel';
-   let sheaveLocation = 'Overslung';
-   let sheaveMounting = 'Support Plate';
-   let sheaveOffset = 0;
+   let sheaveArrangement = module?.sheaves?.arrangement ?? 'Parallel';
+   let sheaveLocation = module?.sheaves?.location ?? 'Overslung';
+   let sheaveModel = module?.sheaves?.model ?? '';
+   let sheaveMounting = module?.sheaves?.mounting ?? 'Support Plate';
+   let sheaveOffset = module?.sheaves?.offset ?? 0;
+   let sheaveQty = module?.sheaves?.qty ?? 1;
 
    // -- Equipment
    let carTopWeight = 150;
@@ -207,8 +224,8 @@
 
    // - Database
    let channels = [];
-   let shoePlates = [];
    let sheaves = [];
+   let shoePlates = [];
    let slingModels = [];
    let topChannels = [];
 
@@ -251,10 +268,19 @@
    }
 
    // - Parts
-   $: topShoePlate = getShoePlate(shoePlates, shoeModel, stileModel, railSize);
+   $: topShoePlate = getShoePlate(shoePlates, shoeModel, slingModel, railSize);
    $: botShoePlate = getShoePlate(shoePlates, shoeModel, safetyModel, railSize);
-   $: strikePlate = model?.strikePlate;
-   $: gusset = topChannel?.slingGusset;
+   $: strikePlate = modelObj?.strikePlate;
+   $: gusset = topChannelObj?.slingGusset;
+   $: sheaveOptions = clone(sheaves).map((sheave) => {
+      const reqWidth = round((ropeQty - 1) * ropePitch + ropeSize + 0.625, 4);
+      const reqDiameter = round(ropeSize * 40, 3);
+
+      sheave.disabled = ![sheave.rimWidth >= reqWidth, sheave.diameter >= reqDiameter].every((test) => test);
+      sheave.displayName = `${sheave.name} (Ø${floor(sheave.diameter)}")`;
+
+      return sheave;
+   });
 
    // - Stiles
    $: stileSy = round((turningMoment * underBeamHeight) / (4 * dimH * 14000), 2);
@@ -283,9 +309,10 @@
 
    // - Sheave Channel
    $: sheaveConfig = toCamelCase(`${sheaveArrangement}${sheaveLocation}`);
-   $: sheaveChannelSx = tables.sheaveConfig[sheaveConfig].sheaveChannelSx(overallWeight, sheaveOffset, botChannelLength);
-   $: sheaveChannelWeight = (sheaveChannelObj?.weight ?? 0) * slingSheaveChannelLength * 2;
-   $: sheaveChannelOpts = getChannelOptions(channels, sheaveSx);
+   $: sheaveChannelSx = tables.sheaveConfig[sheaveConfig].sheaveChanSx(overallWeight, sheaveOffset, botChannelLength);
+   $: sheaveChannelWeight = (sheaveChannelObj?.weight ?? 0) * sheaveChannelLength * 2;
+   $: sheaveChannelOpts = getChannelOptions(channels, sheaveChannelSx);
+   $: sheaveOffsetImg = tables.sheaveConfig[sheaveConfig].sheaveOffsetImg;
 
    // - Braces
    $: braceLength = ceil(Math.sqrt((platformDepth / 2 - 10 - (stileChannelObj?.depth ?? 0) / 2) ** 2 + (underBeamHeight - 39.5) ** 2));
@@ -294,12 +321,12 @@
    $: braceAssemblyWeight = (cornerPost ? cornerPostBraceLength * cornerPostBraceObj.weight : 0) + braceWeight;
 
    // - Tie down slings
-   $: if (stileModel === '6TS-TD-LD') {
+   $: if (slingModel === '6TS-TD-LD') {
       topChannel = 'C10X25';
       botChannel = 'C10X25';
    }
 
-   $: if (stileModel === '8TS-TD-LD-OH') {
+   $: if (slingModel === '8TS-TD-LD-OH') {
       topChannel = 'MC8X21.4';
       botChannel = 'MC8X21.4';
    }
@@ -381,8 +408,10 @@
    <Fieldset title="Sheaves">
       <InputNumber bind:value={sheaveQty} label="Quantity" />
 
-      <Select bind:value={sheaveModel} label="Model">
-         <Option value="TODO">TODO</Option>
+      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
+         {#each sheaveOptions as { displayName, disabled, name } (name)}
+            <Option {disabled} value={name}>{displayName}</Option>
+         {/each}
       </Select>
 
       {#if sheaveQty > 1}
@@ -395,6 +424,10 @@
             <Option value="Overslung">Overslung</Option>
             <Option value="Underslung">Underslung</Option>
          </Select>
+
+         <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
+            <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
+         </InputImg>
       {/if}
    </Fieldset>
 {/if}
@@ -428,11 +461,11 @@
 
    <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
 
-   <InputNumber value={carWeight} label="Car Weight" {metric} readonly type="weight" />
+   <InputNumber value={carWeight} label="Car Weight" {metric} readonly step="0.01" type="weight" />
 </Fieldset>
 
 <Fieldset title="Properties">
-   <Select bind:value={stileModel} bind:selected={modelObj} label="Model" options={modelOptions}>
+   <Select bind:value={slingModel} bind:selected={modelObj} label="Model" options={modelOptions}>
       {#each modelOptions as { disabled, name } (name)}
          <Option {disabled} value={name}>{name}</Option>
       {/each}
