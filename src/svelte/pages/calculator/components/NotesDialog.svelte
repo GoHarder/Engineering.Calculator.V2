@@ -1,5 +1,6 @@
 <script>
    import { onDestroy } from 'svelte';
+   import { fade } from 'svelte/transition';
 
    import { capitalize } from 'lib/string.mjs';
 
@@ -137,7 +138,7 @@
    </svelte:fragment>
 </Dialog>
 
-<div class="menu">
+<div class="menu" transition:fade>
    <header>
       <h3 class="mdc-drawer__title">Notes</h3>
       <IconButton on:click={() => (show = false)} toolTip="Close">
