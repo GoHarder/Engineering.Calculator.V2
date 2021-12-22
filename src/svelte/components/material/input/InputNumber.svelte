@@ -1,5 +1,6 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
+   import { slide } from 'svelte/transition';
    import { MDCTextField } from '@material/textfield';
    import { classList, filterProps, randomId } from '../../lib';
 
@@ -117,7 +118,7 @@
    });
 </script>
 
-<div class="input" class:metric class:full-width={fullWidth}>
+<div class="input" class:metric class:full-width={fullWidth} transition:slide|local>
    <label bind:this={labelEle} class={labelClass}>
       <span class="mdc-text-field__ripple" />
 

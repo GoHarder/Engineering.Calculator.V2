@@ -1,5 +1,6 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
+   import { slide } from 'svelte/transition';
    import { MDCFormField } from '@material/form-field';
    import { MDCCheckbox } from '@material/checkbox';
 
@@ -67,7 +68,7 @@
    });
 </script>
 
-<div class="checkbox">
+<div class="checkbox" transition:slide|local>
    <div bind:this={divEle1} class="mdc-form-field" class:mdc-checkbox--disabled={disabled}>
       <div bind:this={divEle2} class="mdc-checkbox">
          <input bind:checked {disabled} {name} {value} type="checkbox" class="mdc-checkbox__native-control" id="checkbox-{id}" />

@@ -1,5 +1,6 @@
 <script>
    import { onDestroy, onMount, setContext } from 'svelte';
+   import { slide } from 'svelte/transition';
    import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
    import { MDCSelectIcon } from '@material/select/icon';
@@ -102,7 +103,7 @@
    });
 </script>
 
-<div class="input" class:full-width={fullWidth}>
+<div class="input" class:full-width={fullWidth} transition:slide|local>
    <div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
       <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
          <input type="hidden" />
