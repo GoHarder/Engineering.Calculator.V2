@@ -199,6 +199,7 @@
    let botChannel = '';
    let stileChannel = '';
    let sheaveChannel = '';
+   let cornerPostBrace = '';
 
    // -- Strike Plates
    let strikePlateQty = 1;
@@ -216,8 +217,11 @@
    let rowBalanceWeight = 1;
    let compType = 'None';
    let railToBalance = 0;
-   let balanceLocation = '';
+   let balanceLocation = 1;
    let sheaveChannelLength = 0;
+   let balanceWeightCalc = 0;
+   let o_balanceWeight = false;
+   let plateMounting = '';
 
    // - UI
    let sheaveChannelLabel = 'Sheave Channels';
@@ -428,6 +432,15 @@
          <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
             <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
          </InputImg>
+
+         {#if sheaveConfig === 'parallelUnderslung'}
+            <InputLength bind:value={railToBalance} label="Rail To Sheaves" {metric} />
+
+            <Select bind:value={balanceLocation} label="Sheave Location" type="number">
+               <Option value="1">Behind the Rail</Option>
+               <Option value="-1">Front of the Rail</Option>
+            </Select>
+         {/if}
       {/if}
    </Fieldset>
 {/if}
@@ -439,17 +452,7 @@
 
    <InputNumber bind:value={miscWeight} label="Misc. Equipment Weight" {metric} type="weight" />
 
-   <!-- <InputWeight
-      bind:invalid={balanceWeightError}
-      bind:value={balanceWeight}
-      bind:override={balanceWeightOverride}
-      calc={balanceWeightCalc}
-      helperText={`Max Balance Weights ${round(rowBalanceWeight * 2, 2)}lbs`}
-      label="Balance Weight"
-      reset
-      step={0.01}
-      {metric}
-   /> -->
+   <InputNumber bind:value={balanceWeight} bind:override={o_balanceWeight} label="Balance Weight" calc={o_balanceWeight} step={0.01} {metric} type="weight" />
 
    <InputNumber value={ceil(balanceWeight / rowBalanceWeight)} label="Balance Weight Rows" readonly />
 
@@ -524,12 +527,41 @@
       <Select bind:value={sheaveChannel} bind:selected={sheaveChannelObj} label={sheaveChannelLabel} options={sheaveChannelOpts}>
          <StockStatusOptions options={sheaveChannelOpts} />
       </Select>
+
+      {#if sheaveConfig === 'parallelUnderslung'}
+         <Select bind:value={sheaveMounting} label="Outer Sheave Mounting">
+            <Option value="Support Plate">Support Plate</Option>
+            <Option value="Channel">Channel</Option>
+         </Select>
+
+         {#if sheaveMounting === 'Support Plate'}
+            <Select bind:value={plateMounting} label="Plate Mounting">
+               {#each tables.plateMounting as { name } (name)}
+                  <Option value={name}>{name}</Option>
+               {/each}
+            </Select>
+         {/if}
+      {:else}
+         <InputLength bind:value={sheaveChannelLength} label="Sheave Channel Length" {metric} />
+      {/if}
    {/if}
 
    {#if cornerPost}
-      <!-- ding -->
+      <Select bind:value={cornerPostBrace} bind:selected={cornerPostBraceObj} label="Brace Steel" options={tables.cornerPostBrace}>
+         {#each tables.cornerPostBrace as { name } (name)}
+            <Option value={name}>{name}</Option>
+         {/each}
+      </Select>
    {:else}
       <InputNumber bind:value={braceQty} bind:override={o_braceQty} label="Brace Quantity" calc={braceQtyCalc} />
+   {/if}
+
+   <InputNumber bind:value={strikePlateQty} label="Strike Plate Quantity" min={1} max={10} />
+
+   {#if strikePlateQty > 1}
+      <InputImg src="/public/img/sling/strike-plate.svg" alt="Strike Plate Offset" width="300">
+         <InputLength bind:value={strikePlateOffset} label="Strike Plate Offset" {metric} />
+      </InputImg>
    {/if}
 </Fieldset>
 
