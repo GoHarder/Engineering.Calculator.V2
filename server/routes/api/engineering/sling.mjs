@@ -23,11 +23,17 @@ router.use([checkAuth, checkCache]);
 router.get('/', async (req, res) => {
    let channels = [];
    let models = [];
+   let sheaves = [];
    let shoePlates = [];
    let topChannels = [];
 
    try {
       channels = await engDB.collection('steel').aggregate(_channels).toArray();
+
+      sheaves = await engDB
+         .collection('sheaves')
+         .find({ _uses: 'car' }, { projection: { _id: 0 }, sort: { diameter: 1, rimWidth: 1 } })
+         .toArray();
 
       models = await engDB
          .collection('slings')
@@ -46,5 +52,5 @@ router.get('/', async (req, res) => {
 
    // await setEx(req.originalUrl, JSON.stringify(docs));
 
-   res.status(200).json({ channels, models, shoePlates, topChannels });
+   res.status(200).json({ channels, models, sheaves, shoePlates, topChannels });
 });
