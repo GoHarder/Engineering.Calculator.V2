@@ -133,13 +133,13 @@
    // - Side Channel
    $: sideChannels = channels?.filter((row) => ['MC4X13.8', 'MC6X12', 'MC8X18.7'].includes(row.name)) ?? [];
    $: sideChannelObj = isolation ? sideChannels.find((channel) => channel.depth >= stringerChannelObj?.depth ?? 0) : stringerChannelObj;
-   $: sideChannelLength = platformDepth - (frontChannelObj?.flangeWidth ?? 0) + (backChannelObj?.flangeWidth ?? 0);
+   $: sideChannelLength = platformDepth - ((frontChannelObj?.flangeWidth ?? 0) + (backChannelObj?.flangeWidth ?? 0));
    $: sideChannelWeight = sideChannelLength * (split ? 4 : 2) * (sideChannelObj?.weight ?? 0);
 
    // - Sill Channel
    $: sillChannelObj = useSillChannel && stringerChannelObj ? stringerChannelObj : {};
-   $: sillChannelLength = platformWidth - (sideChannelObj?.flangeWidth ?? 0) * 2;
-   $: sillChannelWeight = sillChannelLength * (sillChannelObj?.weight ?? 0);
+   $: sillChannelLength = platformWidth - (sideChannelObj?.webThickness ?? 0) * 2;
+   $: sillChannelWeight = sillChannelLength * (sillChannelObj?.weight ?? 0) * doorQty * (split ? 2 : 1);
 
    // - Front Channel
    $: frontChannelSectionModulus = freightClassObj.frontChannelFormula.sX(load, platformWidth, tensileStrengthRatio);
@@ -181,6 +181,8 @@
 
    // Events
    // Lifecycle
+
+   $: console.log(backChannelObj);
 </script>
 
 <Fieldset title="Steel">
