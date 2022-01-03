@@ -181,8 +181,6 @@
 
    // Events
    // Lifecycle
-
-   $: console.log(backChannelObj);
 </script>
 
 <Fieldset title="Steel">
