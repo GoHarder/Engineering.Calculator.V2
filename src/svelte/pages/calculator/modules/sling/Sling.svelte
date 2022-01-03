@@ -25,6 +25,10 @@
          car: {
             weight: carWeight,
          },
+         compensation: {
+            type: compType,
+            weight: compWeight,
+         },
          counterWeight: {
             weight: cwtWeight,
          },
@@ -143,6 +147,8 @@
    let apta = globals?.apta ?? false;
    let cabWeight = globals?.cab?.weight ?? 0;
    let cabWidth = globals?.cab?.width ?? 0;
+   let compType = globals?.compensation?.type ?? 'None';
+   let compWeight = globals?.compensation?.weight ?? 0;
    let cornerPost = globals?.platform?.cornerPost ?? false;
    let door1Weight = globals?.doors?.door1?.weight ?? 0;
    let door2Weight = globals?.doors?.door2?.weight ?? 0;
@@ -207,15 +213,15 @@
 
    // -- Braces
    let braceQty = 0;
-   let o_braceQty = false;
    let braceQtyCalc = 0;
+
+   let o_braceQty = false;
 
    // NOTE: Threw these for busy work
    let slingWeight = 0;
    let carWeight = 0;
    let balanceWeight = 0;
    let rowBalanceWeight = 1;
-   let compType = 'None';
    let railToBalance = 0;
    let balanceLocation = 1;
    let sheaveChannelLength = 0;
