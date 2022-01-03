@@ -67,9 +67,11 @@
    <div class="row">
       <Checkbox bind:checked={longToken} label="Keep me signed in" />
 
-      <span>&nbsp;|&nbsp;</span>
+      <div class="row-link">
+         <span>&nbsp;|&nbsp;</span>
 
-      <A href="/Login/ForgotPasswordForm">Forgot Password?</A>
+         <A href="/Login/ForgotPasswordForm">Forgot Password?</A>
+      </div>
    </div>
 
    <div class="row">
@@ -88,8 +90,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      &:last-child {
-         margin-top: 0.5em;
+      &-link {
+         display: flex;
+         align-items: center;
+         height: 40px;
+         margin-bottom: 19px;
       }
    }
 </style>
