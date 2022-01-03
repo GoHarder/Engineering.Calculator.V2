@@ -44,6 +44,11 @@
          dbg,
          model: slingModel,
          railSize,
+         safety: {
+            height: safetyHeight,
+            model: safetyModel,
+            weight: safetyWeight,
+         },
          sheaves: {
             arrangement: sheaveArrangement,
             location: sheaveLocation,
@@ -52,10 +57,25 @@
             offset: sheaveOffset,
             qty: sheaveQty,
          },
+         shoe: {
+            height: shoeHeight,
+            model: shoeModel,
+            weight: shoeWeight,
+         },
       };
 
       if (roping === 1) {
          delete moduleData.sheaves;
+      }
+
+      if (safetyModel !== 'Other') {
+         delete moduleData.safety.height;
+         delete moduleData.safety.weight;
+      }
+
+      if (shoeModel !== 'Other') {
+         delete moduleData.shoe.height;
+         delete moduleData.shoe.weight;
       }
 
       project.globals = { ...project.globals, ...globalData };
@@ -172,14 +192,14 @@
    let o_ropePitch = globals?.rope?.o_pitch ?? false;
 
    // -- Safety
-   let safetyHeight = 0;
-   let safetyModel = 'Other';
-   let safetyWeight = 0;
+   let safetyHeight = module?.safety?.height ?? 0;
+   let safetyModel = module?.safety?.model ?? 'Other';
+   let safetyWeight = module?.safety?.weight ?? 0;
 
    // -- Shoe
-   let shoeHeight = 0;
-   let shoeModel = 'Other';
-   let shoeWeight = 0;
+   let shoeHeight = module?.shoe?.height ?? 0;
+   let shoeModel = module?.shoe?.model ?? 'Other';
+   let shoeWeight = module?.shoe?.weight ?? 0;
 
    // -- Sheaves
    let sheaveArrangement = module?.sheaves?.arrangement ?? 'Parallel';
@@ -353,7 +373,7 @@
          braceAssemblyWeight +
          (gusset?.weight ?? 0) * 4 +
          (strikePlate?.weight ?? 0) * strikePlateQty +
-         // Comp Weight
+         compWeight +
          // Rope Mounting Weight (carRoping === 1 ? 28 : sheaveChannelWeight)
          (slingModel === '6TS-TD-LD' ? 29.11 : 0) +
          (slingModel === '8TS-TD-LD' ? 278.639 : 0)) *
