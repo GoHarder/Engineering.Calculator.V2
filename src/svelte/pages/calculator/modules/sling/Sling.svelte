@@ -56,14 +56,10 @@
 
       if (roping === 1) {
          delete moduleData.sheaves;
-
-         if (project.modules.sling.sheaves) {
-            delete project.modules.sling.sheaves;
-         }
       }
 
       project.globals = { ...project.globals, ...globalData };
-      project.modules.sling = { ...project.modules.sling, ...moduleData };
+      project.modules.sling = moduleData;
    };
 
    // Methods
@@ -167,7 +163,6 @@
    // -- Dimensions
    let stilesBackToBack = 0;
    let underBeamHeight = 114;
-
    let o_stilesBackToBack = false;
 
    // -- Ropes
@@ -213,8 +208,7 @@
 
    // -- Braces
    let braceQty = 0;
-   let braceQtyCalc = 0;
-
+   let braceQtyCalc = 4;
    let o_braceQty = false;
 
    // NOTE: Threw these for busy work
@@ -270,6 +264,16 @@
 
       return model;
    });
+
+   $: if (cornerPost) {
+      braceQtyCalc = 2;
+   } else if (platformDepth < 121) {
+      braceQtyCalc = 4;
+   } else if (platformDepth < 228) {
+      braceQtyCalc = 8;
+   } else {
+      braceQtyCalc = 12;
+   }
 
    $: if (sheaveConfig === 'parallelUnderslung') {
       sheaveChannelLabel = 'Inner Sheave / Safety Channel';
@@ -409,6 +413,8 @@
    <InputNumber bind:value={platformWeight} label="Weight" link={SlingLinks.get('platformWeight')} {metric} step="0.1" type="weight" />
 
    <InputLength bind:value={cabWidth} label="Cab Width" link={SlingLinks.get('cabWidth')} {metric} />
+
+   <InputNumber bind:value={cabWeight} label="Cab Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
 </Fieldset>
 
 {#if roping > 1}
@@ -470,6 +476,17 @@
 
    <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
 
+   <!-- TODO: 12-20-2021 8:52 AM - Add link when machine is done -->
+   <Select bind:value={compType} label="Compensation">
+      {#each gTables.compensation as { name } (name)}
+         <Option value={name}>{name}</Option>
+      {/each}
+   </Select>
+
+   {#if compType !== 'None'}
+      <InputNumber bind:value={compWeight} label="Compensation Weight" step={0.01} {metric} type="weight" />
+   {/if}
+
    <InputNumber value={carWeight} label="Car Weight" {metric} readonly step="0.01" type="weight" />
 </Fieldset>
 
@@ -494,14 +511,7 @@
 
    <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} />
 
-   <!-- TODO: 12-20-2021 8:52 AM - Add link when machine is done -->
-   <Select bind:value={compType} label="Compensation">
-      {#each gTables.compensation as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
-
-   <InputNumber value={slingWeight} label="Total Weight" {metric} readonly type="weight" />
+   <InputNumber value={slingWeight} label="Total Weight" {metric} readonly step="0.01" type="weight" />
 </Fieldset>
 
 <Fieldset title="Steel">

@@ -102,27 +102,18 @@
 
       if (material === 'Wood') {
          delete moduleData.steel;
-
-         if (project.modules.platform.steel) {
-            delete project.modules.platform.steel;
-         }
       }
 
       if (doorQty === 1) {
          delete globalData.doors.door2;
-         delete moduleData.doors.door2;
 
          if (project.globals.doors) {
             delete project.globals.doors.door2;
          }
-
-         if (project.modules.platform.doors) {
-            delete project.modules.platform.doors.door2;
-         }
       }
 
       project.globals = { ...project.globals, ...globalData };
-      project.modules.platform = { ...project.modules.platform, ...moduleData };
+      project.modules.platform = moduleData;
    };
 
    // Methods
