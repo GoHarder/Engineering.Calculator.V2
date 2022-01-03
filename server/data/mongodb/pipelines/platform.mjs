@@ -51,6 +51,6 @@ export const getChannel = (steelType) => {
       },
       { $sort: { _specialSort: 1, _nameSort: 1 } },
       { $unset: ['_nameSort', '_specialSort', '_stockStatusSort'] },
-      { $project: { _id: 0, area: 0, flangeThickness: 0, gage: 0, inertiaY: 0, material: 0, modulusY: 0, shape: 0, webThickness: 0 } },
+      { $project: { _id: 0, area: 0, flangeThickness: 0, gage: 0, inertiaY: 0, material: 0, modulusY: 0, shape: 0 } },
    ];
 };
