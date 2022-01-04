@@ -43,6 +43,13 @@
       const moduleData = {
          dbg,
          equipment: {
+            balanceWeight: {
+               weight: balanceWeight,
+               railToBalance,
+               balanceLocation,
+               o_balanceWeight,
+            },
+
             carTopWeight,
             doorOperatorWeight,
             miscWeight,
@@ -70,11 +77,21 @@
          },
          steel: {
             bottomChannel: botChannel,
+            braceQty,
+            bufferBlockUp,
+            bufferBlockUpLength,
             cornerPostBrace,
+            plateMounting,
+            safetyBlockUp,
+            safetyBlockUpLength,
             sheaveChannel,
             sheaveChannelLength,
+            spacerLength,
             stileChannel,
+            strikePlateOffset,
+            strikePlateQty,
             topChannel,
+            o_braceQty,
          },
          stilesBackToBack,
          underBeamHeight,
@@ -97,8 +114,16 @@
          delete moduleData.equipment.shoe.weight;
       }
 
-      if (!cornerPost) {
-         delete moduleData.steel.cornerPostBrace;
+      if (!cornerPost) delete moduleData.steel.cornerPostBrace;
+
+      if (sheaveConfig !== 'parallelUnderslung') delete moduleData.steel.plateMounting;
+
+      if (sheaveConfig !== 'diagonalUnderslung') {
+         delete moduleData.steel.spacerLength;
+         delete moduleData.steel.safetyBlockUp;
+         delete moduleData.steel.safetyBlockUpLength;
+         delete moduleData.steel.bufferBlockUp;
+         delete moduleData.steel.bufferBlockUpLength;
       }
 
       project.globals = { ...project.globals, ...globalData };
@@ -183,7 +208,6 @@
    // - Saved
 
    // -- Globals
-
    let apta = globals?.apta ?? false;
    let cabWeight = globals?.cab?.weight ?? 0;
    let cabWidth = globals?.cab?.width ?? 0;
@@ -241,6 +265,11 @@
    let shoeModel = module?.equipment?.shoe?.model ?? 'Other';
    let shoeWeight = module?.equipment?.shoe?.weight ?? 0;
 
+   let balanceWeight = module?.equipment?.balanceWeight?.weight ?? 0;
+   let railToBalance = module?.equipment?.balanceWeight?.railToBalance ?? 0;
+   let balanceLocation = module?.equipment?.balanceWeight?.balanceLocation ?? 1;
+   let o_balanceWeight = module?.equipment?.balanceWeight?.o_balanceWeight ?? false;
+
    // -- Steel
    let botChannel = module?.steel?.bottomChannel ?? '';
    let cornerPostBrace = module?.steel?.cornerPostBrace ?? '';
@@ -250,29 +279,26 @@
    let topChannel = module?.steel?.topChannel ?? '';
 
    // -- Strike Plates
-   let strikePlateQty = 1;
-   let strikePlateOffset = 0;
+   let strikePlateOffset = module?.steel?.strikePlateOffset ?? 0;
+   let strikePlateQty = module?.steel?.strikePlateQty ?? 1;
 
    // -- Braces
-   let braceQty = 0;
-   let braceQtyCalc = 4;
-   let o_braceQty = false;
+   let braceQty = module?.steel?.braceQty ?? 0;
+   let o_braceQty = module?.steel?.o_braceQty ?? false;
 
-   // NOTE: Threw these for busy work
-   let balanceWeight = 0;
-   let railToBalance = 0;
-   let balanceLocation = 1;
-   let o_balanceWeight = false;
+   // -- Parallel Underslung
+   let plateMounting = module?.steel?.plateMounting ?? '';
 
-   let plateMounting = '';
-   let spacerLength = 0;
-   let safetyBlockUp = '';
-   let safetyBlockUpLength = 0;
-   let bufferBlockUp = '';
-   let bufferBlockUpLength = 0;
+   // -- Diagonal Underslung
+   let bufferBlockUp = module?.steel?.bufferBlockUp ?? '';
+   let bufferBlockUpLength = module?.steel?.bufferBlockUpLength ?? 0;
+   let safetyBlockUp = module?.steel?.safetyBlockUp ?? '';
+   let safetyBlockUpLength = module?.steel?.safetyBlockUpLength ?? 0;
+   let spacerLength = module?.steel?.spacerLength ?? 0;
 
    // - Calculated
    let balanceWeightCalc = 0;
+   let braceQtyCalc = 4;
    let frontToBalance = 0;
    let sheaveMountingWeight = 0;
 
@@ -520,230 +546,245 @@
    });
 </script>
 
-<Fieldset title="Globals">
-   <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} readonly type="weight" />
+<div class="container">
+   <Fieldset title="Globals">
+      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} readonly type="weight" />
 
-   <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} readonly type="speed" />
+      <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} readonly type="speed" />
 
-   <Input value={loadingValue} label="Loading" link="/Project/Requirements" readonly />
+      <Input value={loadingValue} label="Loading" link="/Project/Requirements" readonly />
 
-   <Input value="{roping}:1" label="Roping" link="/Project/Requirements" readonly />
-</Fieldset>
-
-<Fieldset title="Platform">
-   <InputLength bind:value={platformWidth} link={SlingLinks.get('platformWidth')} label="Width" {metric} />
-
-   <InputLength bind:value={platformDepth} link={SlingLinks.get('platformDepth')} label="Depth" {metric} />
-
-   <InputLength bind:value={platformFrontToRail} link={SlingLinks.get('platformFrontToRail')} label="Front To Rail" {metric} />
-
-   <InputLength bind:value={platformThickness} label="Thickness" link={SlingLinks.get('platformThickness')} {metric} />
-
-   <InputNumber bind:value={platformWeight} label="Weight" link={SlingLinks.get('platformWeight')} {metric} step="0.1" type="weight" />
-</Fieldset>
-
-<Fieldset title="Cab">
-   <InputLength bind:value={cabWidth} label="Width" link={SlingLinks.get('cabWidth')} {metric} />
-
-   <InputNumber bind:value={cabWeight} label="Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
-</Fieldset>
-
-{#if roping > 1}
-   <!-- TODO: 12-20-2021 9:28 AM - Add link when machine is done -->
-   <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} {metric} />
-
-   <Fieldset title="Sheaves">
-      <InputNumber bind:value={sheaveQty} label="Quantity" />
-
-      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
-         {#each sheaveOptions as { displayName, disabled, name } (name)}
-            <Option {disabled} value={name}>{displayName}</Option>
-         {/each}
-      </Select>
-
-      {#if sheaveQty > 1}
-         <Select bind:value={sheaveArrangement} label="Arrangement">
-            <Option value="Parallel">Parallel</Option>
-            <Option value="Diagonal">Diagonal</Option>
-         </Select>
-
-         <Select bind:value={sheaveLocation} label="Mounting">
-            <Option value="Overslung">Overslung</Option>
-            <Option value="Underslung">Underslung</Option>
-         </Select>
-
-         <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
-            <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
-         </InputImg>
-
-         {#if sheaveConfig === 'parallelUnderslung'}
-            <InputLength bind:value={railToBalance} label="Rail To Sheaves" {metric} />
-
-            <Select bind:value={balanceLocation} label="Sheave Location" type="number">
-               <Option value="1">Behind the Rail</Option>
-               <Option value="-1">Front of the Rail</Option>
-            </Select>
-         {/if}
-      {/if}
+      <Input value="{roping}:1" label="Roping" link="/Project/Requirements" readonly />
    </Fieldset>
-{/if}
 
-<Fieldset title="Equipment">
-   <InputNumber bind:value={carTopWeight} label="Car Top Weight" {metric} type="weight" />
+   <Fieldset title="Platform">
+      <InputLength bind:value={platformWidth} link={SlingLinks.get('platformWidth')} label="Width" {metric} />
 
-   <InputNumber bind:value={doorOperatorWeight} label="Door Operator Weight" {metric} type="weight" />
+      <InputLength bind:value={platformDepth} link={SlingLinks.get('platformDepth')} label="Depth" {metric} />
 
-   <InputNumber bind:value={miscWeight} label="Misc. Weight" {metric} type="weight" />
+      <InputLength bind:value={platformFrontToRail} link={SlingLinks.get('platformFrontToRail')} label="Front To Rail" {metric} />
 
-   <InputNumber
-      bind:value={balanceWeight}
-      bind:override={o_balanceWeight}
-      label="Balance Weight"
-      calc={balanceWeightCalc}
-      invalid={balanceWeightRows > 2}
-      step={0.01}
-      {metric}
-      type="weight"
-   >
-      <svelte:fragment slot="helperText">
-         <HelperText validation>Max Balance Weights {round(rowBalanceWeight * 2, 2)}lbs</HelperText>
-      </svelte:fragment>
-   </InputNumber>
+      <InputLength bind:value={platformThickness} label="Thickness" link={SlingLinks.get('platformThickness')} {metric} />
 
-   <InputNumber value={balanceWeightRows} label="Balance Weight Rows" invalid={balanceWeightRows > 2} readonly>
-      <svelte:fragment slot="helperText">
-         <HelperText validation>Platform Can Hold 2 Rows</HelperText>
-      </svelte:fragment>
-   </InputNumber>
+      <InputNumber bind:value={platformWeight} label="Weight" link={SlingLinks.get('platformWeight')} {metric} step="0.1" type="weight" />
+   </Fieldset>
+</div>
 
-   {#if ['12#', '15#'].includes(railSize)}
-      <Checkbox bind:checked={railLock} label="Rail Locks" />
-   {/if}
+<div class="container">
+   <Fieldset title="Cab">
+      <InputLength bind:value={cabWidth} label="Width" link={SlingLinks.get('cabWidth')} {metric} />
 
-   <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
+      <InputNumber bind:value={cabWeight} label="Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
+   </Fieldset>
+</div>
 
-   <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
+<div class="container">
+   {#if roping > 1}
+      <!-- TODO: 12-20-2021 9:28 AM - Add link when machine is done -->
+      <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} {metric} />
 
-   <!-- TODO: 12-20-2021 8:52 AM - Add link when machine is done -->
-   <Select bind:value={compType} label="Compensation">
-      {#each gTables.compensation as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
+      <Fieldset title="Sheaves">
+         <InputNumber bind:value={sheaveQty} label="Quantity" />
 
-   {#if compType !== 'None'}
-      <InputNumber bind:value={compWeight} label="Compensation Weight" step={0.01} {metric} type="weight" />
-   {/if}
-
-   <InputNumber value={carWeight} label="Car Weight" {metric} readonly step="0.01" type="weight" />
-</Fieldset>
-
-<Fieldset title="Properties">
-   <Select bind:value={slingModel} bind:selected={modelObj} label="Model" options={modelOptions}>
-      {#each modelOptions as { disabled, name } (name)}
-         <Option {disabled} value={name}>{name}</Option>
-      {/each}
-   </Select>
-
-   <Checkbox bind:checked={apta} label="APTA" link={SlingLinks.get('apta')} />
-
-   <Select bind:value={railSize} label="Rail Size">
-      {#each gTables.railSizes as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
-
-   <InputLength bind:value={dbg} label="D.B.G." {metric} />
-
-   <InputLength bind:value={stilesBackToBack} bind:override={o_stilesBackToBack} label="Back to Back of Stiles" calc={stilesBackToBackCalc} {metric} />
-
-   <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} />
-
-   <InputNumber value={slingWeight} label="Total Weight" {metric} readonly step="0.01" type="weight" />
-</Fieldset>
-
-<Fieldset title="Steel">
-   <Select bind:value={topChannel} bind:selected={topChannelObj} label="Top Channels" options={topChannelOpts}>
-      {#if modelObj?.top !== null}
-         <Option value={modelObj.top}>{modelObj.top}</Option>
-      {:else}
-         <StockStatusOptions options={topChannelOpts} />
-      {/if}
-   </Select>
-
-   <Select bind:value={stileChannel} bind:selected={stileChannelObj} label="Stiles" options={stileOptions}>
-      {#if modelObj?.stiles?.length === 1}
-         <Option value={modelObj?.stiles[0].name}>{modelObj?.stiles[0].name}</Option>
-      {:else}
-         <StockStatusOptions options={stileOptions} />
-      {/if}
-   </Select>
-
-   <Select bind:value={botChannel} bind:selected={botChannelObj} label="Bottom Channels" options={botChannelOpts}>
-      {#if modelObj?.bottom !== null}
-         <Option value={modelObj.bottom}>{modelObj.bottom}</Option>
-      {:else}
-         <StockStatusOptions options={botChannelOpts} />
-      {/if}
-   </Select>
-
-   {#if sheaveChannelSx > 0}
-      <Select bind:value={sheaveChannel} bind:selected={sheaveChannelObj} label={sheaveChannelLabel} options={sheaveChannelOpts}>
-         <StockStatusOptions options={sheaveChannelOpts} />
-      </Select>
-
-      {#if sheaveConfig === 'parallelUnderslung'}
-         <Select bind:value={sheaveMounting} label="Outer Sheave Mounting">
-            <Option value="Support Plate">Support Plate</Option>
-            <Option value="Channel">Channel</Option>
+         <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
+            {#each sheaveOptions as { displayName, disabled, name } (name)}
+               <Option {disabled} value={name}>{displayName}</Option>
+            {/each}
          </Select>
 
-         {#if sheaveMounting === 'Support Plate'}
-            <Select bind:value={plateMounting} bind:selected={plateMountingObj} label="Plate Mounting" options={tables.plateMounting}>
-               {#each tables.plateMounting as { name } (name)}
-                  <Option value={name}>{name}</Option>
-               {/each}
+         {#if sheaveQty > 1}
+            <Select bind:value={sheaveArrangement} label="Arrangement">
+               <Option value="Parallel">Parallel</Option>
+               <Option value="Diagonal">Diagonal</Option>
             </Select>
+
+            <Select bind:value={sheaveLocation} label="Mounting">
+               <Option value="Overslung">Overslung</Option>
+               <Option value="Underslung">Underslung</Option>
+            </Select>
+
+            <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
+               <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
+            </InputImg>
+
+            {#if sheaveConfig === 'parallelUnderslung'}
+               <InputLength bind:value={railToBalance} label="Rail To Sheaves" {metric} />
+
+               <Select bind:value={balanceLocation} label="Sheave Location" type="number">
+                  <Option value="1">Behind the Rail</Option>
+                  <Option value="-1">Front of the Rail</Option>
+               </Select>
+            {/if}
          {/if}
-      {:else}
-         <InputLength bind:value={sheaveChannelLength} label="Sheave Channel Length" {metric} />
-      {/if}
-
-      {#if sheaveConfig === 'diagonalUnderslung'}
-         <InputLength bind:value={spacerLength} label="Channel Spacer Length" {metric} />
-
-         <Select bind:value={safetyBlockUp} bind:selected={safetyBlockUpObj} label="Safety Block Up" options={channels}>
-            <StockStatusOptions options={channels} />
-         </Select>
-
-         <InputLength bind:value={safetyBlockUpLength} label="Safety Block Up Length" {metric} />
-
-         <Select bind:value={bufferBlockUp} bind:selected={bufferBlockUpObj} label="Buffer Block Up" options={channels}>
-            <StockStatusOptions options={channels} />
-         </Select>
-
-         <InputLength bind:value={bufferBlockUpLength} label="Buffer Block Up Length" {metric} />
-      {/if}
+      </Fieldset>
    {/if}
 
-   {#if cornerPost}
-      <Select bind:value={cornerPostBrace} bind:selected={cornerPostBraceObj} label="Brace Steel" options={tables.cornerPostBrace}>
-         {#each tables.cornerPostBrace as { name } (name)}
+   <Fieldset title="Equipment">
+      <InputNumber bind:value={carTopWeight} label="Car Top Weight" {metric} type="weight" />
+
+      <InputNumber bind:value={doorOperatorWeight} label="Door Operator Weight" {metric} type="weight" />
+
+      <InputNumber bind:value={miscWeight} label="Misc. Weight" {metric} step="0.01" type="weight" />
+
+      <InputNumber
+         bind:value={balanceWeight}
+         bind:override={o_balanceWeight}
+         label="Balance Weight"
+         calc={balanceWeightCalc}
+         invalid={balanceWeightRows > 2}
+         step={0.01}
+         {metric}
+         type="weight"
+      >
+         <svelte:fragment slot="helperText">
+            <HelperText validation>Max Balance Weights {round(rowBalanceWeight * 2, 2)}lbs</HelperText>
+         </svelte:fragment>
+      </InputNumber>
+
+      <InputNumber value={balanceWeightRows} label="Balance Weight Rows" invalid={balanceWeightRows > 2} readonly>
+         <svelte:fragment slot="helperText">
+            <HelperText validation>Platform Can Hold 2 Rows</HelperText>
+         </svelte:fragment>
+      </InputNumber>
+
+      {#if ['12#', '15#'].includes(railSize)}
+         <Checkbox bind:checked={railLock} label="Rail Locks" />
+      {/if}
+
+      <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
+
+      <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
+
+      <!-- TODO: 12-20-2021 8:52 AM - Add link when machine is done -->
+      <Select bind:value={compType} label="Compensation">
+         {#each gTables.compensation as { name } (name)}
             <Option value={name}>{name}</Option>
          {/each}
       </Select>
-   {:else}
-      <InputNumber bind:value={braceQty} bind:override={o_braceQty} label="Brace Quantity" calc={braceQtyCalc} />
-   {/if}
 
-   <InputNumber bind:value={strikePlateQty} label="Strike Plate Quantity" min={1} max={10} />
+      {#if compType !== 'None'}
+         <InputNumber bind:value={compWeight} label="Compensation Weight" step={0.01} {metric} type="weight" />
+      {/if}
 
-   {#if strikePlateQty > 1}
-      <InputImg src="/public/img/sling/strike-plate.svg" alt="Strike Plate Offset" width="300">
-         <InputLength bind:value={strikePlateOffset} label="Strike Plate Offset" {metric} />
-      </InputImg>
-   {/if}
-</Fieldset>
+      <InputNumber value={carWeight} label="Car Weight" {metric} readonly step="0.01" type="weight" />
+   </Fieldset>
+</div>
 
-<style>
+<div class="container">
+   <Fieldset title="Properties">
+      <Select bind:value={slingModel} bind:selected={modelObj} label="Model" options={modelOptions}>
+         {#each modelOptions as { disabled, name } (name)}
+            <Option {disabled} value={name}>{name}</Option>
+         {/each}
+      </Select>
+
+      <Checkbox bind:checked={apta} label="APTA" link={SlingLinks.get('apta')} />
+
+      <Select bind:value={railSize} label="Rail Size">
+         {#each gTables.railSizes as { name } (name)}
+            <Option value={name}>{name}</Option>
+         {/each}
+      </Select>
+
+      <InputLength bind:value={dbg} label="D.B.G." {metric} />
+
+      <InputLength bind:value={stilesBackToBack} bind:override={o_stilesBackToBack} label="Back to Back of Stiles" calc={stilesBackToBackCalc} {metric} />
+
+      <InputLength bind:value={underBeamHeight} label="Under Beam Height" {metric} />
+
+      <InputNumber value={slingWeight} label="Total Weight" {metric} readonly step="0.01" type="weight" />
+   </Fieldset>
+
+   <Fieldset title="Steel">
+      <Select bind:value={topChannel} bind:selected={topChannelObj} label="Top Channels" options={topChannelOpts}>
+         {#if modelObj?.top !== null}
+            <Option value={modelObj.top}>{modelObj.top}</Option>
+         {:else}
+            <StockStatusOptions options={topChannelOpts} />
+         {/if}
+      </Select>
+
+      <Select bind:value={stileChannel} bind:selected={stileChannelObj} label="Stiles" options={stileOptions}>
+         {#if modelObj?.stiles?.length === 1}
+            <Option value={modelObj?.stiles[0].name}>{modelObj?.stiles[0].name}</Option>
+         {:else}
+            <StockStatusOptions options={stileOptions} />
+         {/if}
+      </Select>
+
+      <Select bind:value={botChannel} bind:selected={botChannelObj} label="Bottom Channels" options={botChannelOpts}>
+         {#if modelObj?.bottom !== null}
+            <Option value={modelObj.bottom}>{modelObj.bottom}</Option>
+         {:else}
+            <StockStatusOptions options={botChannelOpts} />
+         {/if}
+      </Select>
+
+      {#if sheaveChannelSx > 0}
+         <Select bind:value={sheaveChannel} bind:selected={sheaveChannelObj} label={sheaveChannelLabel} options={sheaveChannelOpts}>
+            <StockStatusOptions options={sheaveChannelOpts} />
+         </Select>
+
+         {#if sheaveConfig === 'parallelUnderslung'}
+            <Select bind:value={sheaveMounting} label="Outer Sheave Mounting">
+               <Option value="Support Plate">Support Plate</Option>
+               <Option value="Channel">Channel</Option>
+            </Select>
+
+            {#if sheaveMounting === 'Support Plate'}
+               <Select bind:value={plateMounting} bind:selected={plateMountingObj} label="Plate Mounting" options={tables.plateMounting}>
+                  {#each tables.plateMounting as { name } (name)}
+                     <Option value={name}>{name}</Option>
+                  {/each}
+               </Select>
+            {/if}
+         {:else}
+            <InputLength bind:value={sheaveChannelLength} label="Sheave Channel Length" {metric} />
+         {/if}
+
+         {#if sheaveConfig === 'diagonalUnderslung'}
+            <InputLength bind:value={spacerLength} label="Channel Spacer Length" {metric} />
+
+            <Select bind:value={safetyBlockUp} bind:selected={safetyBlockUpObj} label="Safety Block Up" options={channels}>
+               <StockStatusOptions options={channels} />
+            </Select>
+
+            <InputLength bind:value={safetyBlockUpLength} label="Safety Block Up Length" {metric} />
+
+            <Select bind:value={bufferBlockUp} bind:selected={bufferBlockUpObj} label="Buffer Block Up" options={channels}>
+               <StockStatusOptions options={channels} />
+            </Select>
+
+            <InputLength bind:value={bufferBlockUpLength} label="Buffer Block Up Length" {metric} />
+         {/if}
+      {/if}
+
+      {#if cornerPost}
+         <Select bind:value={cornerPostBrace} bind:selected={cornerPostBraceObj} label="Brace Steel" options={tables.cornerPostBrace}>
+            {#each tables.cornerPostBrace as { name } (name)}
+               <Option value={name}>{name}</Option>
+            {/each}
+         </Select>
+      {:else}
+         <InputNumber bind:value={braceQty} bind:override={o_braceQty} label="Brace Quantity" calc={braceQtyCalc} />
+      {/if}
+
+      <InputNumber bind:value={strikePlateQty} label="Strike Plate Quantity" min={1} max={10} />
+
+      {#if strikePlateQty > 1}
+         <InputImg src="/public/img/sling/strike-plate.svg" alt="Strike Plate Offset" width="300">
+            <InputLength bind:value={strikePlateOffset} label="Strike Plate Offset" {metric} />
+         </InputImg>
+      {/if}
+   </Fieldset>
+</div>
+
+<style lang="scss">
+   .container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin: 0.25em;
+      gap: 0.25em;
+   }
 </style>
