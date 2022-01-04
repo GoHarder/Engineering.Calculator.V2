@@ -19,6 +19,7 @@
    export let metric = false;
    export let override = true;
    export let readonly = undefined;
+   export let suffix = '';
    export let type = undefined;
    export let value = undefined;
 
@@ -27,14 +28,14 @@
    const id = `input-${randomId()}`;
 
    const types = {
-      _default: { suffix: '', mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
-      area: { suffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 6), toDisplay: (x) => round(x / 144, 2) },
-      pressure: { suffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 6), toDisplay: (x) => round(x * 144, 2) },
-      speed: { suffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, mRound: 4, toValue: (x) => x, toDisplay: (x) => x },
-      weight: { suffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, mRound: 1, toValue: (x) => x, toDisplay: (x) => x },
+      _default: { iSuffix: suffix, mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
+      area: { iSuffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 6), toDisplay: (x) => round(x / 144, 2) },
+      pressure: { iSuffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 6), toDisplay: (x) => round(x * 144, 2) },
+      speed: { iSuffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, mRound: 4, toValue: (x) => x, toDisplay: (x) => x },
+      weight: { iSuffix: 'lb', mSuffix: 'kg', mConvert: 0.453592, mRound: 1, toValue: (x) => x, toDisplay: (x) => x },
    };
 
-   const { suffix, mSuffix, mConvert, mRound, toValue, toDisplay } = types[type] || types._default;
+   const { iSuffix, mSuffix, mConvert, mRound, toValue, toDisplay } = types[type] || types._default;
 
    // Variables
    let displayValue = 0;
@@ -57,7 +58,7 @@
 
    $: spanClass = classList(['mdc-floating-label', value ? 'mdc-floating-label--float-above' : '']);
 
-   $: props = filterProps($$props, ['calc', 'fullWidth', 'invalid', 'label', 'link', 'metric', 'override', 'type', 'value']);
+   $: props = filterProps($$props, ['calc', 'fullWidth', 'invalid', 'label', 'link', 'metric', 'override', 'suffix', 'type', 'value']);
 
    $: if (!override && calc !== undefined) value = calc;
 
@@ -136,8 +137,8 @@
 
       <input value={displayValue} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
-      {#if suffix}
-         <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{suffix}</span>
+      {#if iSuffix}
+         <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{iSuffix}</span>
       {/if}
 
       {#if link}
