@@ -12,7 +12,7 @@
    // Components
    import { Fieldset, InputImg, RopesInput, SafetyInput, StockStatusOptions, ShoeInput } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
-   import { Input, InputNumber, InputLength } from 'components/material/input';
+   import { HelperText, Input, InputNumber, InputLength } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
 
    // Stores
@@ -42,13 +42,24 @@
 
       const moduleData = {
          dbg,
+         equipment: {
+            carTopWeight,
+            doorOperatorWeight,
+            miscWeight,
+            railLock,
+            safety: {
+               height: safetyHeight,
+               model: safetyModel,
+               weight: safetyWeight,
+            },
+            shoe: {
+               height: shoeHeight,
+               model: shoeModel,
+               weight: shoeWeight,
+            },
+         },
          model: slingModel,
          railSize,
-         safety: {
-            height: safetyHeight,
-            model: safetyModel,
-            weight: safetyWeight,
-         },
          sheaves: {
             arrangement: sheaveArrangement,
             location: sheaveLocation,
@@ -57,25 +68,37 @@
             offset: sheaveOffset,
             qty: sheaveQty,
          },
-         shoe: {
-            height: shoeHeight,
-            model: shoeModel,
-            weight: shoeWeight,
+         steel: {
+            bottomChannel: botChannel,
+            cornerPostBrace,
+            sheaveChannel,
+            sheaveChannelLength,
+            stileChannel,
+            topChannel,
          },
+         stilesBackToBack,
+         underBeamHeight,
+         o_stilesBackToBack,
       };
 
       if (roping === 1) {
          delete moduleData.sheaves;
+         delete moduleData.steel.sheaveChannel;
+         delete moduleData.steel.sheaveChannelLength;
       }
 
       if (safetyModel !== 'Other') {
-         delete moduleData.safety.height;
-         delete moduleData.safety.weight;
+         delete moduleData.equipment.safety.height;
+         delete moduleData.equipment.safety.weight;
       }
 
       if (shoeModel !== 'Other') {
-         delete moduleData.shoe.height;
-         delete moduleData.shoe.weight;
+         delete moduleData.equipment.shoe.height;
+         delete moduleData.equipment.shoe.weight;
+      }
+
+      if (!cornerPost) {
+         delete moduleData.steel.cornerPostBrace;
       }
 
       project.globals = { ...project.globals, ...globalData };
@@ -147,7 +170,7 @@
 
    // Constants
    const { globals, modules, metric } = project;
-   const { capacity, counterBalance, loading, roping, speed } = globals;
+   const { capacity, counterbalance, loading, roping, speed } = globals;
    const { type: loadingType, freight: freightClass } = loading;
    const { sling: module } = modules;
    const modulusOfElasticity = 29000000;
@@ -160,6 +183,7 @@
    // - Saved
 
    // -- Globals
+
    let apta = globals?.apta ?? false;
    let cabWeight = globals?.cab?.weight ?? 0;
    let cabWidth = globals?.cab?.width ?? 0;
@@ -169,6 +193,8 @@
    let door1Weight = globals?.doors?.door1?.weight ?? 0;
    let door2Weight = globals?.doors?.door2?.weight ?? 0;
    let platformDepth = globals?.platform?.depth ?? 0;
+   let platformFrontToRail = globals?.platform?.frontToRail ?? 0;
+   let platformIsolation = globals?.platform?.isolation ?? false;
    let platformThickness = globals?.platform?.thickness ?? 0;
    let platformWeight = globals?.platform?.weight ?? 0;
    let platformWidth = globals?.platform?.width ?? 0;
@@ -181,25 +207,15 @@
    let slingModel = module?.model ?? '';
 
    // -- Dimensions
-   let stilesBackToBack = 0;
-   let underBeamHeight = 114;
-   let o_stilesBackToBack = false;
+   let stilesBackToBack = module?.stilesBackToBack ?? 0;
+   let underBeamHeight = module?.underBeamHeight ?? 114;
+   let o_stilesBackToBack = module?.o_stilesBackToBack ?? false;
 
    // -- Ropes
    let ropePitch = globals?.rope?.pitch ?? 0;
    let ropeSize = globals?.rope?.size ?? 0.375;
    let ropeQty = globals?.rope?.qty ?? 4;
    let o_ropePitch = globals?.rope?.o_pitch ?? false;
-
-   // -- Safety
-   let safetyHeight = module?.safety?.height ?? 0;
-   let safetyModel = module?.safety?.model ?? 'Other';
-   let safetyWeight = module?.safety?.weight ?? 0;
-
-   // -- Shoe
-   let shoeHeight = module?.shoe?.height ?? 0;
-   let shoeModel = module?.shoe?.model ?? 'Other';
-   let shoeWeight = module?.shoe?.weight ?? 0;
 
    // -- Sheaves
    let sheaveArrangement = module?.sheaves?.arrangement ?? 'Parallel';
@@ -210,17 +226,28 @@
    let sheaveQty = module?.sheaves?.qty ?? 1;
 
    // -- Equipment
-   let carTopWeight = 150;
-   let doorOperatorWeight = door2Weight ? 300 : 150;
-   let miscWeight = 200;
-   let railLock = false;
+   let carTopWeight = module?.equipment?.carTopWeight ?? 150;
+   let doorOperatorWeight = module?.equipment?.doorOperatorWeight ?? door2Weight ? 300 : 150;
+   let miscWeight = module?.equipment?.miscWeight ?? 200;
+   let railLock = module?.equipment?.railLock ?? false;
+
+   // --- Safety
+   let safetyHeight = module?.equipment?.safety?.height ?? 0;
+   let safetyModel = module?.equipment?.safety?.model ?? 'Other';
+   let safetyWeight = module?.equipment?.safety?.weight ?? 0;
+
+   // --- Shoe
+   let shoeHeight = module?.equipment?.shoe?.height ?? 0;
+   let shoeModel = module?.equipment?.shoe?.model ?? 'Other';
+   let shoeWeight = module?.equipment?.shoe?.weight ?? 0;
 
    // -- Steel
-   let topChannel = '';
-   let botChannel = '';
-   let stileChannel = '';
-   let sheaveChannel = '';
-   let cornerPostBrace = '';
+   let botChannel = module?.steel?.bottomChannel ?? '';
+   let cornerPostBrace = module?.steel?.cornerPostBrace ?? '';
+   let sheaveChannel = module?.steel?.sheaveChannel ?? '';
+   let sheaveChannelLength = module?.steel?.sheaveChannelLength ?? 0;
+   let stileChannel = module?.steel?.stileChannel ?? '';
+   let topChannel = module?.steel?.topChannel ?? '';
 
    // -- Strike Plates
    let strikePlateQty = 1;
@@ -232,16 +259,22 @@
    let o_braceQty = false;
 
    // NOTE: Threw these for busy work
-   let slingWeight = 0;
-   let carWeight = 0;
    let balanceWeight = 0;
-   let rowBalanceWeight = 1;
    let railToBalance = 0;
    let balanceLocation = 1;
-   let sheaveChannelLength = 0;
-   let balanceWeightCalc = 0;
    let o_balanceWeight = false;
+
    let plateMounting = '';
+   let spacerLength = 0;
+   let safetyBlockUp = '';
+   let safetyBlockUpLength = 0;
+   let bufferBlockUp = '';
+   let bufferBlockUpLength = 0;
+
+   // - Calculated
+   let balanceWeightCalc = 0;
+   let frontToBalance = 0;
+   let sheaveMountingWeight = 0;
 
    // - UI
    let sheaveChannelLabel = 'Sheave Channels';
@@ -255,8 +288,11 @@
 
    // - Objects
    let botChannelObj = {};
+   let bufferBlockUpObj = {};
    let cornerPostBraceObj = {};
    let modelObj = { top: null, bottom: null };
+   let plateMountingObj = {};
+   let safetyBlockUpObj = {};
    let sheaveObj = {};
    let sheaveChannelObj = {};
    let stileChannelObj = {};
@@ -266,7 +302,7 @@
    // Contexts
    // Reactive Rules
    $: designCapacity = capacity * (apta ? 1.5 : 1);
-   $: cwtWeight = round(carWeight + capacity * counterBalance, 2);
+   $: cwtWeight = round(carWeight + capacity * counterbalance, 2);
    $: turningMoment = tables.turningMoment[freightClass](designCapacity, cabWidth);
    $: dimH = roundInc(shoeHeight * 2 + (railLock ? 2.5 : 0) + topShoePlate.thickness + stileLength + safetyHeight + botShoePlate.thickness);
 
@@ -319,7 +355,14 @@
    // - Stiles
    $: stileSy = round((turningMoment * underBeamHeight) / (4 * dimH * 14000), 2);
    $: stileIy = round((turningMoment * underBeamHeight ** 3) / (18 * modulusOfElasticity * dimH), 2);
-   $: stileLength = roundInc((topChannelObj?.depth ?? 0) + underBeamHeight + platformThickness + (botChannelObj?.depth ?? 0));
+   $: stileLength = roundInc(
+      (topChannelObj?.depth ?? 0) +
+         underBeamHeight +
+         platformThickness +
+         (botChannelObj?.depth ?? 0) +
+         (sheaveConfig === 'parallelUnderslung' ? sheaveChannel?.depth ?? 0 : 0) +
+         (sheaveConfig === 'diagonalUnderslung' ? bufferBlockUpChannel?.depth ?? 0 : 0)
+   );
    $: stileWeight = (stileChannelObj?.weight ?? 0) * stileLength * 2;
    $: stilesBackToBackCalc = dbg - 1.5;
    $: stileOptions = clone(modelObj?.stiles ?? []).map((channel) => {
@@ -354,6 +397,61 @@
    $: cornerPostBraceLength = roundInc(Math.sqrt(platformWidth ** 2 * platformDepth ** 2));
    $: braceAssemblyWeight = (cornerPost ? cornerPostBraceLength * cornerPostBraceObj.weight : 0) + braceWeight;
 
+   // - Parallel Underslung
+   $: reinforcementPlate1Weight = (sheaveChannelObj?.depth ?? 0) * 2 * 2.55;
+   $: outerSheaveChannelWeight = botChannelWeight / 2;
+   $: supoortPlate = botChannelLength * (['7T', '7T-SPL'].includes(slingModel) ? 1.025 : 1.167);
+   $: reinforcementPlate2Weight = 14;
+   $: plateMountingWeight = botChannelLength * (plateMountingObj?.weight ?? 0);
+   $: parallelUnderslungWeight =
+      sheaveMounting === 'Channel' ? outerSheaveChannelWeight : reinforcementPlate1Weight + supoortPlate + reinforcementPlate2Weight + plateMountingWeight;
+
+   // - Diagonal Underslung
+   $: channelSpacerWeight = spacerLength * (botChannelObj?.weight ?? 0) * 2;
+   $: safetyBlockUpWeight = safetyBlockUpLength * (safetyBlockUpObj?.weight ?? 0) * 2;
+   $: bufferBlockUpWeight = bufferBlockUpLength * (bufferBlockUpObj?.weight ?? 0) * 2;
+   $: diagonalUnderslungWeight = channelSpacerWeight + safetyBlockUpWeight + bufferBlockUpWeight;
+
+   // - Balance Weights
+   $: balanceChannelLength = roundInc(platformWidth - (platformIsolation ? 4 : 1));
+   $: balanceChannelWeight = round(balanceChannelLength * 0.9, 2);
+   $: balanceWeightMountLength = roundInc(balanceChannelLength - 1.9375);
+   $: balanceWeightQty = floor(balanceWeightMountLength / 3);
+   $: rowBalanceWeight = round(balanceChannelWeight + balanceWeightQty * 9, 2);
+   $: balanceWeightRows = ceil(balanceWeight / rowBalanceWeight);
+
+   // - Balance Moments
+   $: distributedMoment = round(distributedWeight * (platformDepth / 2), 2);
+   $: slingMoment = round(slingMomentWeight * platformFrontToRail, 2);
+   $: sheaveMountingMoment = (sheaveConfig === 'parallelUnderslung' ? parallelUnderslungWeight : 0) * ((sheaveObj?.rimWidth ?? 0) / 2 + 1 + frontToBalance);
+   $: door1Moment = (doorOperatorWeight / roping + door1Weight) * 9;
+   $: door2Moment = (doorOperatorWeight / 2 + door2Weight) * (platformDepth - 9);
+   // toeGuard1Moment = toeGuard1WEight * 0
+   $: toeGuard2Moment = toeGuard2Weight * platformDepth;
+   $: totalMoments = distributedMoment + slingMoment + sheaveMountingMoment + door1Moment + door2Moment + toeGuard2Moment;
+
+   // Assume r1 = 0 Then solve for r2
+   // r2 = Σfy / platformDepth
+   // r1 = unbalancedCarWeight - r2
+   $: r2 = round(totalMoments / platformDepth, 2);
+   $: r1 = round(unbalancedCarWeight - r2, 2);
+   $: backToBalance = platformDepth - frontToBalance;
+
+   // Positive number means its leaning forward
+   $: totalTorque = round(r1 * frontToBalance - r2 * backToBalance, 2);
+   $: balanceChannelLocation = totalTorque > 0 ? backToBalance - (door2Weight ? 9.625 : 4.125) : frontToBalance - 9.625;
+   $: requiredBalanceWeight = round(Math.abs(totalTorque) / balanceChannelLocation);
+
+   $: if (!cornerPost) {
+      if (requiredBalanceWeight < rowBalanceWeight) {
+         balanceWeightCalc = round(rowBalanceWeight, 2);
+      } else if (requiredBalanceWeight < rowBalanceWeight * 2) {
+         balanceWeightCalc = round(rowBalanceWeight * 2, 2);
+      } else {
+         balanceWeightCalc = round(requiredBalanceWeight, 2);
+      }
+   }
+
    // - Tie down slings
    $: if (slingModel === '6TS-TD-LD') {
       topChannel = 'C10X25';
@@ -366,6 +464,23 @@
    }
 
    // - Weights
+   $: switch (sheaveConfig) {
+      case 'parallelUnderslung':
+         sheaveMountingWeight = parallelUnderslungWeight;
+         frontToBalance = platformFrontToRail + railToBalance * balanceLocation;
+         break;
+
+      case 'diagonalUnderslung':
+         sheaveMountingWeight = diagonalUnderslungWeight;
+         frontToBalance = platformFrontToRail;
+         break;
+
+      default:
+         sheaveMountingWeight = sheaveChannelWeight;
+         frontToBalance = platformFrontToRail;
+         break;
+   }
+
    $: slingWeight = round(
       (topChannelWeight +
          stileWeight +
@@ -374,33 +489,25 @@
          (gusset?.weight ?? 0) * 4 +
          (strikePlate?.weight ?? 0) * strikePlateQty +
          compWeight +
-         // Rope Mounting Weight (carRoping === 1 ? 28 : sheaveChannelWeight)
+         (roping === 1 ? 28 : sheaveMountingWeight) +
          (slingModel === '6TS-TD-LD' ? 29.11 : 0) +
          (slingModel === '8TS-TD-LD' ? 278.639 : 0)) *
          1.03,
       2
    );
 
+   $: distributedWeight = platformWeight + cabWeight + carTopWeight + miscWeight + (sheaveObj?.weight ?? 0) * sheaveQty;
+
    $: unbalancedCarWeight = round(
-      slingWeight +
-         platformWeight +
-         cabWeight +
-         door1Weight +
-         door2Weight +
-         toeGuard1Weight +
-         toeGuard2Weight +
-         shoeWeight * 4 +
-         safetyWeight +
-         carTopWeight +
-         doorOperatorWeight +
-         (sheaveObj?.weight ?? 0) * sheaveQty +
-         miscWeight,
+      slingWeight + distributedWeight + door1Weight + door2Weight + toeGuard1Weight + toeGuard2Weight + shoeWeight * 4 + safetyWeight + doorOperatorWeight,
       2
    );
 
    $: carWeight = round(unbalancedCarWeight + balanceWeight, 2);
 
    $: overallWeight = carWeight + designCapacity;
+
+   $: slingMomentWeight = slingWeight - (sheaveConfig === 'parallelUnderslung' ? parallelUnderslungWeight : 0);
 
    // Events
    // Lifecycle
@@ -428,13 +535,17 @@
 
    <InputLength bind:value={platformDepth} link={SlingLinks.get('platformDepth')} label="Depth" {metric} />
 
+   <InputLength bind:value={platformFrontToRail} link={SlingLinks.get('platformFrontToRail')} label="Front To Rail" {metric} />
+
    <InputLength bind:value={platformThickness} label="Thickness" link={SlingLinks.get('platformThickness')} {metric} />
 
    <InputNumber bind:value={platformWeight} label="Weight" link={SlingLinks.get('platformWeight')} {metric} step="0.1" type="weight" />
+</Fieldset>
 
-   <InputLength bind:value={cabWidth} label="Cab Width" link={SlingLinks.get('cabWidth')} {metric} />
+<Fieldset title="Cab">
+   <InputLength bind:value={cabWidth} label="Width" link={SlingLinks.get('cabWidth')} {metric} />
 
-   <InputNumber bind:value={cabWeight} label="Cab Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
+   <InputNumber bind:value={cabWeight} label="Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
 </Fieldset>
 
 {#if roping > 1}
@@ -482,11 +593,28 @@
 
    <InputNumber bind:value={doorOperatorWeight} label="Door Operator Weight" {metric} type="weight" />
 
-   <InputNumber bind:value={miscWeight} label="Misc. Equipment Weight" {metric} type="weight" />
+   <InputNumber bind:value={miscWeight} label="Misc. Weight" {metric} type="weight" />
 
-   <InputNumber bind:value={balanceWeight} bind:override={o_balanceWeight} label="Balance Weight" calc={o_balanceWeight} step={0.01} {metric} type="weight" />
+   <InputNumber
+      bind:value={balanceWeight}
+      bind:override={o_balanceWeight}
+      label="Balance Weight"
+      calc={balanceWeightCalc}
+      invalid={balanceWeightRows > 2}
+      step={0.01}
+      {metric}
+      type="weight"
+   >
+      <svelte:fragment slot="helperText">
+         <HelperText validation>Max Balance Weights {round(rowBalanceWeight * 2, 2)}lbs</HelperText>
+      </svelte:fragment>
+   </InputNumber>
 
-   <InputNumber value={ceil(balanceWeight / rowBalanceWeight)} label="Balance Weight Rows" readonly />
+   <InputNumber value={balanceWeightRows} label="Balance Weight Rows" invalid={balanceWeightRows > 2} readonly>
+      <svelte:fragment slot="helperText">
+         <HelperText validation>Platform Can Hold 2 Rows</HelperText>
+      </svelte:fragment>
+   </InputNumber>
 
    {#if ['12#', '15#'].includes(railSize)}
       <Checkbox bind:checked={railLock} label="Rail Locks" />
@@ -543,7 +671,7 @@
       {/if}
    </Select>
 
-   <Select bind:value={stileChannel} label="Stiles">
+   <Select bind:value={stileChannel} bind:selected={stileChannelObj} label="Stiles" options={stileOptions}>
       {#if modelObj?.stiles?.length === 1}
          <Option value={modelObj?.stiles[0].name}>{modelObj?.stiles[0].name}</Option>
       {:else}
@@ -551,7 +679,7 @@
       {/if}
    </Select>
 
-   <Select bind:value={botChannel} label="Bottom Channels">
+   <Select bind:value={botChannel} bind:selected={botChannelObj} label="Bottom Channels" options={botChannelOpts}>
       {#if modelObj?.bottom !== null}
          <Option value={modelObj.bottom}>{modelObj.bottom}</Option>
       {:else}
@@ -571,7 +699,7 @@
          </Select>
 
          {#if sheaveMounting === 'Support Plate'}
-            <Select bind:value={plateMounting} label="Plate Mounting">
+            <Select bind:value={plateMounting} bind:selected={plateMountingObj} label="Plate Mounting" options={tables.plateMounting}>
                {#each tables.plateMounting as { name } (name)}
                   <Option value={name}>{name}</Option>
                {/each}
@@ -579,6 +707,22 @@
          {/if}
       {:else}
          <InputLength bind:value={sheaveChannelLength} label="Sheave Channel Length" {metric} />
+      {/if}
+
+      {#if sheaveConfig === 'diagonalUnderslung'}
+         <InputLength bind:value={spacerLength} label="Channel Spacer Length" {metric} />
+
+         <Select bind:value={safetyBlockUp} bind:selected={safetyBlockUpObj} label="Safety Block Up" options={channels}>
+            <StockStatusOptions options={channels} />
+         </Select>
+
+         <InputLength bind:value={safetyBlockUpLength} label="Safety Block Up Length" {metric} />
+
+         <Select bind:value={bufferBlockUp} bind:selected={bufferBlockUpObj} label="Buffer Block Up" options={channels}>
+            <StockStatusOptions options={channels} />
+         </Select>
+
+         <InputLength bind:value={bufferBlockUpLength} label="Buffer Block Up Length" {metric} />
       {/if}
    {/if}
 
