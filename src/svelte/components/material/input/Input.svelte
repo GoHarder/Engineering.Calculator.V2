@@ -41,6 +41,8 @@
 
    $: props = filterProps($$props, ['fullWidth', 'label', 'link', 'prefix', 'suffix', 'type', 'value']);
 
+   $: if (link) readonly = true;
+
    // Events
    const onChange = (event) => {
       switch (type) {

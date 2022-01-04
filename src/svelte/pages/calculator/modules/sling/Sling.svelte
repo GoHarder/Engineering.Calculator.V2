@@ -548,13 +548,13 @@
 
 <div class="container">
    <Fieldset title="Globals">
-      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} readonly type="weight" />
+      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
-      <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} readonly type="speed" />
+      <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} type="speed" />
 
-      <Input value={loadingValue} label="Loading" link="/Project/Requirements" readonly />
+      <Input value={loadingValue} label="Loading" link="/Project/Requirements" />
 
-      <Input value="{roping}:1" label="Roping" link="/Project/Requirements" readonly />
+      <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
    </Fieldset>
 
    <Fieldset title="Platform">
