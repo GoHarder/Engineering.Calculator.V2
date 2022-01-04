@@ -24,6 +24,16 @@
    export let fullWidth = false;
 
    // Methods
+   let update = (value) => {
+      if (!Select) return;
+      Select.value = `${value}`;
+
+      if (options === undefined) return;
+      options = options.sort((a, b) => Select.menuItemValues.indexOf(a.name) - Select.menuItemValues.indexOf(b.name));
+
+      selected = options[Select.selectedIndex] || {};
+   };
+
    // Constants
    const events = forwardEvents(get_current_component(), ['MDCSelect:change']);
    const id = `select-${randomId()}`;
@@ -57,13 +67,11 @@
 
    $: if (!override && calc !== undefined) value = calc;
 
-   $: if (Select && value) {
-      Select.value = `${value}`;
-   }
+   $: if (value) update(value);
 
-   $: if (menuItemValues && Select) {
+   $: if (Select && menuItemValues) {
       Select.layoutOptions();
-      Select.value = `${value}`;
+      update(value);
    }
 
    // Events
@@ -78,8 +86,6 @@
       }
 
       override = calc !== value;
-
-      if (options) selected = options[event.detail.index];
    };
 
    const onLink = () => history.pushState({ path: link }, '');
