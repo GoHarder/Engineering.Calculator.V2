@@ -80,6 +80,7 @@
    let code;
    let counterbalance;
    let freightClass;
+   let globals;
    let ibcCategory;
    let ip;
    let loadingType;
@@ -98,7 +99,7 @@
 
    // Subscriptions
    const clearProject = projectStore.subscribe((store) => {
-      const { globals } = store;
+      globals = store.globals;
 
       capacity = globals?.capacity ?? 0;
       code = globals?.code ?? 'ASME A17-1 2010';
@@ -131,7 +132,7 @@
    // Events
    // Lifecycle
    onDestroy(() => {
-      const globals = {
+      const update = {
          capacity,
          code,
          counterbalance: round(counterbalance / 100, 3),
@@ -156,10 +157,12 @@
       };
 
       if (!useIbc) {
-         delete globals.seismic.category;
-         delete globals.seismic.ip;
-         delete globals.seismic.sds;
+         delete update.seismic.category;
+         delete update.seismic.ip;
+         delete update.seismic.sds;
       }
+
+      globals = { ...globals, ...update };
 
       projectStore.update({ globals });
       clearProject();
