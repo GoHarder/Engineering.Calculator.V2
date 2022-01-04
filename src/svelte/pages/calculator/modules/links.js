@@ -16,6 +16,9 @@ const inheritance = {
    platformWidth: ['platform', 'sling'],
    toeGuard1Weight: ['platform', 'sling'],
    toeGuard2Weight: ['platform', 'sling'],
+   // Sling
+   carWeight: ['sling', 'counterweight'],
+   cwtWeight: ['sling', 'counterweight'],
 };
 
 class LinkTree {
@@ -47,4 +50,5 @@ class LinkTree {
    }
 }
 
+export const CounterweightLinks = new LinkTree('counterweight');
 export const SlingLinks = new LinkTree('sling');

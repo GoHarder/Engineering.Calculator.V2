@@ -7,7 +7,7 @@
 
    import * as gTables from '../tables';
    import * as tables from './tables';
-   import { SlingLinks } from '../links';
+   import { SlingLinks as Links } from '../links';
 
    // Components
    import { Fieldset, InputImg, RopesInput, SafetyInput, StockStatusOptions, ShoeInput } from 'components/common';
@@ -200,7 +200,7 @@
    const { sling: module } = modules;
    const modulusOfElasticity = 29000000;
 
-   SlingLinks.setProject(modules);
+   Links.setProject(modules);
 
    const loadingValue = `${loadingType} ${freightClass}`.replace(/\sNone/, '');
 
@@ -558,23 +558,23 @@
    </Fieldset>
 
    <Fieldset title="Platform">
-      <InputLength bind:value={platformWidth} link={SlingLinks.get('platformWidth')} label="Width" {metric} />
+      <InputLength bind:value={platformWidth} link={Links.get('platformWidth')} label="Width" {metric} />
 
-      <InputLength bind:value={platformDepth} link={SlingLinks.get('platformDepth')} label="Depth" {metric} />
+      <InputLength bind:value={platformDepth} link={Links.get('platformDepth')} label="Depth" {metric} />
 
-      <InputLength bind:value={platformFrontToRail} link={SlingLinks.get('platformFrontToRail')} label="Front To Rail" {metric} />
+      <InputLength bind:value={platformFrontToRail} link={Links.get('platformFrontToRail')} label="Front To Rail" {metric} />
 
-      <InputLength bind:value={platformThickness} label="Thickness" link={SlingLinks.get('platformThickness')} {metric} />
+      <InputLength bind:value={platformThickness} label="Thickness" link={Links.get('platformThickness')} {metric} />
 
-      <InputNumber bind:value={platformWeight} label="Weight" link={SlingLinks.get('platformWeight')} {metric} step="0.1" type="weight" />
+      <InputNumber bind:value={platformWeight} label="Weight" link={Links.get('platformWeight')} {metric} step="0.1" type="weight" />
    </Fieldset>
 </div>
 
 <div class="container">
    <Fieldset title="Cab">
-      <InputLength bind:value={cabWidth} label="Width" link={SlingLinks.get('cabWidth')} {metric} />
+      <InputLength bind:value={cabWidth} label="Width" link={Links.get('cabWidth')} {metric} />
 
-      <InputNumber bind:value={cabWeight} label="Weight" link={SlingLinks.get('cabWeight')} {metric} step="0.1" type="weight" />
+      <InputNumber bind:value={cabWeight} label="Weight" link={Links.get('cabWeight')} {metric} step="0.1" type="weight" />
    </Fieldset>
 </div>
 
@@ -678,7 +678,7 @@
          {/each}
       </Select>
 
-      <Checkbox bind:checked={apta} label="APTA" link={SlingLinks.get('apta')} />
+      <Checkbox bind:checked={apta} label="APTA" link={Links.get('apta')} />
 
       <Select bind:value={railSize} label="Rail Size">
          {#each gTables.railSizes as { name } (name)}
