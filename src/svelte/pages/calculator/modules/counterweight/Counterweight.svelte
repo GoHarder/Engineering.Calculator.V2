@@ -1,6 +1,9 @@
 <script>
    import { onDestroy } from 'svelte';
 
+   import { clone } from 'lib/main.mjs';
+   import { ceil, floor, round, roundInc } from 'lib/math.mjs';
+
    import { CounterweightLinks as Links } from '../links';
 
    // Components
@@ -26,6 +29,7 @@
    // Methods
    // Constants
    const { globals, modules, metric } = project;
+   const { capacity, counterbalance, loading, roping, speed } = globals;
 
    Links.setProject(modules);
 
@@ -43,7 +47,13 @@
    });
 </script>
 
-<template>Counterweight</template>
+<Fieldset title="Globals">
+   <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
+
+   <InputNumber value={counterbalance * 100} label="Counterbalance" link="/Project/Requirements" suffix="%" />
+
+   <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
+</Fieldset>
 
 <style>
 </style>
