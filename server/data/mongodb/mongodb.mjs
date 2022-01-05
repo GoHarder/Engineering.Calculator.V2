@@ -48,7 +48,7 @@ export const init = async () => {
 
    if (connected) {
       // Create the database exports
-      app = client.db(name === 'development' ? 'app_dev' : 'app');
+      app = client.db(name === 'production' ? 'app' : 'app_dev');
       eng = client.db('engineering');
 
       console.log(`${style('✓', { color: 'green' })} Connected to mongodb`);
