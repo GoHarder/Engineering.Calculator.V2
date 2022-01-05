@@ -30,7 +30,11 @@ init().then(() => {
 
    console.log(style('\nAccess URL:', { bold: true }));
    console.log(hr(32));
-   if (host === 'localhost') console.log(`Localhost: ${style(url, { underline: true, color: 'magenta' })}`);
+   if (host === 'localhost') {
+      console.log(`Localhost: ${style(url, { underline: true, color: 'magenta' })}`);
+   } else {
+      console.log(`URL: ${style(url, { underline: true, color: 'magenta' })}`);
+   }
    console.log(hr(32));
    console.log(style('Press CTRL-C to stop\n', { bold: true, color: 'blue' }));
 });
