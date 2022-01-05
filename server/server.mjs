@@ -15,14 +15,14 @@ import { env } from './lib/env.mjs';
 import { style } from './lib/terminal.mjs';
 import { router } from './routes/router.mjs';
 
-/** The server environment */
-// const env = env();
-
 /** The express server instance */
 const server = express();
 
 /** The port the server receives requests */
-const port = process.env.PORT || env.port;
+const port = env.port;
+
+/** The protocol the server uses */
+const protocol = env.protocol;
 
 /** The https certificate data */
 let cert = undefined;
@@ -55,7 +55,7 @@ export const init = () => {
          httpServer = http.createServer(server);
          httpsServer = https.createServer({ cert, key }, server);
 
-         if (env.protocol === 'https') {
+         if (protocol === 'https') {
             httpsServer.listen(port);
          } else {
             httpServer.listen(port);
