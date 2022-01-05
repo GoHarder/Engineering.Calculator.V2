@@ -6,7 +6,7 @@
 import { readFileSync } from 'fs';
 
 // Project Imports
-import { getEnv } from '../lib/env.mjs';
+import { env } from '../lib/env.mjs';
 
 /** The location of the template files */
 const baseDir = '../../src/html';
@@ -34,7 +34,7 @@ export const getTemplate = (file) => {
  * @param {object} props The properties to inject in the file
  */
 export const build = (fileData, props) => {
-   const { baseUrl } = getEnv();
+   const { baseUrl } = env;
 
    props = { ...props, baseUrl };
 

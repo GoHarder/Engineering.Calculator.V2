@@ -6,11 +6,11 @@
 import { MongoClient } from 'mongodb';
 
 // Project Imports
-import { getEnv } from '../../lib/env.mjs';
+import { env } from '../../lib/env.mjs';
 import { style } from '../../lib/terminal.mjs';
 
 // The environment variables
-const { name, mongoUrl } = getEnv();
+const { name, mongoUrl } = env;
 
 /** The database client */
 let client = undefined;

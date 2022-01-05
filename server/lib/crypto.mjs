@@ -9,10 +9,10 @@ import { createHmac, randomBytes } from 'crypto';
 import jwt from 'jsonwebtoken';
 
 // Project Imports
-import { getEnv } from './env.mjs';
+import { env } from './env.mjs';
 
 // The hash secret
-const { hash: hashStr } = getEnv();
+const { hash: hashStr } = env;
 
 /**
  * Creates a SHA256 hash string

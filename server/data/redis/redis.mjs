@@ -6,11 +6,11 @@
 import { createClient } from 'redis';
 
 // Project Imports
-import { getEnv } from '../../lib/env.mjs';
+import { env } from '../../lib/env.mjs';
 import { style } from '../../lib/terminal.mjs';
 
 // The environment variables
-const { cache, redisUrl: url } = getEnv();
+const { cache, redisUrl: url } = env;
 
 /** The database client */
 let client = undefined;

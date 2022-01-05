@@ -7,10 +7,10 @@ import formData from 'form-data';
 import Mailgun from 'mailgun.js';
 
 // Project Imports
-import { getEnv } from '../lib/env.mjs';
+import { env } from '../lib/env.mjs';
 import { build, getTemplate } from '../lib/template.mjs';
 
-const { baseUrl, mailgunDomain, mailgunFrom, mailgunKey, mailgunSender } = getEnv();
+const { baseUrl, mailgunDomain, mailgunFrom, mailgunKey, mailgunSender } = env;
 
 /** Main part of the subject string */
 const subjectTitle = 'Engineering Calculator | ';

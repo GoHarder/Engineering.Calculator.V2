@@ -8,9 +8,6 @@ import { readFileSync } from 'fs';
 // Project Imports
 import { toCamelCase } from '../../lib/string.mjs';
 
-/** The server environment */
-let env = undefined;
-
 /**
  * Converts a string to a JSON value
  * @param str The string to convert
@@ -24,9 +21,7 @@ const parseValue = (str) => {
 };
 
 /** Gets the data from the environment file */
-export const getEnv = () => {
-   if (env) return env;
-
+const getEnvFile = () => {
    try {
       const path = new URL('../../.env', import.meta.url);
       let fileData = readFileSync(path, 'utf8');
@@ -45,9 +40,7 @@ export const getEnv = () => {
 
       // Create obj and set the env variable and return the data
       fileData = fileData.reduce((obj, line) => {
-         let key = line.replace(/(^\w+)=.+/g, '$1').toLowerCase();
-         key = toCamelCase(key.replace(/_/g, ' '));
-
+         let key = line.replace(/(^\w+)=.+/g, '$1');
          let value = line.replace(/^\w+=(.+)/g, '$1');
 
          obj[key] = parseValue(value);
@@ -56,16 +49,26 @@ export const getEnv = () => {
       }, {});
 
       // Create the base url string
-      const portStr = fileData.host === 'localhost' ? `:${fileData.port}` : '';
-
-      fileData.baseUrl = `${fileData.protocol}://${fileData.host}${portStr}`;
-
-      // Save the creation of the env object
-      env = fileData;
+      fileData.BASE_URL = `${fileData.PROTOCOL}://${fileData.HOST}:${fileData.PORT}`;
 
       return fileData;
    } catch (error) {
-      console.log(error);
       return {};
    }
 };
+
+/** The server environment */
+export let env = (function () {
+   const file = getEnvFile();
+   let result = {};
+
+   for (const key in file) {
+      const value = file[key];
+
+      let keyName = toCamelCase(key.replace(/_/g, ' ').toLowerCase());
+
+      result[keyName] = process.env[key] || value;
+   }
+
+   return result;
+})();
