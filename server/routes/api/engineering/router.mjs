@@ -6,6 +6,7 @@
 import express from 'express';
 
 // Project Imports
+import { router as counterweight } from './counterweight.mjs';
 import { router as platform } from './platform.mjs';
 import { router as safety } from './safety.mjs';
 import { router as shoes } from './shoes.mjs';
@@ -16,8 +17,8 @@ import { router as steel } from './steel.mjs';
 export const router = express.Router();
 
 // Routes
+router.use('/counterweight', counterweight);
 
-// - API
 router.use('/platform', platform);
 
 router.use('/safety', safety);
