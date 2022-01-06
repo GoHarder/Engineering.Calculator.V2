@@ -19,6 +19,12 @@ const inheritance = {
    // Sling
    carWeight: ['sling', 'counterweight'],
    cwtWeight: ['sling', 'counterweight'],
+   // Machine
+   compType: ['machine', 'sling', 'counterweight'],
+   ropeSize: ['machine', 'sling', 'counterweight'],
+   ropeQty: ['machine', 'sling', 'counterweight'],
+   ropePitch: ['machine', 'sling', 'counterweight'],
+   o_ropePitch: ['machine', 'sling', 'counterweight'],
 };
 
 class LinkTree {

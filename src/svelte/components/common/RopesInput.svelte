@@ -8,7 +8,7 @@
 
    // Stores
    // Properties
-   export let link = '';
+   export let link = undefined;
    export let metric = false;
    export let pitch = 0;
    export let size = 0.375;
