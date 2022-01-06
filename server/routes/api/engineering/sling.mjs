@@ -50,7 +50,9 @@ router.get('/', async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
+   const docs = { channels, models, sheaves, shoePlates, topChannels };
+
    await setEx(req.originalUrl, JSON.stringify(docs));
 
-   res.status(200).json({ channels, models, sheaves, shoePlates, topChannels });
+   res.status(200).json(docs);
 });
