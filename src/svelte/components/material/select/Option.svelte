@@ -13,7 +13,7 @@
    // Methods
    // Constants
    // Variables
-   const { getValue } = getContext('Select');
+   const getValue = getContext('Select')?.getValue;
 
    // Subscriptions
    // Contexts
@@ -23,7 +23,7 @@
    // Events
    // Lifecycle
    onMount(() => {
-      getValue(value);
+      if (getValue) getValue(value);
    });
 </script>
 
