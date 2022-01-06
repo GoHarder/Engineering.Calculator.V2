@@ -10,7 +10,13 @@ import { init as mongodb } from './server/data/mongodb/mongodb.mjs';
 import { init as redis } from './server/data/redis/redis.mjs';
 import { init as server } from './server/server.mjs';
 
-const { protocol, host, name, port } = env;
+const port = process.env.PORT || env.PORT;
+
+const protocol = process.env.PROTOCOL || env.PROTOCOL;
+
+const host = process.env.HOST || env.HOST;
+
+const name = process.env.NAME || env.NAME;
 
 /** Starts the application */
 const init = async () => {

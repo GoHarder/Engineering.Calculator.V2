@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 import { env } from './env.mjs';
 
 // The hash secret
-const { hash: hashStr } = env;
+const hashStr = process.env.HASH || env.HASH;
 
 /**
  * Creates a SHA256 hash string

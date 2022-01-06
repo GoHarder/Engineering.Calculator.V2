@@ -10,7 +10,9 @@ import { env } from '../../lib/env.mjs';
 import { style } from '../../lib/terminal.mjs';
 
 // The environment variables
-const { name, mongoUrl } = env;
+const name = process.env.NAME || env.NAME;
+
+const mongoUrl = process.env.MONGO_URL || env.MONGO_URL;
 
 /** The database client */
 let client = undefined;

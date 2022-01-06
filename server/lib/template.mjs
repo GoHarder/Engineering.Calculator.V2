@@ -11,6 +11,15 @@ import { env } from '../lib/env.mjs';
 /** The location of the template files */
 const baseDir = '../../src/html';
 
+// Environment variables
+const protocol = process.env.PROTOCOL || env.PROTOCOL;
+
+const host = process.env.HOST || env.HOST;
+
+const port = process.env.PORT || env.PORT;
+
+const baseUrl = `${protocol}://${host}:${port}`;
+
 /**
  * Returns the file data from src/html directory
  * @param {string} file The location of the file
@@ -34,8 +43,6 @@ export const getTemplate = (file) => {
  * @param {object} props The properties to inject in the file
  */
 export const build = (fileData, props) => {
-   const { baseUrl } = env;
-
    props = { ...props, baseUrl };
 
    for (const key in props) {

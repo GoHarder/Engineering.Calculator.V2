@@ -10,10 +10,22 @@ import Mailgun from 'mailgun.js';
 import { env } from '../lib/env.mjs';
 import { build, getTemplate } from '../lib/template.mjs';
 
-const { baseUrl, mailgunDomain, mailgunFrom, mailgunKey, mailgunSender } = env;
+const mailgunDomain = process.env.MAILGUN_DOMAIN || env.MAILGUN_DOMAIN;
+
+const mailgunFrom = process.env.MAILGUN_FROM || env.MAILGUN_FROM;
+
+const mailgunKey = process.env.MAILGUN_KEY || env.MAILGUN_KEY;
+
+const mailgunSender = process.env.MAILGUN_SENDER || env.MAILGUN_SENDER;
+
+const protocol = process.env.PROTOCOL || env.PROTOCOL;
+
+const host = process.env.HOST || env.HOST;
 
 /** Main part of the subject string */
 const subjectTitle = 'Engineering Calculator | ';
+
+const baseUrl = `${protocol}://${host}`;
 
 // Setting up the mailgun client
 const mailgun = new Mailgun(formData);

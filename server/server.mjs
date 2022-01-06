@@ -19,10 +19,10 @@ import { router } from './routes/router.mjs';
 const server = express();
 
 /** The port the server receives requests */
-const port = env.port;
+const port = process.env.PORT || env.PORT;
 
 /** The protocol the server uses */
-const protocol = env.protocol;
+const protocol = process.env.PROTOCOL || env.PROTOCOL;
 
 /** The https certificate data */
 let cert = undefined;

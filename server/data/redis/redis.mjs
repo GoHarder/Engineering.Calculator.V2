@@ -10,7 +10,9 @@ import { env } from '../../lib/env.mjs';
 import { style } from '../../lib/terminal.mjs';
 
 // The environment variables
-const { cache, redisUrl: url } = env;
+const cache = process.env.CACHE || env.CACHE;
+
+const url = process.env.REDIS_URL || env.REDIS_URL;
 
 /** The database client */
 let client = undefined;
