@@ -14,6 +14,7 @@
    export let height = 0;
    export let metric = false;
    export let model = 'Other';
+   export let optional = false;
    export let railSize = '';
    export let speed = 0;
    export let weight = 0;
@@ -64,6 +65,10 @@
    $: if (safetyObj.weight) {
       height = safetyObj.height;
       weight = safetyObj.weight;
+   }
+
+   $: if (optional) {
+      options = [{ name: 'None', disabled: false }, ...options];
    }
 
    // Events
