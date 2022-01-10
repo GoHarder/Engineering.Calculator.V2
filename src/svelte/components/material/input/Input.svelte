@@ -188,6 +188,7 @@
    }
 
    .input {
+      position: relative;
       display: grid;
       grid-template: {
          columns: vantage.$input-width;

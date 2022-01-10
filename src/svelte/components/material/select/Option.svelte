@@ -12,9 +12,9 @@
 
    // Methods
    // Constants
-   // Variables
    const getValue = getContext('Select')?.getValue;
 
+   // Variables
    // Subscriptions
    // Contexts
    // Reactive Rules
@@ -27,7 +27,7 @@
    });
 </script>
 
-<li class={liClass} aria-selected={selected} aria-disabled={disabled} data-value={value} role="option">
+<li on:click class={liClass} aria-selected={selected} aria-disabled={disabled} data-value={value} role="option">
    <span class="mdc-deprecated-list-item__ripple" />
    <span class="mdc-deprecated-list-item__text"><slot /></span>
 </li>

@@ -1,6 +1,5 @@
 <script>
-   import { onMount, onDestroy } from 'svelte';
-   import { slide } from 'svelte/transition';
+   import { getContext, onMount, onDestroy } from 'svelte';
    import { MDCTextField } from '@material/textfield';
    import { classList, filterProps, randomId } from '../../lib';
 
@@ -37,8 +36,11 @@
 
    const { iSuffix, mSuffix, mConvert, mRound, toValue, toDisplay } = types[type] || types._default;
 
+   const getFocused = getContext('getFocused');
+
    // Variables
    let displayValue = 0;
+   let focused = false;
    let labelEle;
    let TextField;
    let metricValue = 0;
@@ -77,13 +79,20 @@
 
    $: if (link) readonly = true;
 
+   $: if (getFocused) getFocused(focused);
+
    // Events
+   const onBlur = () => (focused = false);
+
    const onChange = (event) => {
       override = calc !== event.target.value;
       value = toValue(parseFloat(event.target.value) || 0);
    };
 
-   const onFocus = (event) => event.target.select();
+   const onFocus = (event) => {
+      focused = true;
+      event.target.select();
+   };
 
    const onLink = () => history.pushState({ path: link }, '');
 
@@ -119,7 +128,7 @@
    });
 </script>
 
-<div class="input" class:metric class:full-width={fullWidth} transition:slide|local>
+<div class="input" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle} class={labelClass}>
       <span class="mdc-text-field__ripple" />
 
@@ -135,7 +144,7 @@
          {/if}
       {/if}
 
-      <input value={displayValue} type="number" on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
+      <input value={displayValue} type="number" on:blur={onBlur} on:change={onChange} on:focus={onFocus} {...props} class="mdc-text-field__input" aria-labelledby={id} />
 
       {#if iSuffix}
          <span class="mdc-text-field__affix mdc-text-field__affix--suffix">{iSuffix}</span>
@@ -158,6 +167,10 @@
             ({metricValue} {mSuffix})
          {/if}
       </span>
+   {/if}
+
+   {#if $$slots.datalist}
+      <slot name="datalist" {focused} {onChange} />
    {/if}
 </div>
 

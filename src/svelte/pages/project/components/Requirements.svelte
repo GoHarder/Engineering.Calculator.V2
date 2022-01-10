@@ -4,6 +4,7 @@
    import { round } from 'lib/math.mjs';
 
    // Components
+   import { DataList } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
    import { HelperText, Input, InputLength, InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
@@ -179,17 +180,20 @@
          </svelte:fragment>
       </InputNumber>
 
-      <Input bind:value={counterbalance} label="Counterbalance" list="counterbalance" max="50" min="40" {metric} step="2.5" suffix="%" type="number">
+      <InputNumber bind:value={counterbalance} label="Counterbalance" max="50" min="40" {metric} step="2.5" suffix="%">
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Counterbalance %</HelperText>
-            <datalist id="counterbalance">
-               <option value="40" />
-               <option value="45" />
-               <option value="42.5" />
-               <option value="50" />
-            </datalist>
          </svelte:fragment>
-      </Input>
+
+         <svelte:fragment slot="datalist" let:focused let:onChange>
+            <DataList {focused} {onChange} let:onClick>
+               <Option on:click={onClick} value="40">40</Option>
+               <Option on:click={onClick} value="45">45</Option>
+               <Option on:click={onClick} value="42.5">42.5</Option>
+               <Option on:click={onClick} value="50">50</Option>
+            </DataList>
+         </svelte:fragment>
+      </InputNumber>
 
       <InputNumber bind:value={speed} label="Car Speed" max="1500" min="1" {metric} type="speed">
          <svelte:fragment slot="helperText">
