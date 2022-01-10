@@ -83,23 +83,18 @@
    };
 
    const onChange = (event) => {
-      const { dataset, value } = event.target;
+      const { dataset, value: eValue } = event.target;
 
-      if (dataset.units === 'ft') feet = parseFloat(value) || 0;
-      if (dataset.units === 'in') inches = parseFloat(value) || 0;
+      if (dataset?.units === 'ft') feet = parseFloat(eValue) || 0;
+      if (dataset?.units === 'in') inches = parseFloat(eValue) || 0;
+      if (dataset?.units === undefined) {
+         console.log(eValue);
+         value = parseFloat(eValue);
+         return;
+      }
 
       updateValue();
    };
-
-   // const onChange1 = (event) => {
-   //    feet = parseFloat(event.target.value) || 0;
-   //    updateValue();
-   // };
-
-   // const onChange2 = (event) => {
-   //    inches = parseFloat(event.target.value) || 0;
-   //    updateValue();
-   // };
 
    const onFocus = (event) => {
       const { target } = event;
@@ -201,6 +196,10 @@
             ({metricValue} m)
          {/if}
       </span>
+   {/if}
+
+   {#if $$slots.datalist}
+      <slot name="datalist" {focused} {onChange} />
    {/if}
 </div>
 
