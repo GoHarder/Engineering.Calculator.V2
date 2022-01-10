@@ -88,7 +88,6 @@
       if (dataset?.units === 'ft') feet = parseFloat(eValue) || 0;
       if (dataset?.units === 'in') inches = parseFloat(eValue) || 0;
       if (dataset?.units === undefined) {
-         console.log(eValue);
          value = parseFloat(eValue);
          return;
       }
