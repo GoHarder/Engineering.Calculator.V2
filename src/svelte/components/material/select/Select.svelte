@@ -80,6 +80,9 @@
          case 'number':
             value = parseFloat(event.detail.value);
             break;
+         case 'boolean':
+            value = JSON.parse(event.detail.value);
+            break;
          default:
             value = event.detail.value;
             break;
