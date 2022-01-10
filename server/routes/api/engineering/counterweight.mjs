@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
    try {
       models = await engDB
          .collection('counterweights')
-         .find({ roping }, { projection: { _id: 0, roping: 0 }, sort: { _sort: 1 } })
+         .find({ roping }, { projection: { _id: 0, roping: 0, _sort: 0 }, sort: { _sort: 1 } })
          .toArray();
    } catch (error) {
       return res.status(500).json({ message: error.message });
