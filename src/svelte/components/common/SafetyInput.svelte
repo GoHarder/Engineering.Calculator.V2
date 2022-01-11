@@ -16,6 +16,7 @@
    export let model = 'Other';
    export let optional = false;
    export let railSize = '';
+   export let safetyObj = {};
    export let speed = 0;
    export let weight = 0;
 
@@ -51,7 +52,6 @@
    // Variables
    let options = [{ name: 'Other' }];
    let safeties = [];
-   let safetyObj = {};
 
    // Subscriptions
    // Contexts

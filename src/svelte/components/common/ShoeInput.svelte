@@ -16,6 +16,7 @@
    export let metric = false;
    export let model = 'Other';
    export let railSize = '';
+   export let shoeObj = {};
    export let speed = 0;
    export let weight = 0;
 
@@ -51,7 +52,6 @@
    // Variables
    let options = [{ name: 'Other' }];
    let shoes = [];
-   let shoeObj = {};
 
    // Subscriptions
    // Contexts
