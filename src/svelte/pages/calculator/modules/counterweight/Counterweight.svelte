@@ -389,161 +389,189 @@
    });
 </script>
 
-<Fieldset title="Globals">
-   <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
+<div class="container">
+   <Fieldset title="Globals">
+      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
-   <InputNumber value={counterbalance * 100} label="Counterbalance" link="/Project/Requirements" suffix="%" />
+      <InputNumber value={counterbalance * 100} label="Counterbalance" link="/Project/Requirements" suffix="%" />
 
-   <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
-</Fieldset>
+      <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
+   </Fieldset>
 
-<Fieldset title="Sling">
-   <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step={0.01} type="weight" />
+   <Fieldset title="Sling">
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step={0.01} type="weight" />
 
-   <Select bind:value={compType} label="Compensation" link={Links.get('compType')}>
-      {#each gTables.compensation as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
-</Fieldset>
+      <Select bind:value={compType} label="Compensation" link={Links.get('compType')}>
+         {#each gTables.compensation as { name } (name)}
+            <Option value={name}>{name}</Option>
+         {/each}
+      </Select>
+   </Fieldset>
+</div>
 
 {#if roping > 1}
-   <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} link={Links.get('ropeSize')} {metric} />
+   <div class="container">
+      <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} link={Links.get('ropeSize')} {metric} />
 
-   <Fieldset title="Sheave">
-      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
-         {#each sheaveOptions as { disabled, displayName, name } (name)}
-            <Option value={name} {disabled}>{displayName}</Option>
+      <Fieldset title="Sheave">
+         <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
+            {#each sheaveOptions as { disabled, displayName, name } (name)}
+               <Option value={name} {disabled}>{displayName}</Option>
+            {/each}
+         </Select>
+
+         {#if cwtModel !== '236'}
+            <Select bind:value={sheaveHangerModel} bind:selected={sheaveHangerObj} label="Hanger Model" options={sheaveHangerOptions}>
+               {#each sheaveHangerOptions as name (name)}
+                  <Option value={name}>{name}</Option>
+               {/each}
+            </Select>
+         {/if}
+      </Fieldset>
+   </div>
+{/if}
+
+<div class="container">
+   <Fieldset title="Properties">
+      <Select bind:value={cwtModel} bind:selected={modelObj} label="Model" options={modelOptions}>
+         {#each modelOptions as { name, disabled } (name)}
+            <Option value={name} {disabled}>{name}</Option>
          {/each}
       </Select>
 
-      {#if cwtModel !== '236'}
-         <Select bind:value={sheaveHangerModel} bind:selected={sheaveHangerObj} label="Hanger Model" options={sheaveHangerOptions}>
-            {#each sheaveHangerOptions as name (name)}
+      <InputLength bind:value={dbg} label="D.B.G." {metric}>
+         <svelte:fragment slot="datalist" let:focused let:onChange>
+            <DataList {focused} {onChange} let:onClick>
+               <Option on:click={onClick} value="30.125">2' - 6.125"</Option>
+               <Option on:click={onClick} value="38.75">3' - 2.75"</Option>
+               <Option on:click={onClick} value="57.25">4' - 9.25</Option>
+            </DataList>
+         </svelte:fragment>
+      </InputLength>
+
+      <InputLength bind:value={weightWidth} label="Filler Weight Width" {metric}>
+         <svelte:fragment slot="datalist" let:focused let:onChange>
+            <DataList {focused} {onChange} let:onClick>
+               <Option on:click={onClick} value="6">6"</Option>
+               <Option on:click={onClick} value="8">8"</Option>
+               <Option on:click={onClick} value="10">10"</Option>
+            </DataList>
+         </svelte:fragment>
+      </InputLength>
+
+      <Select bind:value={railSize} label="Rail Size">
+         {#each gTables.railSizes as { name } (name)}
+            <Option value={name}>{name}</Option>
+         {/each}
+      </Select>
+
+      {#if ['235', '236'].includes(cwtModel)}
+         <Select bind:value={stileChannel} bind:selected={stileChannelObj} label="Stile Channel" options={tables.stile235}>
+            {#each tables.stile235 as { name } (name)}
                <Option value={name}>{name}</Option>
             {/each}
          </Select>
       {/if}
+
+      <Checkbox bind:checked={lead} label="Lead Weights" />
+
+      <InputNumber value={cwtWeight} label="Total Weight" {metric} readonly step="0.01" type="weight" />
    </Fieldset>
-{/if}
 
-<Fieldset title="Properties">
-   <Select bind:value={cwtModel} bind:selected={modelObj} label="Model" options={modelOptions}>
-      {#each modelOptions as { name, disabled } (name)}
-         <Option value={name} {disabled}>{name}</Option>
-      {/each}
-   </Select>
+   <Fieldset title="Equipment">
+      <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} bind:shoeObj {capacity} {railSize} {speed} />
 
-   <InputLength bind:value={dbg} label="D.B.G." {metric}>
-      <svelte:fragment slot="datalist" let:focused let:onChange>
-         <DataList {focused} {onChange} let:onClick>
-            <Option on:click={onClick} value="30.125">2' - 6.125"</Option>
-            <Option on:click={onClick} value="38.75">3' - 2.75"</Option>
-            <Option on:click={onClick} value="57.25">4' - 9.25</Option>
-         </DataList>
-      </svelte:fragment>
-   </InputLength>
+      <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} bind:safetyObj optional {railSize} {speed} />
 
-   <InputLength bind:value={weightWidth} label="Filler Weight Width" {metric}>
-      <svelte:fragment slot="datalist" let:focused let:onChange>
-         <DataList {focused} {onChange} let:onClick>
-            <Option on:click={onClick} value="6">6"</Option>
-            <Option on:click={onClick} value="8">8"</Option>
-            <Option on:click={onClick} value="10">10"</Option>
-         </DataList>
-      </svelte:fragment>
-   </InputLength>
+      <Checkbox bind:checked={useShoePlates} disabled={seismicZone >= 2} label="Shoe Plates" />
 
-   <Select bind:value={railSize} label="Rail Size">
-      {#each gTables.railSizes as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
-
-   {#if ['235', '236'].includes(cwtModel)}
-      <Select bind:value={stileChannel} bind:selected={stileChannelObj} label="Stile Channel" options={tables.stile235}>
-         {#each tables.stile235 as { name } (name)}
-            <Option value={name}>{name}</Option>
-         {/each}
-      </Select>
-   {/if}
-
-   <Checkbox bind:checked={lead} label="Lead Weights" />
-
-   <InputNumber value={cwtWeight} label="Total Weight" {metric} readonly type="weight" />
-</Fieldset>
-
-<Fieldset title="Equipment">
-   <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} bind:shoeObj {capacity} {railSize} {speed} />
-
-   <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} bind:safetyObj optional {railSize} {speed} />
-
-   <Checkbox bind:checked={useShoePlates} disabled={seismicZone >= 2} label="Shoe Plates" />
-
-   {#if compType !== 'Rope'}
-      {#if safetyModel !== 'None'}
-         <Checkbox bind:checked={safetySpacers} disabled={disableSafetySpacers} label="Safety Spacers" />
-      {:else}
-         {#if !bufferPlate}
-            <Select bind:value={blockQty} label={`${isStriker ? 'Striker' : 'Knock Off'} Block Quantity`} type="number">
-               <Option value="0">0</Option>
-               <Option value="1">1</Option>
-               <Option value="2">2</Option>
-               <Option value="3">3</Option>
-            </Select>
-         {/if}
-
-         {#if blockQty === 0}
-            <Checkbox bind:checked={bufferPlate} disabled={['235', '236'].includes(cwtModel)} label="Buffer Plate" />
+      {#if compType !== 'Rope'}
+         {#if safetyModel !== 'None'}
+            <Checkbox bind:checked={safetySpacers} disabled={disableSafetySpacers} label="Safety Spacers" />
          {:else}
-            <Select bind:value={isStriker} label="Block Type" type="boolean">
-               <Option value="false">Knock Off</Option>
-               <Option value="true">Striker</Option>
-            </Select>
+            {#if !bufferPlate}
+               <Select bind:value={blockQty} label={`${isStriker ? 'Striker' : 'Knock Off'} Block Quantity`} type="number">
+                  <Option value="0">0</Option>
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
+               </Select>
+            {/if}
+
+            {#if blockQty === 0}
+               <Checkbox bind:checked={bufferPlate} disabled={['235', '236'].includes(cwtModel)} label="Buffer Plate" />
+            {:else}
+               <Select bind:value={isStriker} label="Block Type" type="boolean">
+                  <Option value="false">Knock Off</Option>
+                  <Option value="true">Striker</Option>
+               </Select>
+            {/if}
          {/if}
       {/if}
-   {/if}
-</Fieldset>
+   </Fieldset>
+</div>
 
-<Fieldset title="Dimensions">
-   <div>
-      {#if roping > 1 && cwtModel !== '236'}
-         <InputLength bind:value={sheaveHeight} label="Sheave" />
-      {/if}
+<div class="container">
+   <Fieldset title="Dimensions">
+      <div class="dimensions">
+         <div>
+            {#if roping > 1 && cwtModel !== '236'}
+               <InputLength bind:value={sheaveHeight} label="Sheave" />
+            {/if}
 
-      <InputLength value={topChanHeight} label="Top Channel" readonly {metric} />
+            <InputLength value={topChanHeight} label="Top Channel" readonly {metric} />
 
-      <InputLength bind:value={gap} bind:override={o_gap} label="Gap" calc={gapCalc} invalid={gap < minGap - 0.0001} {metric}>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Gap must be at least {floor(minGap / 12)}'-{round(minGap % 12, 4)}"</HelperText>
-         </svelte:fragment>
-      </InputLength>
+            <InputLength bind:value={gap} bind:override={o_gap} label="Gap" calc={gapCalc} invalid={gap < minGap - 0.0001} {metric}>
+               <svelte:fragment slot="helperText">
+                  <HelperText validation>Gap must be at least {floor(minGap / 12)}'-{round(minGap % 12, 4)}"</HelperText>
+               </svelte:fragment>
+            </InputLength>
 
-      {#if !lead}
-         <InputLength value={stackHeight} label="Weight Stack" readonly {metric} />
-      {:else}
-         <InputLength bind:value={stackHeight} bind:override={o_stackHeight} label="Weight Stack" calc={stackHeightCalc} invalid={stackHeight < stackHeightCalc} {metric}>
-            <svelte:fragment slot="helperText">
-               <HelperText validation>Stack is shorter than {floor(stackHeightCalc / 12)}'-{round(stackHeightCalc % 12, 4)}"</HelperText>
-            </svelte:fragment>
-         </InputLength>
+            {#if !lead}
+               <InputLength value={stackHeight} label="Weight Stack" readonly {metric} />
+            {:else}
+               <InputLength
+                  bind:value={stackHeight}
+                  bind:override={o_stackHeight}
+                  label="Weight Stack"
+                  calc={stackHeightCalc}
+                  invalid={stackHeight < stackHeightCalc}
+                  {metric}
+               >
+                  <svelte:fragment slot="helperText">
+                     <HelperText validation>Stack is shorter than {floor(stackHeightCalc / 12)}'-{round(stackHeightCalc % 12, 4)}"</HelperText>
+                  </svelte:fragment>
+               </InputLength>
 
-         <InputLength value={steelStackHeight} label="Steel Weight Stack" {metric} readonly />
+               <InputLength value={steelStackHeight} label="Steel Weight Stack" {metric} readonly />
 
-         <InputLength value={leadStackHeight} label="Lead Weight Stack" {metric} readonly />
-      {/if}
+               <InputLength value={leadStackHeight} label="Lead Weight Stack" {metric} readonly />
+            {/if}
 
-      <InputLength value={botChanHeight} label="Bottom Channel" {metric} readonly />
+            <InputLength value={botChanHeight} label="Bottom Channel" {metric} readonly />
 
-      {#if safetyModel !== 'None' || bufferPlate || blockQty > 0}
-         <InputLength value={botEquipHeight} label={botEquipHeightLabel} {metric} readonly />
-      {/if}
+            {#if safetyModel !== 'None' || bufferPlate || blockQty > 0}
+               <InputLength value={botEquipHeight} label={botEquipHeightLabel} {metric} readonly />
+            {/if}
 
-      <InputLength value={cwtHeight} label="Overall Height" {metric} readonly />
-   </div>
+            <InputLength value={cwtHeight} label="Overall Height" {metric} readonly />
+         </div>
 
-   <img src="/public/img/counterweight/{imgString}.svg" alt="Counterweight Dimensions" />
-</Fieldset>
+         <img src="/public/img/counterweight/{imgString}.svg" alt="Counterweight Dimensions" />
+      </div>
+   </Fieldset>
+</div>
 
 <style>
+   .container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin: 0.25em;
+      gap: 0.25em;
+   }
+
+   .dimensions {
+      display: flex;
+   }
 </style>
