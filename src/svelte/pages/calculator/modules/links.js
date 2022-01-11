@@ -17,14 +17,14 @@ const inheritance = {
    toeGuard1Weight: ['platform', 'sling'],
    toeGuard2Weight: ['platform', 'sling'],
    // Sling
-   carWeight: ['sling', 'counterweight'],
+   carWeight: ['sling', 'counterweight', 'machine'],
    cwtWeight: ['sling', 'counterweight'],
    // Machine
    compType: ['machine', 'sling', 'counterweight'],
-   ropeSize: ['machine', 'sling', 'counterweight'],
-   ropeQty: ['machine', 'sling', 'counterweight'],
-   ropePitch: ['machine', 'sling', 'counterweight'],
-   o_ropePitch: ['machine', 'sling', 'counterweight'],
+   ropeSize: ['machine', 'sling'],
+   ropeQty: ['machine', 'sling'],
+   ropePitch: ['machine', 'sling'],
+   o_ropePitch: ['machine', 'sling'],
 };
 
 class LinkTree {
@@ -57,4 +57,5 @@ class LinkTree {
 }
 
 export const CounterweightLinks = new LinkTree('counterweight');
+export const MachineLinks = new LinkTree('machine');
 export const SlingLinks = new LinkTree('sling');
