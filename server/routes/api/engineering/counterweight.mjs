@@ -28,17 +28,26 @@ router.get('/', async (req, res) => {
    roping = parseInt(roping);
 
    let models = [];
+   let sheaves = [];
+   let shoePlates = [];
 
    try {
       models = await engDB
          .collection('counterweights')
          .find({ roping }, { projection: { _id: 0, roping: 0, _sort: 0 }, sort: { _sort: 1 } })
          .toArray();
+
+      sheaves = await engDB
+         .collection('sheaves')
+         .find({ _uses: 'counterweight' }, { projection: { _id: 0 }, sort: { diameter: 1, rimWidth: 1 } })
+         .toArray();
+
+      shoePlates = await engDB.collection('shoe_plates').find().toArray();
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
 
-   const docs = { models };
+   const docs = { models, sheaves, shoePlates };
 
    // await setEx(req.originalUrl, JSON.stringify(docs));
 
