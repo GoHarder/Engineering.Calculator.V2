@@ -9,7 +9,7 @@
    import { CounterweightLinks as Links } from '../links';
 
    // Components
-   import { DataList, Fieldset, InputImg, RopesInput, SafetyInput, StockStatusOptions, ShoeInput } from 'components/common';
+   import { DataList, Fieldset, RopesInput, SafetyInput, ShoeInput } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
    import { HelperText, Input, InputNumber, InputLength } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
@@ -20,19 +20,82 @@
    // Properties
    export let project;
    export const updateModule = () => {
-      const globalData = {};
+      const globalData = {
+         car: {
+            weight: carWeight,
+         },
+         compensation: {
+            type: compType,
+         },
+         counterweight: {
+            weight: cwtWeight,
+         },
+         rope: {
+            pitch: ropePitch,
+            size: ropeSize,
+            qty: ropeQty,
+            o_pitch: o_ropePitch,
+         },
+      };
 
       const moduleData = {
-         model: cwtModel,
+         dbg,
+         gap,
          equipment: {
+            blockQty,
+            bufferPlate,
+            isStriker,
+
             safety: {
                model: safetyModel,
+               height: safetyHeight,
+               weight: safetyWeight,
+               spacers: safetySpacers,
+            },
+            sheave: {
+               model: sheaveModel,
+               height: sheaveHeight,
+               hangerModel: sheaveHangerModel,
             },
             shoe: {
                model: shoeModel,
+
+               height: shoeHeight,
+
+               weight: shoeWeight,
+               useShoePlates,
             },
          },
+         lead,
+         model: cwtModel,
+         railSize,
+         stackHeight,
+         stileChannel,
+         weightWidth,
+         o_gap,
+         o_stackHeight,
       };
+
+      if (roping === 1) delete moduleData.equipment.sheave;
+
+      if (safetyModel !== 'Other') {
+         delete moduleData.equipment.safety.height;
+         delete moduleData.equipment.safety.weight;
+      }
+
+      if (shoeModel !== 'Other') {
+         delete moduleData.equipment.shoe.height;
+         delete moduleData.equipment.shoe.weight;
+      }
+
+      if (safetyModel === 'None') delete moduleData.equipment.safety;
+
+      if (!lead) {
+         delete moduleData.stackHeight;
+         delete moduleData.o_stackHeight;
+      }
+
+      if (!['235', '236'].includes(cwtModel)) delete moduleData.stileChannel;
 
       project.globals = { ...project.globals, ...globalData };
       project.modules.counterweight = moduleData;
@@ -61,6 +124,8 @@
          fetchStore.loading(false);
 
          cwtModels = [...body.models];
+         sheaves = [...body.sheaves];
+         shoePlates = [...body.shoePlates];
       } catch (error) {
          fetchStore.setError({ res, error });
       }
@@ -93,9 +158,6 @@
    const { counterweight: module } = modules;
    Links.setProject(modules);
 
-   console.log(project);
-   // console.log(Links);
-
    // Variables
 
    // - Globals
@@ -108,34 +170,18 @@
    let ropeQty = globals?.rope?.qty ?? 4;
    let o_ropePitch = globals?.rope?.o_pitch ?? false;
 
-   // NOTE: unorganized here for convenience
-   let sheaveModel = '';
-   let sheaveOptions = [];
-   let sheaveHangerModel = '';
-   let cwtModel = module?.model ?? '';
-   let sheaveHangerOptions = [];
-   let dbg = 38.75;
-   let weightWidth = 8;
-   let railSize = '8#';
-   let lead = false;
-   let cwtWeight = 0;
-   let useShoePlates = false;
-   let safetySpacers = false;
-   let blockQty = 0;
-   let bufferPlate = false;
-   let isStriker = true;
-   let disableSafetySpacers = false;
-   let sheaveHeight = 0;
-   let gap = 24;
-   let o_gap = false;
-   let gapCalc = 24;
-   let minGap = 16;
-   let stackHeight = 0;
-   let o_stackHeight = false;
-   let stileChannel = '';
+   // - General
+   let cwtModel = module?.model ?? '230';
+   let dbg = module?.dbg ?? 38.75;
+   let gap = module?.gap ?? 24;
+   let lead = module?.lead ?? false;
+   let railSize = module?.railSize ?? '8#';
+   let stackHeight = module?.stackHeight ?? 0;
+   let stileChannel = module?.stileChannel ?? 'MC8X22.8';
+   let weightWidth = module?.weightWidth ?? 8;
 
-   let modelObj;
-   let stileChannelObj;
+   let o_gap = module?.o_gap ?? false;
+   let o_stackHeight = module?.o_stackHeight ?? false;
 
    // -- Equipment
 
@@ -143,22 +189,85 @@
    let safetyHeight = module?.equipment?.safety?.height ?? 0;
    let safetyModel = module?.equipment?.safety?.model ?? 'None';
    let safetyWeight = module?.equipment?.safety?.weight ?? 0;
+   let safetySpacers = module?.equipment?.safety?.spacers ?? false;
+
+   // --- Sheave
+   let sheaveHeight = module?.equipment?.sheave?.height ?? 0;
+   let sheaveHangerModel = module?.equipment?.sheave?.hangerModel ?? '341';
+   let sheaveModel = module?.equipment?.sheave?.model ?? '';
 
    // --- Shoe
    let shoeHeight = module?.equipment?.shoe?.height ?? 0;
    let shoeModel = module?.equipment?.shoe?.model ?? 'Other';
    let shoeWeight = module?.equipment?.shoe?.weight ?? 0;
+   let useShoePlates = module?.equipment?.shoe?.useShoePlates ?? false;
+
+   // --- Misc
+   let blockQty = module?.equipment?.blockQty ?? 0;
+   let bufferPlate = module?.equipment?.bufferPlate ?? false;
+   let isStriker = module?.equipment?.isStriker ?? true;
+
+   // - Calculated
+   let botEquipHeight = 0;
+   let botEquipWeight = 0;
+   let botEquipHeightLabel = '';
+   let disableSafetySpacers = false;
+
+   // - Object
+   let modelObj = {};
+   let safetyObj = {};
+   let stileChannelObj = {};
+   let sheaveObj = {};
+   let sheaveHangerObj = {};
+   let shoeObj = {};
 
    // - Database
    let cwtModels = [];
    let shoePlates = [];
+   let sheaves = [];
 
    // Subscriptions
    // Contexts
    // Reactive Rules
-
    $: if (seismicZone >= 2) useShoePlates = true;
 
+   $: if (!lead) stackHeight = ceil(stackWeight / steelSectionWeight);
+
+   $: if (['235', '236'].includes(cwtModel) && safetyModel === 'None') {
+      bufferPlate = true;
+      botEquipHeightLabel = 'Plate';
+      botEquipHeight = 1;
+   }
+
+   $: if (safetyObj?.cwt?.spacers) {
+      disableSafetySpacers = true;
+      safetySpacers = true;
+      botEquipHeight = safety.cwt.extLength;
+   } else {
+      disableSafetySpacers = false;
+      botEquipHeight = round(safetyHeight + (safetySpacers ? 6 : 0));
+   }
+
+   $: if (safetyModel !== 'None') {
+      blockQty = 0;
+      bufferPlate = false;
+
+      botEquipWeight = safetyWeight + (safetySpacers ? block.weight * 2 : 0);
+      botEquipHeightLabel = 'Extension Height';
+   } else if (bufferPlate) {
+      botEquipHeightLabel = 'Plate';
+      botEquipHeight = 1;
+      botEquipWeight = plateWeight;
+   } else if (blockQty > 0) {
+      botEquipHeightLabel = 'Block Height';
+      botEquipHeight = blockQty * block.height;
+      botEquipWeight = blockQty * block.weight;
+   } else {
+      botEquipHeight = 0;
+      botEquipWeight = 0;
+   }
+
+   // - Option Arrays
    $: modelOptions = clone(cwtModels).map((model) => {
       const row = tables.models[`_${model.name}`];
 
@@ -171,8 +280,19 @@
       return model;
    });
 
-   $: console.table(modelOptions);
-   $: console.table(cwtModels);
+   $: sheaveOptions = clone(sheaves).map((sheave) => {
+      const reqWidth = round((ropeQty - 1) * ropePitch + ropeSize + 0.625, 4);
+      const reqDiameter = round(ropeSize * 40, 3);
+
+      sheave.disabled = sheave.diameter < reqDiameter && sheave.rimWidth < reqWidth;
+      sheave.displayName = `${sheave.name} (Ø${floor(sheave.diameter)}")`;
+
+      return sheave;
+   });
+
+   $: sheaveHangerOptions = modelObj?.sheaveHangers ?? [];
+
+   // - Dimension Image
 
    $: imgSearchString = [
       cwtModel.match(/\d{3}/)[0],
@@ -182,25 +302,81 @@
       safetyModel !== 'None' ? '-safety' : '',
    ].join('');
 
-   $: imgString = tables.dimensionImages.find((row) => row.name === imgSearchString).name || '230';
+   $: imgString = tables.dimensionImages.find((row) => row.name === imgSearchString)?.name || '230';
 
-   // - Weight Calcs
+   // - Weight And  Height Calcs
+   $: minGap = cwtModel !== '236' ? modelObj?.minGap ?? 0 : (sheaveObj?.diameter ?? 0) + 17;
+   $: gapCalc = minGap > 24 ? minGap : 24;
+
+   // - Steel
    $: channelLength = roundInc(dbg + (modelObj?.channelOffset ?? 0));
    $: topChanHeight = modelObj?.crosshead?.channel.depth ?? 0;
    $: topChanWeight = ((modelObj?.crosshead?.channel.weight ?? 0) * channelLength + (modelObj?.crosshead?.gusset?.weight ?? 0)) * 2;
    $: botChanHeight = modelObj?.plank?.depth ?? 0;
    $: botChanWeight = (modelObj?.plank?.weight ?? 0) * channelLength * 2;
+   $: stileWeight = modelObj?.stileWeight ?? stileChannelObj.weight;
 
-   // NOTE: That last number is stile depth plug that in
-   $: steelFillerWeight = tables.models[`_${cwtModel}`]?.fillerWeight(dbg, weightWidth, 0.284, 8) ?? 0;
-   $: leadFillerWeight = tables.models[`_${cwtModel}`]?.fillerWeight(dbg, weightWidth, 0.4096, 8) ?? 0;
+   // - Filler Weights
+   $: steelFillerWeight = tables.models[`_${cwtModel}`]?.fillerWeight(dbg, weightWidth, 0.284, stileChannelObj?.depth ?? 8) ?? 0;
+   $: leadFillerWeight = tables.models[`_${cwtModel}`]?.fillerWeight(dbg, weightWidth, 0.4096, stileChannelObj?.depth ?? 8) ?? 0;
 
+   // - Shoe Plates
    $: topShoePlate = getShoePlate(shoePlates, shoeModel, cwtModel, railSize);
-   $: bottomShoePlate = getShoePlate(shoePlates, shoeModel, safetyModel !== 'None' ? safetyModel : cwtModel, railSize);
+   $: botShoePlate = getShoePlate(shoePlates, shoeModel, safetyModel !== 'None' ? safetyModel : cwtModel, railSize);
 
-   $: miscWeight = modelObj?.miscWeight?.(cwtDBG) ?? 0;
+   // - Sheave Hanger
+   $: sheaveHangerPlateLength = topChanHeight + 3.5 - ((sheaveObj?.diameter ?? 1) / 2 + 5);
+   $: sheaveHangerPlateWeight = sheaveHangerObj?.plateWeight?.(sheaveHangerPlateLength) ?? 0;
+   $: sheaveHangerChannelWeight = sheaveHangerObj?.channel?.find((nth) => nth.stock).weight;
+   $: sheaveHangerWeight = round(sheaveHangerObj.miscWeight + sheaveHangerChannelWeight + sheaveHangerPlateWeight * 2, 2);
+
+   // - Rope Mounting
+   $: sheaveAsmWeight = (cwtModel !== '236' ? sheaveHangerWeight : 0) + (sheaveObj?.weight ?? 0);
+   $: hitchPlateWeight = modelObj?.hitchPlateWeight ?? 0;
+   $: ropeMountingWeight = roping === 1 ? hitchPlateWeight : sheaveAsmWeight;
+
+   // - Misc Parts
+   $: plateLength = roundInc(dbg - ((shoeObj?.railToBack ?? 8) + 0.25), 0.25);
+   $: plateWidth = round((modelObj?.stileGap ?? stileChannelObj.depth) + modelObj?.plank?.flangeWidth * 2);
+   $: plateWeight = plateLength * plateWidth * 0.2836;
+
+   $: block = tables.blocks.find((block) => block.striker === isStriker && block.depth <= weightWidth);
+
+   $: miscWeight = modelObj?.miscWeight?.(dbg) ?? 0;
+
+   // - Weight Calcs
+   $: staticStyleWeight = (topChanHeight + botChanHeight + (modelObj?.stileOffset ?? 0)) * stileWeight;
+   $: staticTieRodWeight = botChanHeight + (['235', '236'].includes(cwtModel) ? 0 : topChanHeight) + (modelObj?.tieRodOffset ?? 0);
+
+   $: staticWeight =
+      miscWeight +
+      ropeMountingWeight +
+      topChanWeight +
+      shoeWeight * 4 +
+      (useShoePlates ? topShoePlate.weight : 0) * 2 +
+      (useShoePlates ? botShoePlate.weight : 0) * 2 +
+      staticStyleWeight +
+      staticTieRodWeight +
+      botChanWeight +
+      botEquipWeight;
+
+   $: stileSectionWeight = round(stileWeight * 2, 2);
+   $: gapSectionWeight = stileSectionWeight + 0.1742;
+   $: steelSectionWeight = steelFillerWeight + gapSectionWeight;
+   $: leadSectionWeight = leadFillerWeight + gapSectionWeight;
+
+   $: gapWeight = ['235', '236'].includes(cwtModel) ? (gap - 12) * stileSectionWeight + 12 * gapSectionWeight : gap * gapSectionWeight;
+
+   $: stackWeight = round(cwtWeight - (staticWeight + gapWeight), 2);
+
+   $: stackHeightCalc = ceil(stackWeight / leadSectionWeight);
+
+   $: steelStackHeight = o_stackHeight ? floor((stackWeight - leadSectionWeight * stackHeight) / (steelSectionWeight - leadSectionWeight)) : 0;
+   $: leadStackHeight = stackHeight - steelStackHeight;
 
    $: cwtWeight = round(carWeight + capacity * counterbalance, 2);
+
+   $: cwtHeight = roundInc(sheaveHeight + topChanHeight + gap + stackHeight + botChanHeight + botEquipHeight);
 
    // Events
    // Lifecycle
@@ -235,16 +411,16 @@
    <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} link={Links.get('ropeSize')} {metric} />
 
    <Fieldset title="Sheave">
-      <Select bind:value={sheaveModel} label="Model">
-         {#each sheaveOptions as { value, text, valid } (value)}
-            <Option {value} {text} disabled={!valid} selected={sheaveModel === value} />
+      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Model" options={sheaveOptions}>
+         {#each sheaveOptions as { disabled, displayName, name } (name)}
+            <Option value={name} {disabled}>{displayName}</Option>
          {/each}
       </Select>
 
       {#if cwtModel !== '236'}
-         <Select bind:value={sheaveHangerModel} label="Hanger Model">
-            {#each sheaveHangerOptions as text (text)}
-               <Option {text} />
+         <Select bind:value={sheaveHangerModel} bind:selected={sheaveHangerObj} label="Hanger Model" options={sheaveHangerOptions}>
+            {#each sheaveHangerOptions as name (name)}
+               <Option value={name}>{name}</Option>
             {/each}
          </Select>
       {/if}
@@ -298,9 +474,9 @@
 </Fieldset>
 
 <Fieldset title="Equipment">
-   <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
+   <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} bind:shoeObj {capacity} {railSize} {speed} />
 
-   <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} optional {railSize} {speed} />
+   <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} bind:safetyObj optional {railSize} {speed} />
 
    <Checkbox bind:checked={useShoePlates} disabled={seismicZone >= 2} label="Shoe Plates" />
 
@@ -330,54 +506,41 @@
 </Fieldset>
 
 <Fieldset title="Dimensions">
-   {#if roping > 1 && cwtModel !== '236'}
-      <InputLength bind:value={sheaveHeight} label="Sheave" />
-   {/if}
+   <div>
+      {#if roping > 1 && cwtModel !== '236'}
+         <InputLength bind:value={sheaveHeight} label="Sheave" />
+      {/if}
 
-   <InputLength value={topChanHeight} label="Top Channel" readonly {metric} />
+      <InputLength value={topChanHeight} label="Top Channel" readonly {metric} />
 
-   <!-- <InputLength
-   bind:value={gap}
-   bind:override={o_gap}
-   calc={gapCalc}
-   helperText={`Gap must be at least ${floor(minGap / 12)}'-${round(minGap % 12, 4)}"`}
-   invalid={gap < minGap - 0.0001}
-   label="Gap"
-   reset
-   {metric}
-/> -->
+      <InputLength bind:value={gap} bind:override={o_gap} label="Gap" calc={gapCalc} invalid={gap < minGap - 0.0001} {metric}>
+         <svelte:fragment slot="helperText">
+            <HelperText validation>Gap must be at least {floor(minGap / 12)}'-{round(minGap % 12, 4)}"</HelperText>
+         </svelte:fragment>
+      </InputLength>
 
-   <InputLength bind:value={gap} bind:override={o_gap} label="Gap" calc={gapCalc} invalid={gap < minGap - 0.0001} {metric}>
-      <svelte:fragment slot="helperText">
-         <HelperText validation>Gap must be at least {floor(minGap / 12)}'-{round(minGap % 12, 4)}"</HelperText>
-      </svelte:fragment>
-   </InputLength>
+      {#if !lead}
+         <InputLength value={stackHeight} label="Weight Stack" readonly {metric} />
+      {:else}
+         <InputLength bind:value={stackHeight} bind:override={o_stackHeight} label="Weight Stack" calc={stackHeightCalc} invalid={stackHeight < stackHeightCalc} {metric}>
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Stack is shorter than {floor(stackHeightCalc / 12)}'-{round(stackHeightCalc % 12, 4)}"</HelperText>
+            </svelte:fragment>
+         </InputLength>
 
-   {#if !lead}
-      <InputLength value={stackHeight} label="Weight Stack" readonly {metric} />
-   {:else}
-      <!-- <InputLength
-      bind:value={stackHeight}
-      bind:override={stackHeightOverride}
-      calc={stackHeightCalc}
-      helperText={`Stack is shorter than ${floor(stackHeightCalc / 12)}'-${round(stackHeightCalc % 12, 4)}"`}
-      invalid={stackHeight < stackHeightCalc}
-      label="Weight Stack"
-      reset
-      {metric}
-   /> -->
+         <InputLength value={steelStackHeight} label="Steel Weight Stack" {metric} readonly />
 
-      <!-- <InputLength value={steelStackHeight} display label="Steel Weight Stack" {metric} /> -->
-      <!-- <InputLength value={leadStackHeight} display label="Lead Weight Stack" {metric} /> -->
-   {/if}
+         <InputLength value={leadStackHeight} label="Lead Weight Stack" {metric} readonly />
+      {/if}
 
-   <!-- <InputLength value={plankHeight} display label="Bottom Channel" {metric} /> -->
+      <InputLength value={botChanHeight} label="Bottom Channel" {metric} readonly />
 
-   {#if safetyModel !== 'None' || bufferPlate || blockQty > 0}
-      <!-- <InputLength value={bottomEquipHeight} display label={bottomEquipHeightString} {metric} /> -->
-   {/if}
+      {#if safetyModel !== 'None' || bufferPlate || blockQty > 0}
+         <InputLength value={botEquipHeight} label={botEquipHeightLabel} {metric} readonly />
+      {/if}
 
-   <!-- <InputLength value={cwtHeight} display label="Overall Height" {metric} /> -->
+      <InputLength value={cwtHeight} label="Overall Height" {metric} readonly />
+   </div>
 
    <img src="/public/img/counterweight/{imgString}.svg" alt="Counterweight Dimensions" />
 </Fieldset>
