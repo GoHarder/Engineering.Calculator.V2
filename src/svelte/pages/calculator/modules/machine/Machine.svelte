@@ -5,6 +5,7 @@
    import { ceil, floor, round, roundInc } from 'lib/math.mjs';
 
    import * as gTables from '../tables';
+   import * as tables from './tables';
    import { MachineLinks as Links } from '../links';
 
    // Components
@@ -19,9 +20,25 @@
    // Properties
    export let project;
    export const updateModule = () => {
-      const globalData = {};
+      const globalData = {
+         rope: {
+            pitch: ropePitch,
+            size: ropeSize,
+            qty: ropeQty,
+            o_pitch: o_ropePitch,
+         },
+      };
 
-      const moduleData = {};
+      const moduleData = {
+         location,
+         model,
+         sheave: {
+            arcOfContact,
+            groove,
+            model: sheaveModel,
+         },
+         type,
+      };
 
       project.globals = { ...project.globals, ...globalData };
       project.modules.machine = moduleData;
@@ -75,18 +92,26 @@
    Links.setProject(modules);
 
    // Variables
-   let carWeight = car?.weight ?? 0;
+   // - Globals
+   let carWeight = globals?.car?.weight ?? 0;
+   let ropePitch = globals?.car?.pitch ?? 1;
+   let ropeSize = globals?.car?.size ?? 0.375;
+   let ropeQty = globals?.car?.qty ?? 3;
+   let o_ropePitch = globals?.car?.o_pitch ?? false;
 
-   let type = 'Geared';
-   let location = 'Overhead';
-   let model = 'Other';
+   // - General
+   let type = module?.type ?? 'Geared';
+   let location = module?.locaiton ?? 'Overhead';
+   let model = module?.model ?? '';
+
+   // - Sheave
+   let arcOfContact = module?.sheave?.arcOfContact ?? 0;
+   let groove = module?.sheave?.groove ?? '';
+   let sheaveModel = module?.sheave?.model ?? '';
 
    // NOTE: For Convenience
-   let sheaveModel = '';
-   let arcOfContact = 0;
    let travelingCables = 0;
    let o_travelingCables = false;
-
    let compType = 'None';
 
    // - Database
@@ -95,21 +120,50 @@
 
    // - Objects
    let machineObj = {};
+   let sheaveObj = {};
+   let ropeObj = {};
 
    // Subscriptions
    // Contexts
    // Reactive Rules
    $: getEngineeringData(type, location);
 
-   $: sheaves = machineObj?.sheaves ?? [];
+   $: cwtWeight = round(carWeight + capacity * counterbalance, 2);
 
+   $: sheaves = machineObj?.sheaves ?? [];
+   $: ropeVariants = ropeObj?.variants ?? [];
+
+   // - Rope Calcs
+   $: ropeSizeOpts = clone(gTables.ropeSizes).map((rope) => {
+      let diaTest = true;
+      let limitTest = true;
+
+      if (sheaveObj?.diameter) diaTest = round(rope.value * 40, 2) <= sheaveObj.diameter;
+
+      if (sheaveObj?.ropeSizeLimit) limitTest = sheaveObj.ropeSizeLimit.includes(rope.name);
+
+      const pitch = o_ropePitch ? ropePitch : rope.value + 0.25;
+
+      // Figure out how many ropes can be on a sheave if past 10 then set to 10
+      rope.maxQty = floor(((sheaveObj?.rimWidth ?? maxRimWidth) - (0.375 + rope.value)) / pitch);
+      rope.maxQty = rope.maxQty > 10 ? 10 : rope.maxQty;
+
+      if (diaTest && limitTest) return rope;
+   });
+
+   // - Input Calcs
    $: travelingCablesCalc = ceil((overallTravel * 0.25) / 4);
+   $: ropePitchCalc = ropeSize + 0.25;
 
    // Events
    // Lifecycle
    onDestroy(() => {
       updateModule();
    });
+
+   // Console
+   $: console.table(ropeSizeOpts);
+   $: console.log(sheaveObj);
 </script>
 
 <Fieldset title="Globals">
@@ -143,13 +197,13 @@
    </Select>
 
    {#if model && model !== 'Other'}
-      <Select bind:value={sheaveModel} label="Traction Sheave">
+      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Traction Sheave" options={sheaves}>
          {#each sheaves as { name, diameter } (name)}
             <Option value={name}>{name} (Ø{floor(diameter)}")</Option>
          {/each}
       </Select>
 
-      <InputNumber bind:value={arcOfContact} label="Arc Of Contact" type="angle" />
+      <InputNumber bind:value={arcOfContact} label="Arc Of Contact" step="0.1" type="angle" />
    {/if}
 
    <InputNumber bind:value={travelingCables} bind:override={o_travelingCables} label="Traveling Cable Weight" calc={travelingCablesCalc} {metric} type="weight" />
@@ -161,6 +215,64 @@
          <Option value="Rope">Rope</Option>
       </Select>
    {/if}
+</Fieldset>
+
+<Fieldset title="Hoist Ropes">
+   <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" options={ropeSizeOpts} type="number">
+      {#each ropeSizeOpts as { name, value } (value)}
+         <Option {value}>{name}</Option>
+      {/each}
+   </Select>
+
+   <InputNumber bind:value={ropeQty} label="Quantity" {metric}>
+      <svelte:fragment slot="helperText">
+         <HelperText validation>Rope size won't hold load</HelperText>
+      </svelte:fragment>
+   </InputNumber>
+
+   <InputLength bind:value={ropePitch} bind:override={o_ropePitch} label="Pitch" calc={ropePitchCalc} {metric} />
+
+   {#if model && model !== 'Other'}
+      <!-- <InputTorque bind:value={ropeWeight} defaultList label="Weight" list="weight-list" {metric} />
+         <datalist id="weight-list">
+            {#each ropeWeightOptions as value (value)}
+               <option {value} />
+            {/each}
+         </datalist> -->
+
+      <!-- <InputWeight
+            bind:value={ropeMaxLoad}
+            defaultList
+            helperText={`Rope should at least hold ${singleRopeLoad} lbs`}
+            label="Max Load"
+            list="max-load-list"
+            min={singleRopeLoad}
+            {metric}
+         />
+         <datalist id="max-load-list">
+            {#each ropeMaxLoadOptions as value (value)}
+               <option {value} />
+            {/each}
+         </datalist> -->
+   {/if}
+
+   <!-- {#if !ropeSizeLimit && sheave}
+      <Select bind:value={groove} calc={grooveCalc} label="Groove">
+         {#if hwGrooveOptions.length > 0}
+            <OptGroup label="Standard Grooves">
+               {#each hwGrooveOptions as { name, description } (name)}
+                  <Option text={`${name} ${description}`} value={name} selected={groove === name} />
+               {/each}
+            </OptGroup>
+         {/if}
+
+         <OptGroup label="Customer Grooves">
+            {#each customerGrooveOptions as { name, description } (name)}
+               <Option text={`${name} ${description}`} value={name} selected={groove === name} />
+            {/each}
+         </OptGroup>
+      </Select>
+   {/if} -->
 </Fieldset>
 
 <style>
