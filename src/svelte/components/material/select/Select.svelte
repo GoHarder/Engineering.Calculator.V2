@@ -1,6 +1,5 @@
 <script>
    import { onDestroy, onMount, setContext } from 'svelte';
-   import { slide } from 'svelte/transition';
    import { get_current_component } from 'svelte/internal';
    import { MDCSelect } from '@material/select';
    import { MDCSelectIcon } from '@material/select/icon';
@@ -12,6 +11,7 @@
    // Stores
    // Properties
    export let calc = undefined;
+   export let invalid = undefined;
    export let label = '';
    export let link = undefined;
    export let disabled = false;
@@ -37,12 +37,14 @@
    // Constants
    const events = forwardEvents(get_current_component(), ['MDCSelect:change']);
    const id = `select-${randomId()}`;
+   const helperId = `helper-text-${randomId()}`;
 
    // Variables
    let divEle;
    let SelectIcon;
    let Select;
    let menuItemValues = [];
+   let useNativeValidation = true;
 
    // Subscriptions
    // Contexts
@@ -51,7 +53,7 @@
    });
 
    // Reactive Rules
-   $: props = filterProps($$props, ['calc', 'class', 'options', 'override', 'selected', 'fullWidth', 'label', 'link', 'value', 'type']);
+   $: props = filterProps($$props, ['calc', 'class', 'invalid', 'options', 'override', 'selected', 'fullWidth', 'label', 'link', 'value', 'type']);
 
    $: divClass = classList([
       'mdc-select mdc-select--filled',
@@ -62,7 +64,14 @@
 
    $: if (Select) {
       Select.disabled = disabled;
+
       Select.required = required;
+
+      if (useNativeValidation) {
+         invalid = !Select.valid;
+      } else {
+         Select.valid = !invalid;
+      }
    }
 
    $: if (!override && calc !== undefined) value = calc;
@@ -103,6 +112,22 @@
          const icon = divEle.querySelector('.mdc-select__icon');
          SelectIcon = new MDCSelectIcon(icon);
       }
+
+      if ($$slots.helperText) {
+         const p = divEle.nextElementSibling;
+         // const anchor = divEle.querySelector('.mdc-select__anchor');
+
+         p.id = helperId;
+         // anchor.ariaDescribedBy = helperId;
+
+         // console.log(anchor);
+      }
+
+      if (invalid !== undefined) {
+         useNativeValidation = false;
+      }
+
+      Select.useNativeValidation = useNativeValidation;
    });
 
    onDestroy(() => {
@@ -112,9 +137,9 @@
    });
 </script>
 
-<div class="input" class:full-width={fullWidth} transition:slide|local>
+<div class="input" class:full-width={fullWidth}>
    <div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
-      <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text">
+      <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text" aria-describedby={helperId}>
          <input type="hidden" />
          <span class="mdc-select__ripple" />
          <span {id} class="mdc-floating-label">{label}</span>
