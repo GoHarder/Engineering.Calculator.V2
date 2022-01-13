@@ -30,6 +30,7 @@
       _default: { iSuffix: suffix, mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
       angle: { iSuffix: '°', mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => x, toDisplay: (x) => x },
       area: { iSuffix: 'ft²', mSuffix: 'm²', mConvert: 0.00064516, mRound: 4, toValue: (x) => round(x * 144, 6), toDisplay: (x) => round(x / 144, 2) },
+      percent: { iSuffix: '%', mSuffix: '', mConvert: 0, mround: 1, toValue: (x) => round(x / 100, 3), toDisplay: (x) => x * 100 },
       pressure: { iSuffix: 'lb/ft²', mSuffix: 'kg/m²', mConvert: 4.88242764, mRound: 4, toValue: (x) => round(x / 144, 6), toDisplay: (x) => round(x * 144, 2) },
       speed: { iSuffix: 'ft/min', mSuffix: 'm/sec', mConvert: 0.00508, mRound: 4, toValue: (x) => x, toDisplay: (x) => x },
       torque: { iSuffix: 'lb/ft', mSuffix: 'kg/m', mConvert: 1.48816, mround: 4, toValue: (x) => round(x / 12, 4), toDisplay: (x) => round(x * 12, 4) },
