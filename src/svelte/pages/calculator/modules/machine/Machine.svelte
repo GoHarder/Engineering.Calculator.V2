@@ -9,10 +9,9 @@
    import { MachineLinks as Links } from '../links';
 
    // Components
-   import { DataList, Fieldset, RopesInput, SafetyInput, ShoeInput } from 'components/common';
-   import { Checkbox } from 'components/material/checkbox';
+   import { CompInput, Fieldset } from 'components/common';
    import { HelperText, Input, InputNumber, InputLength } from 'components/material/input';
-   import { Option, Select } from 'components/material/select';
+   import { HelperText as SelHelperText, Option, OptGroup, Select } from 'components/material/select';
 
    // Stores
    import fetchStore from 'stores/fetch';
@@ -91,6 +90,10 @@
    const { machine: module } = modules;
    Links.setProject(modules);
 
+   const safetyFactor = tables.safetyFactor.find((row) => machineSpeed <= row.speed)[loadingType.toLowerCase()];
+   const acceleration = tables.performanceStandards.find((row) => row.speed >= machineSpeed).acceleration;
+   const accelerationFactor = round((1 + acceleration / 32.2) / (1 - acceleration / 32.2), 4);
+
    // Variables
    // - Globals
    let carWeight = globals?.car?.weight ?? 0;
@@ -113,10 +116,27 @@
    let travelingCables = 0;
    let o_travelingCables = false;
    let compType = 'None';
+   let ropeWeight = 0;
+   let ropeMaxLoad = 0;
+   let compWeight = 0;
+   let compSheaveWeight = 0;
+   let compRopeChainQty = 2;
+   let compPercentage = 1;
+   let compSheaveModel = '';
+   let compRopeSize = 0.375;
+   let compChainModel = '';
 
    // - Database
    let machines = [];
    let maxRimWidth = 0;
+
+   // - Calculated
+
+   let minRopes = 3;
+   let tractionRatioCond1 = 0;
+   let tractionRatioCond2 = 0;
+   let tractionRatioCond3 = 0;
+   let tractionRatio125 = 0;
 
    // - Objects
    let machineObj = {};
@@ -134,6 +154,14 @@
    $: ropeVariants = ropeObj?.variants ?? [];
 
    // - Rope Calcs
+   // NOTE: 8-17-2021 2:41 PM - Ben doesn't know why the totalRopeLoad2 formula exists I don't either. It doesn't make sense
+   $: totalRopeWeight = round(ropeQty * ropeWeight * overallTravel * roping);
+   $: totalRopeLoad1 = (carWeight + capacity + totalRopeWeight + compWeight + travelingCables) / roping;
+   $: totalRopeLoad2 = (0.5 * roping * compSheaveWeight + roping * travelingCables + carWeight + capacity + totalRopeWeight) / roping;
+   $: totalRopeLoad = round(Math.max(totalRopeLoad1, totalRopeLoad2) * safetyFactor, 1);
+   $: singleRopeLoad = ceil(totalRopeLoad / ropeQty); // Is min breaking Strength
+
+   // - Rope Options
    $: ropeSizeOpts = clone(gTables.ropeSizes).map((rope) => {
       let diaTest = true;
       let limitTest = true;
@@ -151,19 +179,88 @@
       if (diaTest && limitTest) return rope;
    });
 
+   $: ropeVariantOpts = clone(ropeVariants).map((rope) => {
+      let weightTest = true;
+      let maxLoadTest = true;
+
+      if (ropeWeight) weightTest = rope.weight === round(ropeWeight * 12, 2);
+      if (ropeMaxLoad) maxLoadTest = rope.maxLoad === ropeMaxLoad;
+
+      if (weightTest && maxLoadTest) return rope;
+   });
+
+   $: ropeWeightOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope.weight))].sort((a, b) => a - b);
+   $: ropeMaxLoadOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope.maxLoad))].sort((a, b) => a - b);
+
+   $: maxRopes = ropeObj?.maxQty ?? 100;
+   $: ropeLoadError = minRopes >= maxRopes;
+
+   // - Groove Calcs
+   $: ropeTension = round(
+      (2 *
+         (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight + 0.5 * compSheaveWeight + 0.5 * travelingCables) *
+         (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight + 0.5 * compSheaveWeight)) /
+         (carWeight + capacity + cwtWeight + ropeWeight + compWeight + compSheaveWeight + 0.5 * travelingCables)
+   );
+
+   $: if (carWeight + compWeight + 0.5 * travelingCables <= cwtWeight + totalRopeWeight) {
+      tractionRatioCond1 = round(((cwtWeight + totalRopeWeight) / (carWeight + compWeight + 0.5 * travelingCables)) * accelerationFactor, 4);
+   } else {
+      tractionRatioCond1 = round(((carWeight + compWeight + 0.5 * travelingCables) / (cwtWeight + totalRopeWeight)) * accelerationFactor, 4);
+   }
+
+   $: if (cwtWeight + compWeight <= carWeight + capacity + totalRopeWeight) {
+      tractionRatioCond2 = round(((carWeight + capacity + totalRopeWeight) / (cwtWeight + compWeight)) * accelerationFactor, 4);
+   } else {
+      tractionRatioCond2 = round(((cwtWeight + compWeight) / (carWeight + capacity + totalRopeWeight)) * accelerationFactor, 4);
+   }
+
+   $: tractionRatioCond3 = freightClass === 'C2' ? round((carWeight + 1.5 * capacity + totalRopeWeight) / (cwtWeight + compWeight), 4) : 0;
+
+   $: if (cwtWeight + compWeight <= carWeight + capacity + totalRopeWeight) {
+      tractionRatio125 = round((carWeight + capacity * 1.25 + totalRopeWeight) / (cwtWeight + compWeight), 4);
+   } else {
+      tractionRatio125 = round((cwtWeight + compWeight) / (carWeight + capacity * 1.25 + totalRopeWeight), 4);
+   }
+
+   $: tractionRatio = Math.max(tractionRatioCond1, tractionRatioCond2, tractionRatioCond3, tractionRatio125);
+
+   // -- Groove Options
+
+   $: grooveOpts = clone(tables.sheaveGrooves).map((groove) => {
+      const sheaveDia = sheaveObj?.diameter ?? 1;
+      const optimalTraction = round(tractionRatio + 0.1, 4);
+      const { frictionCoefficient, grooveAngle, undercutAngle, shape } = groove;
+
+      if (!groove.customer) {
+         groove.availableTraction = tables.availableTraction[shape](frictionCoefficient, arcOfContact, grooveAngle, undercutAngle);
+         groove.specificPressure = tables.specificPressure[shape](ropeTension, grooveAngle, accelerationFactor, ropeQty, ropeSize, sheaveDia, undercutAngle);
+         groove._optimal = round(Math.abs(optimalTraction - groove.availableTraction), 4);
+      }
+
+      return groove;
+   });
+
+   $: filteredGrooveOpts = clone(grooveOpts).filter((groove) => {
+      if (groove.customer) return true;
+      if (!sheaveObj?.maxGroovePressure) return true;
+
+      return groove.availableTraction > tractionRatio && groove.specificPressure < sheaveObj.maxGroovePressure;
+   });
+
+   $: hwGrooveOpts = filteredGrooveOpts.filter((groove) => !groove.customer);
+   $: customerGrooveOpts = filteredGrooveOpts.filter((groove) => groove.customer);
+
    // - Input Calcs
    $: travelingCablesCalc = ceil((overallTravel * 0.25) / 4);
    $: ropePitchCalc = ropeSize + 0.25;
+   $: grooveCalc = (hwGrooveOpts.sort((grooveA, grooveB) => grooveA._optimal - grooveB._optimal)[0] ?? customerGrooveOpts[0]).name;
 
    // Events
    // Lifecycle
    onDestroy(() => {
       updateModule();
    });
-
-   // Console
-   $: console.table(ropeSizeOpts);
-   $: console.log(sheaveObj);
 </script>
 
 <Fieldset title="Globals">
@@ -218,62 +315,85 @@
 </Fieldset>
 
 <Fieldset title="Hoist Ropes">
-   <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" options={ropeSizeOpts} type="number">
+   <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" invalid={ropeLoadError} options={ropeSizeOpts} type="number">
       {#each ropeSizeOpts as { name, value } (value)}
          <Option {value}>{name}</Option>
       {/each}
+
+      <svelte:fragment slot="helperText">
+         <SelHelperText validation>Rope size won't hold load</SelHelperText>
+      </svelte:fragment>
    </Select>
 
-   <InputNumber bind:value={ropeQty} label="Quantity" {metric}>
+   <InputNumber bind:value={ropeQty} label="Quantity" {metric} min={minRopes} max={maxRopes}>
       <svelte:fragment slot="helperText">
-         <HelperText validation>Rope size won't hold load</HelperText>
+         <HelperText validation>
+            {#if ropeLoadError}
+               Rope size won't hold load
+            {:else}
+               Sheave can handle {minRopes} to {maxRopes} ropes
+            {/if}
+         </HelperText>
       </svelte:fragment>
    </InputNumber>
 
    <InputLength bind:value={ropePitch} bind:override={o_ropePitch} label="Pitch" calc={ropePitchCalc} {metric} />
 
    {#if model && model !== 'Other'}
-      <!-- <InputTorque bind:value={ropeWeight} defaultList label="Weight" list="weight-list" {metric} />
-         <datalist id="weight-list">
-            {#each ropeWeightOptions as value (value)}
-               <option {value} />
-            {/each}
-         </datalist> -->
+      <InputNumber bind:value={ropeWeight} label="Weight" list="weight-list" {metric} type="torque" />
+      <datalist id="weight-list">
+         {#each ropeWeightOpts as value (value)}
+            <option {value} />
+         {/each}
+      </datalist>
 
-      <!-- <InputWeight
-            bind:value={ropeMaxLoad}
-            defaultList
-            helperText={`Rope should at least hold ${singleRopeLoad} lbs`}
-            label="Max Load"
-            list="max-load-list"
-            min={singleRopeLoad}
-            {metric}
-         />
-         <datalist id="max-load-list">
-            {#each ropeMaxLoadOptions as value (value)}
-               <option {value} />
-            {/each}
-         </datalist> -->
+      <InputNumber bind:value={ropeMaxLoad} label="Max Load" list="max-load-list" {metric} min={singleRopeLoad} type="weight">
+         <svelte:fragment slot="helperText">
+            <SelHelperText validation>Rope should at least hold {singleRopeLoad} lbs</SelHelperText>
+         </svelte:fragment>
+      </InputNumber>
+      <datalist id="max-load-list">
+         {#each ropeMaxLoadOpts as value (value)}
+            <option {value} />
+         {/each}
+      </datalist>
    {/if}
 
-   <!-- {#if !ropeSizeLimit && sheave}
-      <Select bind:value={groove} calc={grooveCalc} label="Groove">
-         {#if hwGrooveOptions.length > 0}
+   {#if !(sheaveObj?.ropeSizeLimit ?? false) && sheaveObj?.name}
+      <Select bind:value={groove} label="Groove" calc={grooveCalc}>
+         {#if hwGrooveOpts.length > 0}
             <OptGroup label="Standard Grooves">
-               {#each hwGrooveOptions as { name, description } (name)}
-                  <Option text={`${name} ${description}`} value={name} selected={groove === name} />
+               {#each hwGrooveOpts as { name, description } (name)}
+                  <Option value={name}>{name} {description}</Option>
                {/each}
             </OptGroup>
          {/if}
 
          <OptGroup label="Customer Grooves">
-            {#each customerGrooveOptions as { name, description } (name)}
-               <Option text={`${name} ${description}`} value={name} selected={groove === name} />
+            {#each customerGrooveOpts as { name, description } (name)}
+               <Option value={name}>{name} {description}</Option>
             {/each}
          </OptGroup>
       </Select>
-   {/if} -->
+   {/if}
 </Fieldset>
+
+{#if compType !== 'None'}
+   <CompInput
+      travel={overallTravel}
+      {roping}
+      {ropeSize}
+      {ropeQty}
+      bind:type={compType}
+      bind:ropeChainQty={compRopeChainQty}
+      bind:percentage={compPercentage}
+      bind:compWeight
+      bind:compSheaveModel
+      bind:compSheaveWeight
+      bind:compRopeSize
+      bind:compChainModel
+   />
+{/if}
 
 <style>
 </style>
