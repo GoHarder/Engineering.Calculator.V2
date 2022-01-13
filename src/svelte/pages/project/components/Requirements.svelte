@@ -104,7 +104,7 @@
 
       capacity = globals?.capacity ?? 0;
       code = globals?.code ?? 'ASME A17-1 2010';
-      counterbalance = globals.counterbalance ? globals.counterbalance * 100 : 40;
+      counterbalance = globals?.counterbalance ?? 0.4;
       freightClass = globals?.loading?.freight ?? 'None';
       ibcCategory = globals?.seismic?.category ?? 'A';
       ip = globals?.seismic?.ip ?? 1;
@@ -136,7 +136,7 @@
       const update = {
          capacity,
          code,
-         counterbalance: round(counterbalance / 100, 3),
+         counterbalance,
          loading: {
             type: loadingType,
             freight: freightClass,
@@ -180,7 +180,7 @@
          </svelte:fragment>
       </InputNumber>
 
-      <InputNumber bind:value={counterbalance} label="Counterbalance" max="50" min="40" {metric} step="2.5" suffix="%">
+      <InputNumber bind:value={counterbalance} label="Counterbalance" max="50" min="40" {metric} step="2.5" type="percent">
          <svelte:fragment slot="helperText">
             <HelperText validation>Invalid Counterbalance %</HelperText>
          </svelte:fragment>
