@@ -21,6 +21,7 @@ const inheritance = {
    cwtWeight: ['sling', 'counterweight'],
    // Machine
    compType: ['machine', 'sling', 'counterweight'],
+   compWeight: ['machine', 'sling'],
    ropeSize: ['machine', 'sling'],
    ropeQty: ['machine', 'sling'],
    ropePitch: ['machine', 'sling'],
