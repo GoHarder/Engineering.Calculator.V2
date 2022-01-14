@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
 
    const docs = { machines, maxRimWidth };
 
-   // await setEx(req.originalUrl, JSON.stringify(docs));
+   await setEx(req.originalUrl, JSON.stringify(docs));
 
    res.status(200).json(docs);
 });
