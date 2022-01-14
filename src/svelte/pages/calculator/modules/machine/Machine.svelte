@@ -1,8 +1,8 @@
 <script>
-   import { onDestroy, onMount } from 'svelte';
+   import { onDestroy } from 'svelte';
 
    import { clone } from 'lib/main.mjs';
-   import { ceil, floor, round, roundInc } from 'lib/math.mjs';
+   import { ceil, floor, round } from 'lib/math.mjs';
 
    import * as gTables from '../tables';
    import * as tables from './tables';
