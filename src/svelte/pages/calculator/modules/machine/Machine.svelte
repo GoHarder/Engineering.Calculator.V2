@@ -26,17 +26,37 @@
             qty: ropeQty,
             o_pitch: o_ropePitch,
          },
+         compensation: {
+            type: compType,
+            weight: compWeight,
+         },
       };
 
       const moduleData = {
+         compensation: {
+            chianModel: compChainModel,
+            percentage: compPercentage,
+            ropeChainQty: compRopeChainQty,
+            ropeSize: compRopeSize,
+            sheave: {
+               model: compSheaveModel,
+               weight: compSheaveWeight,
+            },
+         },
          location,
          model,
+         rope: {
+            maxLoad,
+            weight,
+         },
          sheave: {
             arcOfContact,
             groove,
             model: sheaveModel,
          },
+         travelingCables,
          type,
+         o_travelingCables,
       };
 
       project.globals = { ...project.globals, ...globalData };
@@ -84,7 +104,7 @@
 
    // Constants
    const { globals, modules, metric } = project;
-   const { capacity, car, roping, speed, counterbalance, loading, machine, overallTravel } = globals;
+   const { capacity, roping, speed, counterbalance, loading, machine, overallTravel } = globals;
    const { type: loadingType, freight: freightClass } = loading;
    const { capacity: machineCapacity, speed: machineSpeed } = machine;
    const { machine: module } = modules;
@@ -97,34 +117,39 @@
    // Variables
    // - Globals
    let carWeight = globals?.car?.weight ?? 0;
-   let ropePitch = globals?.car?.pitch ?? 1;
-   let ropeSize = globals?.car?.size ?? 0.375;
-   let ropeQty = globals?.car?.qty ?? 3;
-   let o_ropePitch = globals?.car?.o_pitch ?? false;
+
+   let ropePitch = globals?.rope?.pitch ?? 1;
+   let ropeSize = globals?.rope?.size ?? 0.375;
+   let ropeQty = globals?.rope?.qty ?? 3;
+   let o_ropePitch = globals?.rope?.o_pitch ?? false;
+
+   let compType = globals?.compensation?.type ?? 'None';
+   let compWeight = globals?.compensation?.weight ?? 0;
 
    // - General
+   let travelingCables = module?.travelingCables ?? 0;
    let type = module?.type ?? 'Geared';
    let location = module?.locaiton ?? 'Overhead';
    let model = module?.model ?? '';
+
+   let o_travelingCables = module?.o_travelingCables ?? false;
 
    // - Sheave
    let arcOfContact = module?.sheave?.arcOfContact ?? 0;
    let groove = module?.sheave?.groove ?? '';
    let sheaveModel = module?.sheave?.model ?? '';
 
-   // NOTE: For Convenience
-   let travelingCables = 0;
-   let o_travelingCables = false;
-   let compType = 'None';
-   let ropeWeight = 0;
-   let ropeMaxLoad = 0;
-   let compWeight = 0;
-   let compSheaveWeight = 0;
-   let compRopeChainQty = 2;
-   let compPercentage = 1;
-   let compSheaveModel = '';
-   let compRopeSize = 0.375;
-   let compChainModel = '';
+   // - Rope
+   let ropeWeight = module?.rope?.weight ?? 0;
+   let ropeMaxLoad = module?.rope?.maxLoad ?? 0;
+
+   // Compensation
+   let compChainModel = module.compensation?.chianModel ?? '';
+   let compPercentage = module.compensation?.percentage ?? 1;
+   let compRopeChainQty = module.compensation?.ropeChainQty ?? 2;
+   let compRopeSize = module.compensation?.ropeSize ?? 0.375;
+   let compSheaveModel = module.compensation?.sheave?.model ?? '';
+   let compSheaveWeight = module.compensation?.sheave?.weight ?? 0;
 
    // - Database
    let machines = [];
@@ -263,137 +288,146 @@
    });
 </script>
 
-<Fieldset title="Globals">
-   <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} type="weight" />
+<div class="container">
+   <Fieldset title="Globals">
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} type="weight" />
 
-   <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
+      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
-   <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} type="speed" />
+      <InputNumber value={speed} label="Car Speed" link="/Project/Requirements" {metric} type="speed" />
 
-   <InputNumber value={counterbalance * 100} label="Counterbalance" link="/Project/Requirements" suffix="%" />
+      <InputNumber value={counterbalance * 100} label="Counterbalance" link="/Project/Requirements" suffix="%" />
 
-   <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
-</Fieldset>
+      <Input value="{roping}:1" label="Roping" link="/Project/Requirements" />
+   </Fieldset>
 
-<Fieldset title="Properties">
-   <Select bind:value={type} label="Type">
-      <Option value="Geared">Geared</Option>
-      <Option value="Gearless">Gearles</Option>
-   </Select>
+   <Fieldset title="Properties">
+      <Select bind:value={type} label="Type">
+         <Option value="Geared">Geared</Option>
+         <Option value="Gearless">Gearles</Option>
+      </Select>
 
-   <Select bind:value={location} label="Location">
-      <Option value="Overhead">Overhead</Option>
-      <Option value="Hoistway">Hoistway</Option>
-      <Option value="Basement">Basement</Option>
-   </Select>
+      <Select bind:value={location} label="Location">
+         <Option value="Overhead">Overhead</Option>
+         <Option value="Hoistway">Hoistway</Option>
+         <Option value="Basement">Basement</Option>
+      </Select>
 
-   <Select bind:value={model} bind:selected={machineObj} label="Model" options={machines}>
-      {#each machines as { name } (name)}
-         <Option value={name}>{name}</Option>
-      {/each}
-   </Select>
-
-   {#if model && model !== 'Other'}
-      <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Traction Sheave" options={sheaves}>
-         {#each sheaves as { name, diameter } (name)}
-            <Option value={name}>{name} (Ø{floor(diameter)}")</Option>
+      <Select bind:value={model} bind:selected={machineObj} label="Model" options={machines}>
+         {#each machines as { name } (name)}
+            <Option value={name}>{name}</Option>
          {/each}
       </Select>
 
-      <InputNumber bind:value={arcOfContact} label="Arc Of Contact" step="0.1" type="angle" />
-   {/if}
+      {#if model && model !== 'Other'}
+         <Select bind:value={sheaveModel} bind:selected={sheaveObj} label="Traction Sheave" options={sheaves}>
+            {#each sheaves as { name, diameter } (name)}
+               <Option value={name}>{name} (Ø{floor(diameter)}")</Option>
+            {/each}
+         </Select>
 
-   <InputNumber bind:value={travelingCables} bind:override={o_travelingCables} label="Traveling Cable Weight" calc={travelingCablesCalc} {metric} type="weight" />
+         <InputNumber bind:value={arcOfContact} label="Arc Of Contact" step="0.1" type="angle" />
+      {/if}
 
-   {#if compType === 'None'}
-      <Select bind:value={compType} label="Compensation">
-         <Option value="None">None</Option>
-         <Option value="Chain">Chain</Option>
-         <Option value="Rope">Rope</Option>
-      </Select>
-   {/if}
-</Fieldset>
+      <InputNumber bind:value={travelingCables} bind:override={o_travelingCables} label="Traveling Cable Weight" calc={travelingCablesCalc} {metric} type="weight" />
 
-<Fieldset title="Hoist Ropes">
-   <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" invalid={ropeLoadError} options={ropeSizeOpts} type="number">
-      {#each ropeSizeOpts as { name, value } (value)}
-         <Option {value}>{name}</Option>
-      {/each}
+      {#if compType === 'None'}
+         <Select bind:value={compType} label="Compensation">
+            <Option value="None">None</Option>
+            <Option value="Chain">Chain</Option>
+            <Option value="Rope">Rope</Option>
+         </Select>
+      {/if}
+   </Fieldset>
+</div>
 
-      <svelte:fragment slot="helperText">
-         <SelHelperText validation>Rope size won't hold load</SelHelperText>
-      </svelte:fragment>
-   </Select>
-
-   <InputNumber bind:value={ropeQty} label="Quantity" {metric} min={minRopes} max={maxRopes}>
-      <svelte:fragment slot="helperText">
-         <HelperText validation>
-            {#if ropeLoadError}
-               Rope size won't hold load
-            {:else}
-               Sheave can handle {minRopes} to {maxRopes} ropes
-            {/if}
-         </HelperText>
-      </svelte:fragment>
-   </InputNumber>
-
-   <InputLength bind:value={ropePitch} bind:override={o_ropePitch} label="Pitch" calc={ropePitchCalc} {metric} />
-
-   {#if model && model !== 'Other'}
-      <InputNumber bind:value={ropeWeight} label="Weight" list="weight-list" {metric} type="torque" />
-      <datalist id="weight-list">
-         {#each ropeWeightOpts as value (value)}
-            <option {value} />
+<div class="container">
+   <Fieldset title="Hoist Ropes">
+      <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" invalid={ropeLoadError} options={ropeSizeOpts} type="number">
+         {#each ropeSizeOpts as { name, value } (value)}
+            <Option {value}>{name}</Option>
          {/each}
-      </datalist>
 
-      <InputNumber bind:value={ropeMaxLoad} label="Max Load" list="max-load-list" {metric} min={singleRopeLoad} type="weight">
          <svelte:fragment slot="helperText">
-            <SelHelperText validation>Rope should at least hold {singleRopeLoad} lbs</SelHelperText>
+            <SelHelperText validation>Rope size won't hold load</SelHelperText>
+         </svelte:fragment>
+      </Select>
+
+      <InputNumber bind:value={ropeQty} label="Quantity" {metric} min={minRopes} max={maxRopes}>
+         <svelte:fragment slot="helperText">
+            <HelperText validation>
+               {#if ropeLoadError}
+                  Rope size won't hold load
+               {:else}
+                  Sheave can handle {minRopes} to {maxRopes} ropes
+               {/if}
+            </HelperText>
          </svelte:fragment>
       </InputNumber>
-      <datalist id="max-load-list">
-         {#each ropeMaxLoadOpts as value (value)}
-            <option {value} />
-         {/each}
-      </datalist>
-   {/if}
 
-   {#if !(sheaveObj?.ropeSizeLimit ?? false) && sheaveObj?.name}
-      <Select bind:value={groove} label="Groove" calc={grooveCalc}>
-         {#if hwGrooveOpts.length > 0}
-            <OptGroup label="Standard Grooves">
-               {#each hwGrooveOpts as { name, description } (name)}
+      <InputLength bind:value={ropePitch} bind:override={o_ropePitch} label="Pitch" calc={ropePitchCalc} {metric} />
+
+      {#if model && model !== 'Other'}
+         <InputNumber bind:value={ropeWeight} label="Weight" list="weight-list" {metric} type="torque" />
+         <datalist id="weight-list">
+            {#each ropeWeightOpts as value (value)}
+               <option {value} />
+            {/each}
+         </datalist>
+
+         <InputNumber bind:value={ropeMaxLoad} label="Max Load" list="max-load-list" {metric} min={singleRopeLoad} type="weight">
+            <svelte:fragment slot="helperText">
+               <SelHelperText validation>Rope should at least hold {singleRopeLoad} lbs</SelHelperText>
+            </svelte:fragment>
+         </InputNumber>
+         <datalist id="max-load-list">
+            {#each ropeMaxLoadOpts as value (value)}
+               <option {value} />
+            {/each}
+         </datalist>
+      {/if}
+
+      {#if !(sheaveObj?.ropeSizeLimit ?? false) && sheaveObj?.name}
+         <Select bind:value={groove} label="Groove" calc={grooveCalc}>
+            {#if hwGrooveOpts.length > 0}
+               <OptGroup label="Standard Grooves">
+                  {#each hwGrooveOpts as { name, description } (name)}
+                     <Option value={name}>{name} {description}</Option>
+                  {/each}
+               </OptGroup>
+            {/if}
+
+            <OptGroup label="Customer Grooves">
+               {#each customerGrooveOpts as { name, description } (name)}
                   <Option value={name}>{name} {description}</Option>
                {/each}
             </OptGroup>
-         {/if}
+         </Select>
+      {/if}
+   </Fieldset>
 
-         <OptGroup label="Customer Grooves">
-            {#each customerGrooveOpts as { name, description } (name)}
-               <Option value={name}>{name} {description}</Option>
-            {/each}
-         </OptGroup>
-      </Select>
+   {#if compType !== 'None'}
+      <CompInput
+         travel={overallTravel}
+         {roping}
+         {ropeSize}
+         {ropeQty}
+         bind:type={compType}
+         bind:ropeChainQty={compRopeChainQty}
+         bind:percentage={compPercentage}
+         bind:compWeight
+         bind:compSheaveModel
+         bind:compSheaveWeight
+         bind:compRopeSize
+         bind:compChainModel
+      />
    {/if}
-</Fieldset>
-
-{#if compType !== 'None'}
-   <CompInput
-      travel={overallTravel}
-      {roping}
-      {ropeSize}
-      {ropeQty}
-      bind:type={compType}
-      bind:ropeChainQty={compRopeChainQty}
-      bind:percentage={compPercentage}
-      bind:compWeight
-      bind:compSheaveModel
-      bind:compSheaveWeight
-      bind:compRopeSize
-      bind:compChainModel
-   />
-{/if}
+</div>
 
 <style>
+   .container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+   }
 </style>
