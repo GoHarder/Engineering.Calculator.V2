@@ -293,7 +293,7 @@
    </Button>
 </div>
 
-<Table on:sort={onSort} class="home-data-table">
+<Table on:sort={onSort} class="home-data-table" sticky>
    <svelte:fragment slot="head">
       <Row>
          <Cell scope="col" role="columnheader" class="project-row-cell contract" sort="contract">Contract #</Cell>
