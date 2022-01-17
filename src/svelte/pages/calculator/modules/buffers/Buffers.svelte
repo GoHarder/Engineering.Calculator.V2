@@ -113,6 +113,9 @@
 
    // Events
    // Lifecycle
+   onDestroy(() => {
+      updateModule();
+   });
 </script>
 
 <div class="container">
