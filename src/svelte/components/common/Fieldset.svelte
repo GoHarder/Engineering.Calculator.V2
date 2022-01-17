@@ -1,5 +1,4 @@
 <script>
-   import { fade } from 'svelte/transition';
    import { filterProps } from '../lib';
 
    // Components
@@ -19,7 +18,7 @@
    // Lifecycle
 </script>
 
-<fieldset transition:fade {...props}>
+<fieldset {...props}>
    <legend>{title}</legend>
    <hr />
    <slot />
