@@ -48,15 +48,15 @@
 
       ButtonRipple.unbounded = true;
 
-      let icon = buttonEle.querySelector('svg');
+      let icons = buttonEle.querySelectorAll('svg');
 
-      if (!icon) {
-         icon = buttonEle.querySelector('i');
-      }
+      if (icons.length === 0) icons = buttonEle.querySelectorAll('i');
 
-      if ($$slots.default && icon) {
-         icon.classList.add('material-icons');
-         icon.classList.add('mdc-icon-button__icon');
+      if ($$slots.default && icons.length > 0) {
+         icons.forEach((icon) => {
+            icon.classList.add('material-icons');
+            icon.classList.add('mdc-icon-button__icon');
+         });
       }
    });
 
@@ -76,6 +76,18 @@
 {/if}
 
 <style lang="scss" global>
-   @use '@material/icon-button/_icon-button';
-   @include icon-button.core-styles;
+   @use '@material/icon-button/_icon-button-theme' as theme;
+   @use '@material/icon-button/styles';
+
+   // @use '@material/icon-button/_icon-button';
+   // @include icon-button.core-styles;
+
+   .mdc-icon-button {
+      &.density-1 {
+         @include theme.density(-1);
+      }
+      &.density-2 {
+         @include theme.density(-2);
+      }
+   }
 </style>
