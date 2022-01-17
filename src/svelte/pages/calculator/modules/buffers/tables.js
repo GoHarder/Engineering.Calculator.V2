@@ -1,0 +1,41 @@
+export const tripSpeed = [
+   { carSpeed: 25, carTrip: 175, carTripWithCwtSafety: 175, cwtTrip: 184 },
+   { carSpeed: 50, carTrip: 175, carTripWithCwtSafety: 175, cwtTrip: 184 },
+   { carSpeed: 75, carTrip: 175, carTripWithCwtSafety: 175, cwtTrip: 184 },
+   { carSpeed: 100, carTrip: 175, carTripWithCwtSafety: 175, cwtTrip: 184 },
+   { carSpeed: 125, carTrip: 175, carTripWithCwtSafety: 175, cwtTrip: 184 },
+   { carSpeed: 150, carTrip: 210, carTripWithCwtSafety: 210, cwtTrip: 220 },
+   { carSpeed: 175, carTrip: 250, carTripWithCwtSafety: 250, cwtTrip: 263 },
+   { carSpeed: 200, carTrip: 280, carTripWithCwtSafety: 280, cwtTrip: 294 },
+   { carSpeed: 225, carTrip: 308, carTripWithCwtSafety: 308, cwtTrip: 323 },
+   { carSpeed: 250, carTrip: 337, carTripWithCwtSafety: 337, cwtTrip: 354 },
+   { carSpeed: 300, carTrip: 395, carTripWithCwtSafety: 395, cwtTrip: 415 },
+   { carSpeed: 350, carTrip: 452, carTripWithCwtSafety: 430, cwtTrip: 452 },
+   { carSpeed: 400, carTrip: 510, carTripWithCwtSafety: 485, cwtTrip: 510 },
+   { carSpeed: 450, carTrip: 568, carTripWithCwtSafety: 568, cwtTrip: 596 },
+   { carSpeed: 500, carTrip: 625, carTripWithCwtSafety: 594, cwtTrip: 625 },
+   { carSpeed: 600, carTrip: 740, carTripWithCwtSafety: 703, cwtTrip: 740 },
+   { carSpeed: 700, carTrip: 855, carTripWithCwtSafety: 855, cwtTrip: 898 },
+   { carSpeed: 800, carTrip: 970, carTripWithCwtSafety: 921, cwtTrip: 970 },
+   { carSpeed: 900, carTrip: 1085, carTripWithCwtSafety: 1085, cwtTrip: 1139 },
+   { carSpeed: 1000, carTrip: 1200, carTripWithCwtSafety: 1200, cwtTrip: 1260 },
+   { carSpeed: 1100, carTrip: 1320, carTripWithCwtSafety: 1320, cwtTrip: 1386 },
+   { carSpeed: 1200, carTrip: 1440, carTripWithCwtSafety: 1440, cwtTrip: 1512 },
+   { carSpeed: 1300, carTrip: 1560, carTripWithCwtSafety: 1560, cwtTrip: 1638 },
+   { carSpeed: 1400, carTrip: 1680, carTripWithCwtSafety: 1680, cwtTrip: 1764 },
+   { carSpeed: 1500, carTrip: 1800, carTripWithCwtSafety: 1800, cwtTrip: 1890 },
+];
+
+const springCompression = [
+   { name: '1 1/2"', value: 1.5 },
+   { name: '2"', value: 2 },
+   { name: '2 1/2"', value: 2.5 },
+   { name: '3"', value: 3 },
+   { name: '3 1/2"', value: 3.5 },
+   { name: '4"', value: 4 },
+   { name: '4 1/2"', value: 4.5 },
+   { name: '5"', value: 5 },
+   { name: '5 1/2"', value: 5.5 },
+];
+
+export const getSpringCompression = (valid) => springCompression.filter((row) => valid.includes(row.value));
