@@ -17,8 +17,8 @@ const inheritance = {
    toeGuard1Weight: ['platform', 'sling'],
    toeGuard2Weight: ['platform', 'sling'],
    // Sling
-   carWeight: ['sling', 'counterweight', 'machine'],
-   cwtWeight: ['sling', 'counterweight'],
+   carWeight: ['sling', 'counterweight', 'machine', 'buffers'],
+   cwtWeight: ['sling', 'counterweight', 'buffers'],
    // Machine
    compType: ['machine', 'sling', 'counterweight'],
    compWeight: ['machine', 'sling'],
@@ -57,6 +57,7 @@ class LinkTree {
    }
 }
 
+export const BufferLinks = new LinkTree('buffers');
 export const CounterweightLinks = new LinkTree('counterweight');
 export const MachineLinks = new LinkTree('machine');
 export const SlingLinks = new LinkTree('sling');
