@@ -13,10 +13,20 @@
    import fetchStore from 'stores/fetch';
 
    // Properties
+   export let bufferQty = 1;
+   export let compression = 0;
    export let grossLoad = 0;
    export let metric = false;
+   export let oilModel = '500';
    export let ratedSpeed = 0;
+   export let spaceBelow = false;
+   export let springModel = '400-008';
+   export let springQty = 1;
+   export let style = 'Oil';
    export let title = '';
+
+   export let o_compression = false;
+   export let o_springQty = false;
 
    // Methods
    const getOilBuffers = async (style, speed, load) => {
@@ -83,19 +93,6 @@
    const location = title === 'Car' ? 'car' : 'cwt';
 
    // Variables
-   let style = 'Oil';
-   let compression = 0;
-   let spaceBelow = false;
-   let bufferQty = 1;
-   let springQty = 1;
-   let oilModel = '500';
-   let springModel = '400-008';
-
-   let validationText = '';
-   let springError = false;
-
-   let o_springQty = false;
-   let o_compression = false;
 
    // - Database
    let oilBuffers = [];
@@ -118,7 +115,6 @@
    $: tripSpeed = location === 'car' ? carTripSpeed : cwtTripSpeed;
 
    $: impact = ceilInc((2 * grossLoad * (1 + ((1.25 * ratedSpeed) / 60) ** 2 / (64.4 * (compression / 12)))) / bufferQty, 10);
-   // $: console.log(grossLoad, ratedSpeed, compression, bufferQty);
 
    // NOTE: 8-30-2021 8:15 AM - The min and max spring loads are from 2.22.3.2.1 and 2.6.1(b)
    $: minSpringLoad = spaceBelow ? impact : round(grossLoad * 2);
@@ -148,9 +144,6 @@
 
    // Events
    // Lifecycle
-
-   // console.log(round(springLoad / springQty));
-   $: console.log(oilBufferObj);
 </script>
 
 <Fieldset {title}>
@@ -207,7 +200,13 @@
 
       <InputNumber value={round(springLoad / springQty)} label="Spring Load" invalid={invalidSpringLoad} readonly type="weight">
          <svelte:fragment slot="helperText">
-            <HelperText validation>Compression and quantity is not allowed</HelperText>
+            <HelperText validation>
+               {#if round(springLoad / springQty) === 0}
+                  Compression and quantity is not allowed
+               {:else}
+                  Spring load is close to limit
+               {/if}
+            </HelperText>
          </svelte:fragment>
       </InputNumber>
 
