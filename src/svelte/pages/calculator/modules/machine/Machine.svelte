@@ -429,5 +429,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: flex-start;
+      margin: 0.25em;
+      gap: 0.25em;
    }
 </style>
