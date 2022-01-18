@@ -201,7 +201,12 @@
    </Content>
 </div>
 
-<Snackbar bind:show={showSnackbar}>Project Saved</Snackbar>
+<Snackbar bind:show={showSnackbar}>
+   <div class="snack-text">
+      <span>Project Saved</span>
+      <i class="material-icons">done</i>
+   </div>
+</Snackbar>
 
 <style lang="scss">
    @use 'src/scss/theme' as vantage;
@@ -268,5 +273,18 @@
       height: 100%;
       width: 1px;
       background-color: vantage.$gray-90;
+   }
+
+   .snack-text {
+      position: relative;
+
+      span {
+         line-height: 24px;
+         display: inline-block;
+      }
+      i {
+         position: absolute;
+         right: 0;
+      }
    }
 </style>
