@@ -1,6 +1,12 @@
 <script>
+   import { createEventDispatcher } from 'svelte';
+
    // Components
    import { Icon, IconButton } from 'components/material/button';
+   import { OptGroup, Option, Select } from 'components/material/select';
+   import { ToolTip } from 'components/material/tool-tip';
+
+   import SteelMember from './SteelMember.svelte';
 
    // Stores
    // Properties
@@ -17,45 +23,73 @@
 
    // Methods
    // Constants
+   const dispatch = createEventDispatcher();
+
    // Variables
-   let test = false;
+   let show = true;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
+
+   // - Steel Selection
+   $: steelSizes = steel[shape] || [];
+
    // Events
+   const onDelete = () => {
+      dispatch('delete', id);
+   };
+
    // Lifecycle
 </script>
 
 <div class="fieldset">
    <header>
-      <p>Some sort of title</p>
+      <p bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
 
-      <IconButton on={test} toggle class="density-2">
-         <Icon>copy_all</Icon>
-      </IconButton>
+      <ToolTip {id}>Edit Label</ToolTip>
 
-      <IconButton on={test} toggle class="density-2">
-         <Icon class="mdc-icon-button__icon--on">minimize</Icon>
-         <Icon>maximize</Icon>
-      </IconButton>
+      <div class="buttons">
+         <IconButton class="density-3" toolTip="Copy">
+            <Icon>copy_all</Icon>
+         </IconButton>
 
-      <IconButton class="density-2">
-         <Icon>close</Icon>
-      </IconButton>
+         <IconButton bind:on={show} toggle class="density-3" toolTip={show ? 'Minimize' : 'Maximize'}>
+            <Icon class="mdc-icon-button__icon--on">minimize</Icon>
+            <Icon>maximize</Icon>
+         </IconButton>
+
+         <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
+            <Icon>close</Icon>
+         </IconButton>
+      </div>
    </header>
 
-   <hr />
+   {#if show}
+      <hr />
 
-   {steel}
-   {supplied}
-   {existing}
-   {id}
-   {members}
-   {name}
-   {shape}
-   {label}
-   {reactions}
+      <SteelMember>
+         <Select bind:value={shape} label="Shape">
+            <Option value="cChannels">C Channel</Option>
+            <Option value="mcChannels">MC Channel</Option>
+            <Option value="sBeams">S Beam</Option>
+            <Option value="wBeams">W Beam</Option>
+         </Select>
+      </SteelMember>
+
+      {steel}
+      {supplied}
+      {existing}
+      {id}
+      {members}
+      {name}
+      {shape}
+      {reactions}
+
+      {#if members.length === 2}
+         <SteelMember />
+      {/if}
+   {/if}
 </div>
 
 <style lang="scss">
@@ -69,15 +103,28 @@
    header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
    }
 
    p {
       font-size: 1.1rem;
       margin: 0;
       margin-top: 6px;
-      margin-right: auto;
+      margin-right: 100px;
+      position: relative;
 
-      // margin: 6px 0 10px;
+      &:hover {
+         color: vantage.$primary;
+
+         &::after {
+            font-family: 'Material Icons';
+            content: ' \e3c9';
+            position: absolute;
+            top: 1px;
+            right: -24px;
+            z-index: 12;
+         }
+      }
    }
 
    hr {
