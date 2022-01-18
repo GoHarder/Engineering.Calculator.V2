@@ -82,12 +82,13 @@
    // @use '@material/icon-button/_icon-button';
    // @include icon-button.core-styles;
 
+   $densities: -1, -2, -3, -4, -5;
+
    .mdc-icon-button {
-      &.density-1 {
-         @include theme.density(-1);
-      }
-      &.density-2 {
-         @include theme.density(-2);
+      @each $density in $densities {
+         &.density#{$density} {
+            @include theme.density($density);
+         }
       }
    }
 </style>
