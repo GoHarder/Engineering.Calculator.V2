@@ -83,6 +83,10 @@
       update(value);
    }
 
+   $: if (options) {
+      update(value);
+   }
+
    // Events
    const onChange = (event) => {
       switch (type) {
