@@ -85,6 +85,8 @@ $input-width: 300px;
       margin: 6px 0 10px;
       float: left;
       clear: right;
+      cursor: default;
+      user-select: none;
    }
 
    hr {
