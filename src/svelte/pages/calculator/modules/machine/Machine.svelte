@@ -46,8 +46,8 @@
          location,
          model,
          rope: {
-            maxLoad,
-            weight,
+            maxLoad: ropeMaxLoad,
+            weight: ropeWeight,
          },
          sheave: {
             arcOfContact,
@@ -214,8 +214,8 @@
       if (weightTest && maxLoadTest) return rope;
    });
 
-   $: ropeWeightOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope.weight))].sort((a, b) => a - b);
-   $: ropeMaxLoadOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope.maxLoad))].sort((a, b) => a - b);
+   $: ropeWeightOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope?.weight))].sort((a, b) => a - b);
+   $: ropeMaxLoadOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope?.maxLoad))].sort((a, b) => a - b);
 
    $: maxRopes = ropeObj?.maxQty ?? 100;
    $: ropeLoadError = minRopes >= maxRopes;
@@ -286,6 +286,9 @@
    onDestroy(() => {
       updateModule();
    });
+
+   // $: console.table(ropeSizeOpts);
+   // $: console.log(ropeObj);
 </script>
 
 <div class="container">
@@ -368,7 +371,7 @@
       <InputLength bind:value={ropePitch} bind:override={o_ropePitch} label="Pitch" calc={ropePitchCalc} {metric} />
 
       {#if model && model !== 'Other'}
-         <InputNumber bind:value={ropeWeight} label="Weight" list="weight-list" {metric} type="torque" />
+         <InputNumber bind:value={ropeWeight} label="Weight" list="weight-list" {metric} step="0.01" type="torque" />
          <datalist id="weight-list">
             {#each ropeWeightOpts as value (value)}
                <option {value} />
