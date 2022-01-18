@@ -1,4 +1,6 @@
 <script>
+   import { onDestroy } from 'svelte';
+
    import { round } from 'lib/math.mjs';
 
    import { BufferLinks as Links } from '../links';
