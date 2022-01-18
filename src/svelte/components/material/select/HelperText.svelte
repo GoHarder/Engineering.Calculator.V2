@@ -31,7 +31,7 @@
    });
 
    onDestroy(() => {
-      HelperText.destory();
+      HelperText.destroy();
    });
 </script>
 
