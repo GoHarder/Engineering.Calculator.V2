@@ -130,7 +130,7 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   if (updateInfo.modifiedCount === 0) return res.status(500).json({ message: 'Nothing was changed' });
+   if (updateInfo.modifiedCount === 0) return res.status(200).json({ message: 'Nothing was changed' });
 
    res.status(200).json(doc);
 });
