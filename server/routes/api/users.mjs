@@ -7,7 +7,7 @@ import express from 'express';
 import { ObjectId } from 'mongodb';
 
 // Project Imports
-import { hash, signToken, randomPassword } from '../../lib/crypto.mjs';
+import { hash, signToken, randomPassword, randomStr } from '../../lib/crypto.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
@@ -113,7 +113,7 @@ router.get('/bearer', checkAuth, async (req, res) => {
    res.status(200).json(userDoc);
 });
 
-router.get('email/:email', async (req, res) => {
+router.get('/email/:email', async (req, res) => {
    const { email } = req.params;
 
    if (!validate.email(email)) return res.status(400).json({ message: 'Email is invalid' });
