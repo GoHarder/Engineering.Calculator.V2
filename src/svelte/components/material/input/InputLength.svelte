@@ -133,7 +133,7 @@
    <label bind:this={labelEle} class={labelClass}>
       <span class="mdc-text-field__ripple" />
 
-      <span class={spanClass} {id}>{label}</span>
+      <span class={spanClass} {id}>{@html label}</span>
 
       {#if calc !== undefined}
          {#if override}
