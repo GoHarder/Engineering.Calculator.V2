@@ -94,3 +94,19 @@ $input-width: 300px;
       border: 1px solid $primary;
    }
 }
+
+@mixin edit-label {
+   position: relative;
+
+   &:hover {
+      color: $primary;
+
+      &::after {
+         font-family: 'Material Icons';
+         content: ' \e3c9';
+         position: absolute;
+         top: 0;
+         right: -24px;
+      }
+   }
+}
