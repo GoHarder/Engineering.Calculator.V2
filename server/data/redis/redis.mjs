@@ -28,6 +28,8 @@ const connect = async () => {
 
    client = createClient(options);
 
+   client.on('error', (error) => {});
+
    try {
       await client.connect();
       return true;
