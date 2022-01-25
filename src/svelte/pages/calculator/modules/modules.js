@@ -4,6 +4,7 @@
 
 import Buffers from './buffers/Buffers.svelte';
 import Counterweight from './counterweight/Counterweight.svelte';
+import Hoistway from './hoistway/Hoistway.svelte';
 import Machine from './machine/Machine.svelte';
 import OverheadSteel from './overhead-steel/OverheadSteel.svelte';
 import Platform from './platform/Platform.svelte';
@@ -48,6 +49,14 @@ export default {
       img: 'public/img/products/buffers.png',
       checked: true,
       comp: Buffers,
+      show: true,
+   },
+   hoistway: {
+      title: 'Hoistway',
+      description: 'To calculate min and max hoistway heights.',
+      img: 'public/img/products/hoistway.png',
+      checked: true,
+      comp: Hoistway,
       show: true,
    },
    overheadSteel: {
