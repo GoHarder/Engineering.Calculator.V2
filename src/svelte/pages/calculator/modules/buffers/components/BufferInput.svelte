@@ -18,7 +18,7 @@
    export let grossLoad = 0;
    export let metric = false;
    export let oilModel = '500';
-   export let ratedSpeed = 0;
+   export let terminalSpeed = 0;
    export let spaceBelow = false;
    export let springModel = '400-008';
    export let springQty = 1;
@@ -105,16 +105,16 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: getOilBuffers(style, ratedSpeed, grossLoad);
-   $: getBufferSprings(style, ratedSpeed, minSpringLoad, maxSpringLoad);
+   $: getOilBuffers(style, terminalSpeed, grossLoad);
+   $: getBufferSprings(style, terminalSpeed, minSpringLoad, maxSpringLoad);
 
    // - Trip Speed
-   $: tripSpeedRow = tables.tripSpeed.find((row) => row.carSpeed >= ratedSpeed);
+   $: tripSpeedRow = tables.tripSpeed.find((row) => row.carSpeed >= terminalSpeed);
    $: carTripSpeed = spaceBelow ? tripSpeedRow.carTripWithCwtSafety : tripSpeedRow.carTrip;
    $: cwtTripSpeed = spaceBelow ? tripSpeedRow.cwtTrip : tripSpeedRow.carTrip;
    $: tripSpeed = location === 'car' ? carTripSpeed : cwtTripSpeed;
 
-   $: impact = ceilInc((2 * grossLoad * (1 + ((1.25 * ratedSpeed) / 60) ** 2 / (64.4 * (compression / 12)))) / bufferQty, 10);
+   $: impact = ceilInc((2 * grossLoad * (1 + ((1.25 * terminalSpeed) / 60) ** 2 / (64.4 * (compression / 12)))) / bufferQty, 10);
 
    // NOTE: 8-30-2021 8:15 AM - The min and max spring loads are from 2.22.3.2.1 and 2.6.1(b)
    $: minSpringLoad = spaceBelow ? impact : round(grossLoad * 2);
@@ -127,7 +127,7 @@
    $: styleOptions = [
       { name: 'Spring', maxSpeed: 200 },
       { name: 'Oil', maxSpeed: 800 },
-   ].filter((row) => row.maxSpeed >= ratedSpeed);
+   ].filter((row) => row.maxSpeed >= terminalSpeed);
 
    $: compressionOptions = tables.getSpringCompression(springObj?.compression ?? []);
 

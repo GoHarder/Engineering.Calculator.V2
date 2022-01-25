@@ -23,10 +23,10 @@
          counterweight: {
             weight: cwtWeight,
          },
+         terminalSpeed,
       };
 
       const moduleData = {
-         ratedSpeed,
          speedDevice,
          car: {
             bufferQty: carBufferQty,
@@ -70,7 +70,7 @@
 
    // - General
    let speedDevice = module?.speedDevice ?? false;
-   let ratedSpeed = module?.ratedSpeed ?? 0;
+   let terminalSpeed = module?.terminalSpeed ?? 0;
 
    // - Location Specific
    // -- Car
@@ -108,7 +108,7 @@
       cwtWeightDisplay = true;
    }
 
-   $: if (!speedDevice) ratedSpeed = speed;
+   $: if (!speedDevice) terminalSpeed = speed;
 
    $: carGrossLoad = round(carWeight + capacity, 2);
    $: cwtGrossLoad = cwtWeight;
@@ -137,7 +137,7 @@
       <Checkbox bind:checked={speedDevice} label="Terminal Speed Reducing Device" />
 
       {#if speedDevice}
-         <InputNumber bind:value={ratedSpeed} label="Reduced Speed" max={speed} {metric} type="speed">
+         <InputNumber bind:value={terminalSpeed} label="Reduced Speed" max={speed} {metric} type="speed">
             <svelte:fragment slot="helperText">
                <HelperText>Speed must be between 0 and {speed}</HelperText>
             </svelte:fragment>
@@ -160,7 +160,7 @@
       bind:o_springQty={o_carSpringQty}
       grossLoad={carGrossLoad}
       {metric}
-      {ratedSpeed}
+      {terminalSpeed}
    />
 
    <BufferInput
@@ -176,7 +176,7 @@
       bind:o_springQty={o_cwtSpringQty}
       grossLoad={cwtGrossLoad}
       {metric}
-      {ratedSpeed}
+      {terminalSpeed}
    />
 </div>
 
