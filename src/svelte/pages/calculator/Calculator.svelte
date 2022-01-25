@@ -73,7 +73,7 @@
       Object.keys(project?.modules ?? {}).forEach((key, i) => {
          update[key].show = true;
          update[key].href = `/Calculator/${capitalize(key)}`;
-         update[key].index = i;
+         // update[key].index = i;
          update[key].checked = i === 0;
          maxIndex = i;
       });
@@ -114,6 +114,8 @@
       clearPath();
       clearProject();
    });
+
+   $: console.log(moduleItems);
 </script>
 
 <svelte:head>
