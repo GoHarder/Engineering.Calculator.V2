@@ -29,5 +29,7 @@
 
    fieldset {
       @include vantage.fieldset;
+      @include vantage.paper;
+      @include vantage.fieldset-legend(vantage.$primary);
    }
 </style>

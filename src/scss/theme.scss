@@ -76,10 +76,11 @@ $input-width: 300px;
 }
 
 @mixin fieldset {
-   @include paper;
    border: none;
    margin: 0;
+}
 
+@mixin fieldset-legend($border-color: rgba(0, 0, 0, 0.12)) {
    legend {
       font-size: 1.1rem;
       margin: 6px 0 10px;
@@ -91,7 +92,7 @@ $input-width: 300px;
 
    hr {
       clear: both;
-      border: 1px solid $primary;
+      border: 1px solid $border-color;
    }
 }
 
