@@ -114,8 +114,6 @@
       clearPath();
       clearProject();
    });
-
-   $: console.log(moduleItems);
 </script>
 
 <svelte:head>
