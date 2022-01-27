@@ -20,9 +20,11 @@
          buffers: {
             car: {
                compression: carCompression,
+               height: carHeight,
             },
             counterweight: {
                compression: cwtCompression,
+               height: cwtHeight,
             },
          },
          car: {
@@ -103,6 +105,10 @@
    let o_cwtCompression = module?.counterweight?.o_compression ?? false;
    let o_cwtSpringQty = module?.counterweight?.o_springQty ?? false;
 
+   // - Calculated
+   let carHeight = 0;
+   let cwtHeight = 0;
+
    // - UI
    let cwtWeightDisplay = false;
 
@@ -157,6 +163,7 @@
       title="Car"
       bind:bufferQty={carBufferQty}
       bind:compression={carCompression}
+      bind:height={carHeight}
       bind:oilModel={carOilModel}
       bind:spaceBelow={carSpaceBelow}
       bind:springModel={carSpringModel}
@@ -173,6 +180,7 @@
       title="Counterweight"
       bind:bufferQty={cwtBufferQty}
       bind:compression={cwtCompression}
+      bind:height={cwtHeight}
       bind:oilModel={cwtOilModel}
       bind:spaceBelow={cwtSpaceBelow}
       bind:springModel={cwtSpringModel}

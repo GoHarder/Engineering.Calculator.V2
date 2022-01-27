@@ -16,6 +16,7 @@
    export let bufferQty;
    export let compression;
    export let grossLoad = 0;
+   export let height = 0;
    export let metric = false;
    export let oilModel;
    export let terminalSpeed = 0;
@@ -122,6 +123,11 @@
    $: springLoad = springObj?.applications?.find((row) => row.qty === springQty && row.compression === compression)?.load ?? 0;
 
    $: if (springQty < bufferQty) springQty = bufferQty;
+
+   $: springHeight = (springObj?.height ?? 1) + 1;
+   $: oilHeight = oilBufferObj?.height ?? 0;
+
+   $: height = style === 'Oil' ? oilHeight : springHeight;
 
    // - UI
    $: styleOptions = [
