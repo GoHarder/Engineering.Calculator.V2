@@ -28,6 +28,7 @@
             type: compType,
          },
          counterweight: {
+            height: cwtHeight,
             weight: cwtWeight,
          },
          rope: {
