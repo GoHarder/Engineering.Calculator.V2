@@ -17,6 +17,14 @@
    export let project;
    export const updateModule = () => {
       const globalData = {
+         buffers: {
+            car: {
+               compression: carCompression,
+            },
+            counterweight: {
+               compression: cwtCompression,
+            },
+         },
          car: {
             weight: carWeight,
          },
@@ -30,7 +38,6 @@
          speedDevice,
          car: {
             bufferQty: carBufferQty,
-            compression: carCompression,
             oilModel: carOilModel,
             spaceBelow: carSpaceBelow,
             springModel: carSpringModel,
@@ -41,7 +48,6 @@
          },
          counterweight: {
             bufferQty: cwtBufferQty,
-            compression: cwtCompression,
             oilModel: cwtOilModel,
             spaceBelow: cwtSpaceBelow,
             springModel: cwtSpringModel,
@@ -74,28 +80,28 @@
 
    // - Location Specific
    // -- Car
-   let carBufferQty = 1;
-   let carCompression = 0;
-   let carOilModel = '500';
-   let carSpaceBelow = false;
-   let carSpringModel = '400-008';
-   let carSpringQty = 1;
-   let carStyle = 'Spring';
+   let carBufferQty = module?.car?.bufferQty ?? 1;
+   let carCompression = module?.car?.compression ?? 0;
+   let carOilModel = module?.car?.oilModel ?? '500';
+   let carSpaceBelow = module?.car?.spaceBelow ?? false;
+   let carSpringModel = module?.car?.springModel ?? '400-008';
+   let carSpringQty = module?.car?.springQty ?? 1;
+   let carStyle = module?.car?.style ?? 'Spring';
 
-   let o_carCompression = false;
-   let o_carSpringQty = false;
+   let o_carCompression = module?.car?.o_compression ?? false;
+   let o_carSpringQty = module?.car?.o_springQty ?? false;
 
    // -- Cwt
-   let cwtBufferQty = 1;
-   let cwtCompression = 0;
-   let cwtOilModel = '500';
-   let cwtSpaceBelow = false;
-   let cwtSpringModel = '400-008';
-   let cwtSpringQty = 1;
-   let cwtStyle = 'Spring';
+   let cwtBufferQty = module?.counterweight?.bufferQty ?? 1;
+   let cwtCompression = module?.counterweight?.compression ?? 0;
+   let cwtOilModel = module?.counterweight?.oilModel ?? '500';
+   let cwtSpaceBelow = module?.counterweight?.spaceBelow ?? false;
+   let cwtSpringModel = module?.counterweight?.springModel ?? '400-008';
+   let cwtSpringQty = module?.counterweight?.springQty ?? 1;
+   let cwtStyle = module?.counterweight?.style ?? 'Spring';
 
-   let o_cwtCompression = false;
-   let o_cwtSpringQty = false;
+   let o_cwtCompression = module?.counterweight?.o_compression ?? false;
+   let o_cwtSpringQty = module?.counterweight?.o_springQty ?? false;
 
    // - UI
    let cwtWeightDisplay = false;

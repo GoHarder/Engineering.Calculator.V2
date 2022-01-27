@@ -13,16 +13,16 @@
    import fetchStore from 'stores/fetch';
 
    // Properties
-   export let bufferQty = 1;
-   export let compression = 0;
+   export let bufferQty;
+   export let compression;
    export let grossLoad = 0;
    export let metric = false;
-   export let oilModel = '500';
+   export let oilModel;
    export let terminalSpeed = 0;
-   export let spaceBelow = false;
-   export let springModel = '400-008';
-   export let springQty = 1;
-   export let style = 'Oil';
+   export let spaceBelow;
+   export let springModel;
+   export let springQty;
+   export let style;
    export let title = '';
 
    export let o_compression = false;
