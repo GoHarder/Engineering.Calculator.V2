@@ -1,6 +1,7 @@
 <script>
    // Components
    import { Fieldset } from 'components/common';
+   import { InputLength } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
 
    import Standard from './components/Standard.svelte';
@@ -30,6 +31,10 @@
 </script>
 
 <div class="container">
+   <Fieldset title="Globals">
+      <InputLength label="Overall Travel" />
+   </Fieldset>
+
    <Fieldset title="Properties">
       <Select bind:value={compName} label="Type">
          <Option value="Standard">Overhead Standard</Option>
