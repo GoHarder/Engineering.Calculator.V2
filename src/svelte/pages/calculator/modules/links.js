@@ -19,6 +19,8 @@ const inheritance = {
    // Sling
    carWeight: ['sling', 'counterweight', 'machine', 'buffers'],
    cwtWeight: ['sling', 'counterweight', 'buffers'],
+   // Counterweight
+   cwtHeight: ['counterweight', 'hoistway'],
    // Machine
    compType: ['machine', 'sling', 'counterweight'],
    compWeight: ['machine', 'sling'],
@@ -26,6 +28,12 @@ const inheritance = {
    ropeQty: ['machine', 'sling'],
    ropePitch: ['machine', 'sling'],
    o_ropePitch: ['machine', 'sling'],
+   // Buffers
+   terminalSpeed: ['buffers', 'hoistway'],
+   carBufferComp: ['buffers', 'hoistway'],
+   cwtBufferComp: ['buffers', 'hoistway'],
+   carBufferHeight: ['buffers', 'hoistway'],
+   cwtBufferHeight: ['buffers', 'hoistway'],
 };
 
 class LinkTree {
@@ -59,5 +67,6 @@ class LinkTree {
 
 export const BufferLinks = new LinkTree('buffers');
 export const CounterweightLinks = new LinkTree('counterweight');
+export const HoistwayLinks = new LinkTree('hoistway');
 export const MachineLinks = new LinkTree('machine');
 export const SlingLinks = new LinkTree('sling');
