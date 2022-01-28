@@ -2,6 +2,7 @@
    import { onDestroy, onMount } from 'svelte';
    import { classList } from 'components/lib';
 
+   import * as tables from '../tables';
    import { HoistwayLinks as Links } from '../../links';
 
    // Components
@@ -25,9 +26,14 @@
    // Variables
    // - Globals
    let carBufferComp = globals?.buffers?.car?.compression ?? 5;
+   let carBufferStyle = 'Oil';
+
    let cwtBufferComp = globals?.buffers?.counterweight?.compression ?? 5;
+   let cwtBufferHeight = globals?.buffers?.counterweight?.height ?? 0;
+   let cwtBufferStyle = 'Oil';
    let cwtHeight = globals?.counterweight?.height ?? 114;
-   let platformThickness = globals?.plattform?.thickness ?? 0;
+
+   let terminalSpeed = globals?.terminalSpeed ?? 0;
 
    // - Pit
    let carPitChan = 2.625;
@@ -35,6 +41,14 @@
    let carBufferGap = 6;
    let cwtBufferGap = 6;
    let pitDepth = 64;
+
+   let carBrfGrpHeight = 0;
+   let cwtBfrGrpHeight = 0;
+
+   let floorToPlate = 18;
+
+   let o_carBrfGrpHeight = false;
+   let o_cwtBfrGrpHeight = false;
 
    // - UI
    let divEle;
@@ -46,8 +60,18 @@
    // Reactive Rules
    $: pitSecitonClass = classList(['pit-section', sizeClass]);
 
-   let carBufferHeight = 6;
-   let cwtBufferHeight = 6;
+   $: carBfrGrpHeightCalc = pitDepth - (carPitChan + carBufferGap + floorToPlate);
+
+   // - Stoping Distance
+   $: carStopDist = tables.getStopDist(carBufferStyle, terminalSpeed);
+   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, terminalSpeed);
+
+   // - Minimum Top Clearance
+   $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist;
+   $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
+
+   // - Top Clearance
+   $: cwtTopClear = carBufferGap + carBufferComp - (cwtHeight + cwtBufferGap + cwtBfrGrpHeight + cwtPitChan);
 
    // Events
    const onResize = (event) => {
@@ -84,9 +108,9 @@
          <legend>Car</legend>
          <hr />
          <InputLength bind:value={pitDepth} label="Pit Depth" />
-         <InputLength value="1" label="Floor To Plate" />
+         <InputLength bind:value={floorToPlate} label="Floor To Plate" />
          <InputLength bind:value={carBufferGap} label="Gap" />
-         <InputLength value="1" label="Buffer Height" />
+         <InputLength bind:value={carBrfGrpHeight} bind:override={o_carBrfGrpHeight} label="Buffer Height" calc={carBfrGrpHeightCalc} />
          <InputLength bind:value={carBufferComp} label="Buffer Compression" link={Links.get('carBufferComp')} />
          <InputLength bind:value={carPitChan} label="Pit Channel" />
       </fieldset>
@@ -98,7 +122,7 @@
          <hr />
          <InputLength bind:value={cwtHeight} label="Height" link={Links.get('cwtHeight')} />
          <InputLength bind:value={cwtBufferGap} label="Gap" />
-         <InputLength value="1" label="Buffer Height" />
+         <InputLength bind:value={cwtBfrGrpHeight} bind:override={o_cwtBfrGrpHeight} label="Buffer Height" calc={cwtBufferHeight} />
          <InputLength bind:value={cwtBufferComp} label="Buffer Compression" link={Links.get('cwtBufferComp')} />
          <InputLength bind:value={cwtPitChan} label="Pit Channel" />
       </fieldset>

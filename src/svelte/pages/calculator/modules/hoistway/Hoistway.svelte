@@ -1,7 +1,9 @@
 <script>
+   import { HoistwayLinks as Links } from '../links';
+
    // Components
    import { Fieldset } from 'components/common';
-   import { InputLength } from 'components/material/input';
+   import { InputLength, InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
 
    import Standard from './components/Standard.svelte';
@@ -20,7 +22,14 @@
 
    // Methods
    // Constants
+   const { globals, modules } = project;
+   const { overallTravel } = globals;
+
+   Links.setProject(modules);
+
    // Variables
+   let terminalSpeed = globals?.terminalSpeed ?? 0;
+
    let compName = 'Standard';
 
    // Subscriptions
@@ -32,7 +41,7 @@
 
 <div class="container">
    <Fieldset title="Globals">
-      <InputLength label="Overall Travel" />
+      <InputLength value={overallTravel} label="Overall Travel" link="/Project/Requirements" />
    </Fieldset>
 
    <Fieldset title="Properties">
@@ -44,6 +53,8 @@
          <Option value="MRL Over" disabled>MRL Overslung</Option>
          <Option value="MRL Under" disabled>MRL Underslung</Option>
       </Select>
+
+      <InputNumber bind:value={terminalSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
    </Fieldset>
 </div>
 
