@@ -386,7 +386,7 @@
          platformThickness +
          (botChannelObj?.depth ?? 0) +
          (sheaveConfig === 'parallelUnderslung' ? sheaveChannel?.depth ?? 0 : 0) +
-         (sheaveConfig === 'diagonalUnderslung' ? bufferBlockUpChannel?.depth ?? 0 : 0)
+         (sheaveConfig === 'diagonalUnderslung' ? bufferBlockUpObj?.depth ?? 0 : 0)
    );
    $: stileWeight = (stileChannelObj?.weight ?? 0) * stileLength * 2;
    $: stilesBackToBackCalc = dbg - 1.5;
@@ -694,7 +694,7 @@
 
    <Fieldset title="Steel">
       <Select bind:value={topChannel} bind:selected={topChannelObj} label="Top Channels" options={topChannelOpts}>
-         {#if modelObj?.top !== null}
+         {#if modelObj?.top}
             <Option value={modelObj.top}>{modelObj.top}</Option>
          {:else}
             <StockStatusOptions options={topChannelOpts} />
@@ -710,7 +710,7 @@
       </Select>
 
       <Select bind:value={botChannel} bind:selected={botChannelObj} label="Bottom Channels" options={botChannelOpts}>
-         {#if modelObj?.bottom !== null}
+         {#if modelObj?.bottom}
             <Option value={modelObj.bottom}>{modelObj.bottom}</Option>
          {:else}
             <StockStatusOptions options={botChannelOpts} />
