@@ -7,7 +7,7 @@
 
    // Components
    import { A, Badge, ShareDialog } from 'components/common';
-   import { Icon, IconButton } from 'components/material/button';
+   import { Fab, Icon, IconButton } from 'components/material/button';
    import { Content, Drawer, Item } from 'components/material/drawer';
    import { Snackbar } from 'components/material/snackbar';
 
@@ -42,10 +42,12 @@
 
    // - UI
    let comp;
+   let compEle;
    let domTitle = 'Undefined Project';
    let moduleItems = clone(moduleLibrary);
    let notesDialog = false;
    let path = [];
+   let scrollTop = 0;
    let selectedIndex = -1;
    let shareDialog = false;
    let showDrawer = true;
@@ -109,6 +111,12 @@
       if (saved) showSnackbar = true;
    };
 
+   const onScroll = (event) => (scrollTop = event.target.scrollTop);
+
+   const onToTop = () => {
+      compEle.scrollTop = 0;
+   };
+
    // Lifecycle
    onDestroy(() => {
       clearPath();
@@ -126,6 +134,14 @@
 
 {#if notesDialog}
    <NotesDialog bind:show={notesDialog} bind:project />
+{/if}
+
+{#if scrollTop > 300}
+   <div class="fab">
+      <Fab on:click={onToTop} mini toolTip="To Top">
+         <Icon class="material-icons">arrow_upward</Icon>
+      </Fab>
+   </div>
 {/if}
 
 <header>
@@ -193,7 +209,7 @@
          </IconButton>
       </div>
 
-      <div class="comp">
+      <div bind:this={compEle} on:scroll={onScroll} class="comp">
          {#if comp}
             <svelte:component this={comp} bind:project bind:updateModule />
          {/if}
@@ -259,6 +275,7 @@
       height: calc(100% - 48px);
       overflow-x: hidden;
       overflow-y: auto;
+      scroll-behavior: smooth;
 
       background-color: vantage.$gray-90;
    }
@@ -286,5 +303,12 @@
          position: absolute;
          right: 0;
       }
+   }
+
+   .fab {
+      position: absolute;
+      bottom: -28px;
+      right: 8px;
+      z-index: 2;
    }
 </style>
