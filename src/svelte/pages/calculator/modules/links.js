@@ -29,11 +29,13 @@ const inheritance = {
    ropePitch: ['machine', 'sling'],
    o_ropePitch: ['machine', 'sling'],
    // Buffers
-   terminalSpeed: ['buffers', 'hoistway'],
    carBufferComp: ['buffers', 'hoistway'],
-   cwtBufferComp: ['buffers', 'hoistway'],
    carBufferHeight: ['buffers', 'hoistway'],
+   carBufferStyle: ['buffers', 'hoistway'],
+   cwtBufferComp: ['buffers', 'hoistway'],
    cwtBufferHeight: ['buffers', 'hoistway'],
+   terminalSpeed: ['buffers', 'hoistway'],
+   cwtBufferStyle: ['buffers', 'hoistway'],
 };
 
 class LinkTree {

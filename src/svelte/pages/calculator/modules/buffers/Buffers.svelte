@@ -20,11 +20,12 @@
          buffers: {
             car: {
                compression: carCompression,
-               height: carHeight,
+               style: carStyle,
             },
             counterweight: {
                compression: cwtCompression,
                height: cwtHeight,
+               style: cwtStyle,
             },
          },
          car: {
@@ -44,7 +45,6 @@
             spaceBelow: carSpaceBelow,
             springModel: carSpringModel,
             springQty: carSpringQty,
-            style: carStyle,
             o_compression: o_carCompression,
             o_springQty: o_carSpringQty,
          },
@@ -54,7 +54,6 @@
             spaceBelow: cwtSpaceBelow,
             springModel: cwtSpringModel,
             springQty: cwtSpringQty,
-            style: cwtStyle,
             o_compression: o_cwtCompression,
             o_springQty: o_cwtSpringQty,
          },
