@@ -206,7 +206,6 @@
 
    // Variables
    // - Saved
-
    // -- Globals
    let apta = globals?.apta ?? false;
    let cabWeight = globals?.cab?.weight ?? 0;
@@ -580,8 +579,7 @@
 
 <div class="container">
    {#if roping > 1}
-      <!-- TODO: 12-20-2021 9:28 AM - Add link when machine is done -->
-      <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} {metric} />
+      <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} link={Links.get('ropeSize')} {metric} />
 
       <Fieldset title="Sheaves">
          <InputNumber bind:value={sheaveQty} label="Quantity" />
@@ -655,8 +653,7 @@
 
       <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
 
-      <!-- TODO: 12-20-2021 8:52 AM - Add link when machine is done -->
-      <Select bind:value={compType} label="Compensation">
+      <Select bind:value={compType} label="Compensation" link={Links.get('compType')}>
          {#each gTables.compensation as { name } (name)}
             <Option value={name}>{name}</Option>
          {/each}
