@@ -115,7 +115,7 @@
          <InputLength bind:value={carPitChan} label="Pit Channel" />
       </fieldset>
 
-      <img src="/public/img/hoistway/hoistway-pit.svg" alt="Hoistway Pit" class="pit-section-img" />
+      <img src="/public/img/hoistway/pit.svg" alt="Hoistway Pit" class="pit-section-img" />
 
       <fieldset class="pit-section-cwt">
          <legend>Counterweight</legend>

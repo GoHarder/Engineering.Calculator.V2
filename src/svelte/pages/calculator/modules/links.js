@@ -3,15 +3,16 @@ import { capitalize } from 'lib/string.mjs';
 const inheritance = {
    // Platform
    apta: ['platform', 'sling'],
+   cabHeight: ['platform', 'hoistway'],
    cabWeight: ['platform', 'sling'],
    cabWidth: ['platform', 'sling'],
-   cornerPost: ['platform', 'sling'],
+   cornerPost: ['platform', 'sling', 'hoistway'],
    door1Weight: ['platform', 'sling'],
    door2Weight: ['platform', 'sling'],
    platformDepth: ['platform', 'sling'],
    platformFrontToRail: ['platform', 'sling'],
    platformIsolation: ['platform', 'sling'],
-   platformThickness: ['platform', 'sling'],
+   platformThickness: ['platform', 'sling', 'hoistway'],
    platformWeight: ['platform', 'sling'],
    platformWidth: ['platform', 'sling'],
    toeGuard1Weight: ['platform', 'sling'],
@@ -19,6 +20,10 @@ const inheritance = {
    // Sling
    carWeight: ['sling', 'counterweight', 'machine', 'buffers'],
    cwtWeight: ['sling', 'counterweight', 'buffers'],
+   slingBotChanDepth: ['sling', 'hoistway'],
+   slingStrikePlateThick: ['sling', 'hoistway'],
+   slingTopChanDepth: ['sling', 'hoistway'],
+   underBeamHeight: ['sling', 'hoistway'],
    // Counterweight
    cwtHeight: ['counterweight', 'hoistway'],
    // Machine

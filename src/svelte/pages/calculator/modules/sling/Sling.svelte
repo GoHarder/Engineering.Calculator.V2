@@ -32,6 +32,12 @@
          counterweight: {
             weight: cwtWeight,
          },
+         sling: {
+            botChanDepth: botChannelObj.depth,
+            strikePlateThick: modelObj.strikePlate.thickness,
+            topChanDepth: topChannelObj.depth,
+            underBeamHeight,
+         },
          rope: {
             pitch: ropePitch,
             size: ropeSize,
@@ -94,7 +100,6 @@
             o_braceQty,
          },
          stilesBackToBack,
-         underBeamHeight,
          o_stilesBackToBack,
       };
 
@@ -224,6 +229,8 @@
    let toeGuard1Weight = globals?.doors?.door1?.toeGuardWeight ?? 0;
    let toeGuard2Weight = globals?.doors?.door2?.toeGuardWeight ?? 0;
 
+   let underBeamHeight = globals?.sling?.underBeamHeight ?? 114;
+
    // -- General
    let dbg = module?.dbg ?? 0;
    let railSize = module?.railsize ?? '15#';
@@ -231,7 +238,6 @@
 
    // -- Dimensions
    let stilesBackToBack = module?.stilesBackToBack ?? 0;
-   let underBeamHeight = module?.underBeamHeight ?? 114;
    let o_stilesBackToBack = module?.o_stilesBackToBack ?? false;
 
    // -- Ropes
