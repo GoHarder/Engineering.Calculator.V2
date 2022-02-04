@@ -1,6 +1,7 @@
 <script>
    import { getContext, onMount, onDestroy } from 'svelte';
-   import { MDCTextField } from '@material/textfield';
+   import { MDCRipple } from '@material/ripple';
+   import { MDCLineRipple } from '@material/line-ripple';
    import { classList, filterProps, randomId } from '../../lib';
 
    import { floor, round } from 'lib/math.mjs';
@@ -12,6 +13,7 @@
    // Properties
    export let calc = undefined;
    export let fullWidth = undefined;
+   export let invalid = undefined;
    export let label = '';
    export let link = undefined;
    export let readonly = undefined;
@@ -35,8 +37,11 @@
    let focusedIn = false;
    let inches = 0;
    let labelEle;
+   let spanEle1;
+   let spanEle2;
+   let Ripple;
+   let LineRipple;
    let metricValue = 0;
-   let TextField;
 
    // Subscriptions
    // Contexts
@@ -51,6 +56,7 @@
       calc !== undefined ? 'mdc-text-field--with-leading-icon' : '',
       link ? 'mdc-text-field--with-trailing-icon' : '',
       readonly ? 'mdc-text-field--read-only' : '',
+      invalid ? 'mdc-text-field--invalid' : '',
    ]);
 
    $: spanClass = classList(['mdc-floating-label', value !== undefined ? 'mdc-floating-label--float-above' : '']);
@@ -69,7 +75,19 @@
 
    $: focused = focusedFt || focusedIn;
 
-   $: if (focused !== undefined) getFocused?.(focused);
+   $: if (focused !== undefined) {
+      getFocused?.(focused);
+
+      if (LineRipple) {
+         if (focused) {
+            Ripple.activate();
+            LineRipple.activate();
+         } else {
+            Ripple.deactivate();
+            LineRipple.deactivate();
+         }
+      }
+   }
 
    // Events
    const onBlur = (event) => {
@@ -110,7 +128,8 @@
 
    // Lifecycle
    onMount(() => {
-      TextField = new MDCTextField(labelEle);
+      Ripple = new MDCRipple(spanEle1);
+      LineRipple = new MDCLineRipple(spanEle2);
 
       if (value === undefined) value = 0;
       override = calc !== value;
@@ -125,13 +144,14 @@
    });
 
    onDestroy(() => {
-      TextField.destroy();
+      Ripple.destroy();
+      LineRipple.destroy();
    });
 </script>
 
 <div class="input" class:metric class:full-width={fullWidth}>
    <label bind:this={labelEle} class={labelClass}>
-      <span class="mdc-text-field__ripple" />
+      <span bind:this={spanEle1} class="mdc-text-field__ripple" />
 
       <span class={spanClass} {id}>{@html label}</span>
 
@@ -183,7 +203,7 @@
          </Icon>
       {/if}
 
-      <span class="mdc-line-ripple" />
+      <span bind:this={spanEle2} class="mdc-line-ripple" />
    </label>
 
    <slot name="helperText" />
