@@ -9,7 +9,8 @@
    // Properties
    export let beamUnderside;
    export let clearOverhead;
-   export let deflector;
+   export let carEquipOffset;
+   export let cwtEquipOffset;
    export let topToBeam;
 
    export let carTopClear = 0;
@@ -28,7 +29,8 @@
    // Reactive Rules
    $: beamUnderside = clearOverhead - topToBeam;
 
-   $: deflector = 0;
+   $: carEquipOffset = 0; // No sheave over the counterweight
+   $: cwtEquipOffset = 0; // Nothing above car
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;

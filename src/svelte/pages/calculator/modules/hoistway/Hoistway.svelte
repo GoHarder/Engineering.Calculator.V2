@@ -26,6 +26,23 @@
          comp1Name,
          pitDepth,
          topToBeam,
+         cornerPostBrace,
+         toeGuardLen,
+         railHeight,
+         car: {
+            bufferGap: carBufferGap,
+            bufferGroupHeight: carBfrGrpHeight,
+            equipOffset: carEquipOffset,
+            pitChan: carPitChan,
+            o_bufferGroupHeight: o_carBfrGrpHeight,
+         },
+         counterweight: {
+            bufferGap: cwtBufferGap,
+            bufferGroupHeight: cwtBfrGrpHeight,
+            equipOffset: cwtEquipOffset,
+            pitChan: cwtPitChan,
+            o_bufferGroupHeight: o_cwtBfrGrpHeight,
+         },
       };
 
       project.globals = { ...project.globals, ...globalData };
@@ -77,24 +94,25 @@
    let comp1Name = module?.comp1Name ?? 'Block Up';
    let pitDepth = module?.pitDepth ?? 72;
    let topToBeam = module?.topToBeam ?? 14;
+   let cornerPostBrace = module?.cornerPostBrace ?? 0;
+   let toeGuardLen = module?.toeGuardLen ?? 50.625;
+   let railHeight = module?.railHeight ?? 42;
 
-   let toeGuardLen = 50.625;
-   let railHeight = 42;
-   let carPitChan = 2.625;
-   let cwtPitChan = 2.625;
-   let carBufferGap = 6;
-   let cwtBufferGap = 6;
+   let carBufferGap = module?.car?.bufferGap ?? 6;
+   let carBfrGrpHeight = module?.car?.bufferGroupHeight ?? 0;
+   let carEquipOffset = module?.car?.equipOffset ?? 17.5;
+   let carPitChan = module?.car?.pitChan ?? 2.625;
+
+   let cwtBufferGap = module?.cwt?.bufferGap ?? 6;
+   let cwtBfrGrpHeight = module?.cwt?.bufferGroupHeight ?? 0;
+   let cwtEquipOffset = module?.cwt?.equipOffset ?? 0;
+   let cwtPitChan = module?.cwt?.pitChan ?? 2.625;
+
+   let o_carBfrGrpHeight = module?.car?.o_bufferGroupHeight ?? false;
+   let o_cwtBfrGrpHeight = module?.cwt?.o_bufferGroupHeight ?? false;
+
    let carBufferStyle = 'Oil';
    let cwtBufferStyle = 'Oil';
-
-   let cornerPostBrace = 0;
-   let deflector = 17.5;
-
-   let carBfrGrpHeight = 0;
-   let cwtBfrGrpHeight = 0;
-
-   let o_carBfrGrpHeight = false;
-   let o_cwtBfrGrpHeight = false;
 
    // - Calculated
    let floorToPlate = 0;
@@ -106,6 +124,7 @@
    let Observer;
    let sizeClass = 'large';
 
+   // - Objects
    let comp1Obj;
 
    // Subscriptions
@@ -125,7 +144,7 @@
 
    $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist;
 
-   $: railClear = beamUnderside + deflector - (cabHeight + railHeight + overTravel + 6);
+   $: railClear = beamUnderside + carEquipOffset - (cabHeight + railHeight + overTravel + 6);
 
    // - Calcs
    $: carBfrGrpHeightCalc = Math.max(pitDepth - (carPitChan + carBufferGap + floorToPlate), carBufferHeight);
@@ -190,7 +209,8 @@
    this={comp1Obj?.comp ?? Standard}
    bind:beamUnderside
    bind:clearOverhead
-   bind:deflector
+   bind:carEquipOffset
+   bind:cwtEquipOffset
    bind:topToBeam
    {carTopClear}
    {cwtTopClear}
