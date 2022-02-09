@@ -1,12 +1,17 @@
 <script>
    import { onMount } from 'svelte';
 
+   import * as tables from './tables';
+
    import { HoistwayLinks as Links } from '../links';
 
    // Components
    import { Fieldset } from 'components/common';
-   import { HelperText, InputLength, InputNumber } from 'components/material/input';
+   import { InputLength, InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
+
+   import BlockUp from './components/BlockUp.svelte';
+   import Standard from './components/Standard.svelte';
 
    import ParallelOverslung from './components/ParallelOverslung.svelte';
 
@@ -16,7 +21,12 @@
    export const updateModule = () => {
       const globalData = {};
 
-      const moduleData = {};
+      const moduleData = {
+         clearOverhead,
+         comp1Name,
+         pitDepth,
+         topToBeam,
+      };
 
       project.globals = { ...project.globals, ...globalData };
       project.modules.hoistway = moduleData;
@@ -26,11 +36,19 @@
    // Constants
    const { globals, metric, modules } = project;
    const { overallTravel } = globals;
+   const { hoistway: module } = modules;
 
    Links.setProject(modules);
-   console.log(project);
+
+   const overheadComps = [
+      { name: 'Standard', comp: Standard },
+      { name: 'Block Up', comp: BlockUp },
+   ];
+
+   // console.log(project);
 
    // Variables
+   // - Globals
    let terminalSpeed = globals?.terminalSpeed ?? 0;
 
    let cabHeight = globals?.cab?.height ?? 96;
@@ -42,6 +60,9 @@
    let strikePlateThick = globals?.sling?.strikePlateThick ?? 1;
    let topChanDepth = globals?.sling?.topChanDepth ?? 8;
    let underBeamHeight = globals?.sling?.underBeamHeight ?? 114;
+   let carSafetyHeight = globals?.sling?.safetyHeight ?? 0;
+   let carShoeHeight = globals?.sling?.shoeHeight ?? 0;
+   let carShoePlateThick = globals?.sling?.shoePlateThickness ?? 0;
 
    let cwtHeight = globals?.counterweight?.height ?? 114;
 
@@ -51,13 +72,23 @@
    let carBufferComp = globals?.buffers?.car?.compression ?? 5;
    let cwtBufferComp = globals?.buffers?.counterweight?.compression ?? 5;
 
-   let compName = 'Standard';
+   // - Module
+   let clearOverhead = module?.clearOverhead ?? 240;
+   let comp1Name = module?.comp1Name ?? 'Block Up';
+   let pitDepth = module?.pitDepth ?? 72;
+   let topToBeam = module?.topToBeam ?? 14;
+
    let toeGuardLen = 50.625;
    let railHeight = 42;
    let carPitChan = 2.625;
    let cwtPitChan = 2.625;
    let carBufferGap = 6;
    let cwtBufferGap = 6;
+   let carBufferStyle = 'Oil';
+   let cwtBufferStyle = 'Oil';
+
+   let cornerPostBrace = 0;
+   let deflector = 17.5;
 
    let carBfrGrpHeight = 0;
    let cwtBfrGrpHeight = 0;
@@ -67,30 +98,42 @@
 
    // - Calculated
    let floorToPlate = 0;
+   let floorToShoe = 0;
+   let beamUnderside = 0;
 
    // - UI
    let divEle;
    let Observer;
    let sizeClass = 'large';
-   let pitDepth = 64;
+
+   let comp1Obj;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
-
-   $: carBfrGrpHeightCalc = Math.max(pitDepth - (carPitChan + carBufferGap + floorToPlate), carBufferHeight);
-
    $: carBfrCompressHeight = carBfrGrpHeight - carBufferComp;
    // $: cwtBfrCompressHeight = cwtBfrGrpHeight - cwtBufferComp;
 
+   $: carStopDist = tables.getStopDist(carBufferStyle, terminalSpeed);
+   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, terminalSpeed);
+
+   $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist;
+   $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
+
+   $: carTopClear = beamUnderside - (topChanDepth + underBeamHeight + cornerPostBrace);
+   $: cwtTopClear = pitDepth + beamUnderside - (cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
+
+   $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist;
+
+   $: railClear = beamUnderside + deflector - (cabHeight + railHeight + overTravel + 6);
+
+   // - Calcs
+   $: carBfrGrpHeightCalc = Math.max(pitDepth - (carPitChan + carBufferGap + floorToPlate), carBufferHeight);
+
+   // - Errors
    $: toeGuardError = toeGuardLen + 1 - floorToPlate > carBfrCompressHeight + carPitChan;
 
-   $: console.table({
-      toeGuardLen,
-      floorToPlate,
-      carBfrCompressHeight,
-      carPitChan,
-   });
+   $: carShoeError = floorToShoe - floorToPlate + 0.5 > carBfrCompressHeight + carPitChan;
 
    // Events
    const onResize = (event) => {
@@ -122,9 +165,9 @@
    </Fieldset>
 
    <Fieldset title="Properties">
-      <Select bind:value={compName} label="Type">
-         <Option value="Standard">Overhead Standard</Option>
-         <Option value="Block Up" disabled>Overhead Block-Up</Option>
+      <Select bind:value={comp1Name} bind:selected={comp1Obj} label="Type" options={overheadComps}>
+         <Option value="Standard" disabled>Overhead Standard</Option>
+         <Option value="Block Up">Overhead Block-Up</Option>
          <Option value="Back Roped" disabled>Overhead Back Roped</Option>
          <Option value="Basement" disabled>Basement / Hoistway</Option>
          <Option value="MRL Over" disabled>MRL Overslung</Option>
@@ -133,21 +176,50 @@
 
       <InputNumber bind:value={terminalSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
    </Fieldset>
+
+   {#if !Links.get('underBeamHeight')}
+      <Fieldset title="Sling Equipment">
+         <InputLength bind:value={carSafetyHeight} label="Safety Height" />
+         <InputLength bind:value={carShoeHeight} label="Car Shoe Height" />
+         <InputLength bind:value={carShoePlateThick} label="Car Shoe Plate Thickness" />
+      </Fieldset>
+   {/if}
 </div>
+
+<svelte:component
+   this={comp1Obj?.comp ?? Standard}
+   bind:beamUnderside
+   bind:clearOverhead
+   bind:deflector
+   bind:topToBeam
+   {carTopClear}
+   {cwtTopClear}
+   {metric}
+   {minCarTopClear}
+   {minCwtTopClear}
+   {overTravel}
+   {railClear}
+/>
 
 <ParallelOverslung
    bind:botChanDepth
    bind:cabHeight
    bind:cornerPost
    bind:floorToPlate
+   bind:floorToShoe
    bind:platformThickness
    bind:railHeight
+   bind:safetyHeight={carSafetyHeight}
+   bind:shoeHeight={carShoeHeight}
+   bind:shoePlateThick={carShoePlateThick}
    bind:strikePlateThick
    bind:toeGuardLen
    bind:topChanDepth
    bind:underBeamHeight
+   {carShoeError}
    {Links}
    {metric}
+   {toeGuardError}
 />
 
 <div class="container">
@@ -160,11 +232,8 @@
       <fieldset class="pit-section-car">
          <legend>Car</legend>
          <hr />
-         <InputLength bind:value={pitDepth} label="Pit Depth" invalid={toeGuardError}>
-            <svelte:fragment slot="helperText">
-               <HelperText validation>Toe Guard Is Hitting The Floor</HelperText>
-            </svelte:fragment>
-         </InputLength>
+         <InputLength bind:value={pitDepth} label="Pit Depth" />
+
          <InputLength bind:value={carBufferGap} label="Gap" />
          <InputLength bind:value={carBfrGrpHeight} bind:override={o_carBfrGrpHeight} label="Buffer Height" calc={carBfrGrpHeightCalc} />
          <InputLength bind:value={carBufferComp} label="Buffer Compression" link={Links.get('carBufferComp')} />

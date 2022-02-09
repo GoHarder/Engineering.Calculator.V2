@@ -4,19 +4,25 @@
    // Components
    import { Fieldset } from 'components/common';
    import { Checkbox } from 'components/material/checkbox';
-   import { InputLength } from 'components/material/input';
+   import { HelperText, InputLength } from 'components/material/input';
 
    // Stores
    // Properties
    export let botChanDepth = 0;
    export let cabHeight = 0;
+   export let carShoeError = false;
    export let cornerPost = false;
    export let floorToPlate = 0;
+   export let floorToShoe = 0;
    export let Links = {};
    export let metric = false;
    export let platformThickness = 0;
    export let railHeight = 0;
+   export let safetyHeight = 0;
+   export let shoeHeight = 0;
+   export let shoePlateThick = 0;
    export let strikePlateThick = 0;
+   export let toeGuardError = false;
    export let toeGuardLen = 0;
    export let topChanDepth = 0;
    export let underBeamHeight = 0;
@@ -37,6 +43,8 @@
    $: imgSrc = `/public/img/hoistway/parallel_overslung${cornerPost ? '_corner' : ''}.svg`;
 
    $: floorToPlate = platformThickness + botChanDepth + strikePlateThick;
+
+   $: floorToShoe = platformThickness + botChanDepth + safetyHeight + shoePlateThick + shoeHeight;
 
    // Events
    const onResize = (event) => {
@@ -63,7 +71,7 @@
 </script>
 
 <div bind:this={divEle} class="container">
-   <Fieldset title="Sling and Car Dimensions">
+   <Fieldset title="Sling Dimensions">
       <div class="observer {sizeClass}">
          <hr class="hr-1" />
          <hr class="hr-2" />
@@ -75,7 +83,11 @@
             {/if}
             <InputLength bind:value={topChanDepth} label="Top Channel" link={Links.get('slingTopChanDepth')} {metric} />
             <InputLength bind:value={underBeamHeight} label="Underbeam" link={Links.get('underBeamHeight')} {metric} />
-            <InputLength bind:value={toeGuardLen} label="Toe Guard" {metric} />
+            <InputLength bind:value={toeGuardLen} label="Toe Guard" {metric} invalid={toeGuardError}>
+               <svelte:fragment slot="helperText">
+                  <HelperText validation>Toe Guard Is Hitting The Floor</HelperText>
+               </svelte:fragment>
+            </InputLength>
          </div>
 
          <img src={imgSrc} alt="Sling" class="img" />
@@ -84,7 +96,11 @@
             <InputLength bind:value={railHeight} label="Rail" {metric} />
             <InputLength bind:value={cabHeight} label="Cab" link={Links.get('cabHeight')} {metric} />
             <InputLength bind:value={platformThickness} label="Platform" link={Links.get('platformThickness')} {metric} />
-            <InputLength bind:value={botChanDepth} label="Bottom Channel" link={Links.get('slingBotChanDepth')} {metric} />
+            <InputLength bind:value={botChanDepth} label="Bottom Channel" link={Links.get('slingBotChanDepth')} {metric} invalid={carShoeError}>
+               <svelte:fragment slot="helperText">
+                  <HelperText validation>Car Shoe Is Hitting The Floor</HelperText>
+               </svelte:fragment>
+            </InputLength>
             <InputLength bind:value={strikePlateThick} label="Strike Plate" link={Links.get('slingStrikePlateThick')} {metric} />
          </div>
       </div>

@@ -37,6 +37,9 @@
             strikePlateThick: modelObj.strikePlate.thickness,
             topChanDepth: topChannelObj.depth,
             underBeamHeight,
+            safetyHeight,
+            shoePlateThickness: botShoePlate.thickness,
+            shoeHeight,
          },
          rope: {
             pitch: ropePitch,
