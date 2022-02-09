@@ -14,6 +14,5 @@ const getOilAdjSpd = (speed) => speed * 1.15;
 export const getStopDist = (style, speed) => {
    const adjustedSpeed = style === 'Oil' ? getOilAdjSpd(speed) : getSpAdjSpd(speed);
 
-   // Simplified 1/2(s) = (V ** 2) / 19320 / 2
-   return roundInc(adjustedSpeed ** 2 / 9660);
+   return roundInc(adjustedSpeed ** 2 / 19320 / 2);
 };
