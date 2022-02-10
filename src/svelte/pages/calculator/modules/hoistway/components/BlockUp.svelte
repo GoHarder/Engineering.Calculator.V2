@@ -29,8 +29,8 @@
    // Reactive Rules
    $: beamUnderside = clearOverhead - topToBeam;
 
-   $: carEquipOffset = 0; // No sheave over the counterweight
-   $: cwtEquipOffset = 0; // Nothing above car
+   $: carEquipOffset = 0; // Nothing above car
+   $: cwtEquipOffset = 0; // No sheave over the counterweight
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
