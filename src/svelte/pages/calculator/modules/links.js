@@ -20,6 +20,8 @@ const inheritance = {
    // Sling
    carWeight: ['sling', 'counterweight', 'machine', 'buffers'],
    cwtWeight: ['sling', 'counterweight', 'buffers'],
+   sheaveArrangement: ['sling', 'hoistway'],
+   sheaveLocation: ['sling', 'hoistway'],
    slingBotChanDepth: ['sling', 'hoistway'],
    slingStrikePlateThick: ['sling', 'hoistway'],
    slingTopChanDepth: ['sling', 'hoistway'],

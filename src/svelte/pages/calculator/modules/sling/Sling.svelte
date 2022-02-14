@@ -40,6 +40,8 @@
             safetyHeight,
             shoePlateThickness: botShoePlate.thickness,
             shoeHeight,
+            sheaveArrangement,
+            sheaveLocation,
          },
          rope: {
             pitch: ropePitch,
@@ -77,8 +79,6 @@
          model: slingModel,
          railSize,
          sheaves: {
-            arrangement: sheaveArrangement,
-            location: sheaveLocation,
             model: sheaveModel,
             mounting: sheaveMounting,
             offset: sheaveOffset,
@@ -234,6 +234,9 @@
 
    let underBeamHeight = globals?.sling?.underBeamHeight ?? 114;
 
+   let sheaveArrangement = globals?.sling?.sheaveArrangement ?? 'Parallel';
+   let sheaveLocation = globals?.sling?.sheaveLocation ?? 'Overslung';
+
    // -- General
    let dbg = module?.dbg ?? 0;
    let railSize = module?.railsize ?? '15#';
@@ -250,8 +253,7 @@
    let o_ropePitch = globals?.rope?.o_pitch ?? false;
 
    // -- Sheaves
-   let sheaveArrangement = module?.sheaves?.arrangement ?? 'Parallel';
-   let sheaveLocation = module?.sheaves?.location ?? 'Overslung';
+
    let sheaveModel = module?.sheaves?.model ?? '';
    let sheaveMounting = module?.sheaves?.mounting ?? 'Support Plate';
    let sheaveOffset = module?.sheaves?.offset ?? 0;
