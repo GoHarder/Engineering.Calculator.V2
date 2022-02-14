@@ -47,15 +47,14 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: imgSrc = `/public/img/hoistway/parallel_overslung${cornerPost ? '_corner' : ''}.svg`;
+   $: imgSrc = `/public/img/hoistway/diagonal_overslung${cornerPost ? '_corner' : ''}.svg`;
 
    $: floorToPlate = platformThickness + botChanDepth + strikePlateThick;
    $: floorToShoe = platformThickness + botChanDepth + safetyHeight + shoePlateThick + shoeHeight;
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
 
-   $: sheaveChannel = 0;
-   $: sheaveDia = 30;
+   $: sheaveError = underBeamHeight < sheaveChannel + cabHeight + sheaveDia / 2 + 4;
 
    // Events
    const onResize = (event) => {
@@ -89,11 +88,23 @@
 
          <div class="form-1">
             <Checkbox bind:checked={cornerPost} label="Cornerpost" link={Links.get('cornerPost')} />
+
             {#if cornerPost}
                <InputLength bind:value={brace} label="Cornerpost Brace" {metric} />
             {/if}
+
             <InputLength bind:value={topChanDepth} label="Top Channel" link={Links.get('slingTopChanDepth')} {metric} />
+
+            <InputLength bind:value={sheaveChannel} label="Sheave Channel" {metric} />
+
+            <InputLength bind:value={sheaveDia} label="Sheave Diameter" {metric} invalid={sheaveError}>
+               <svelte:fragment slot="helperText">
+                  <HelperText validation>Sheave Is Hitting Top Of Cab</HelperText>
+               </svelte:fragment>
+            </InputLength>
+
             <InputLength bind:value={underBeamHeight} label="Underbeam" link={Links.get('underBeamHeight')} {metric} />
+
             <InputLength bind:value={toeGuardLen} label="Toe Guard" {metric} invalid={toeGuardError}>
                <svelte:fragment slot="helperText">
                   <HelperText validation>Toe Guard Is Hitting The Floor</HelperText>
@@ -105,13 +116,17 @@
 
          <div class="form-2">
             <InputLength bind:value={railHeight} label="Rail" {metric} />
+
             <InputLength bind:value={cabHeight} label="Cab" link={Links.get('cabHeight')} {metric} />
+
             <InputLength bind:value={platformThickness} label="Platform" link={Links.get('platformThickness')} {metric} />
+
             <InputLength bind:value={botChanDepth} label="Bottom Channel" link={Links.get('slingBotChanDepth')} {metric} invalid={carShoeError}>
                <svelte:fragment slot="helperText">
                   <HelperText validation>Car Shoe Is Hitting The Floor</HelperText>
                </svelte:fragment>
             </InputLength>
+
             <InputLength bind:value={strikePlateThick} label="Strike Plate" link={Links.get('slingStrikePlateThick')} {metric} />
          </div>
       </div>

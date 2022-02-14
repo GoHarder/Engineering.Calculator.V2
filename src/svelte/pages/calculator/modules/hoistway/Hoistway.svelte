@@ -14,13 +14,50 @@
    import BlockUp from './components/BlockUp.svelte';
    import Standard from './components/Standard.svelte';
 
+   import DiagonalOverslung from './components/DiagonalOverslung.svelte';
+   import DiagonalUnderslung from './components/DiagonalUnderslung.svelte';
    import ParallelOverslung from './components/ParallelOverslung.svelte';
+   import ParallelUnderslung from './components/ParallelUnderslung.svelte';
 
    // Stores
    // Properties
    export let project;
    export const updateModule = () => {
-      const globalData = {};
+      const globalData = {
+         terminalSpeed,
+         cab: {
+            height: cabHeight,
+         },
+         platform: {
+            cornerPost,
+            thickness: platformThickness,
+         },
+         sling: {
+            botChanDepth,
+            strikePlateThick,
+            topChanDepth,
+            underBeamHeight,
+            safetyHeight: carSafetyHeight,
+            shoeHeight: carShoeHeight,
+            shoePlateThickness,
+            carShoePlateThick,
+            sheaveArrangement,
+            sheaveLocation,
+         },
+         counterweight: {
+            height: cwtHeight,
+         },
+         buffers: {
+            car: {
+               height: carBufferHeight,
+               compression: carBufferComp,
+            },
+            counterweight: {
+               height: cwtBufferHeight,
+               compression: cwtBufferComp,
+            },
+         },
+      };
 
       const moduleData = {
          clearOverhead,
@@ -64,7 +101,14 @@
       { name: 'Back Roped', comp: BackRoped },
    ];
 
-   // console.log(project);
+   const slingComps = {
+      ParallelOverslung,
+      DiagonalOverslung,
+      ParallelUnderslung,
+      DiagonalUnderslung,
+   };
+
+   console.log(project);
 
    // Variables
    // - Globals
@@ -91,6 +135,9 @@
    let carBufferComp = globals?.buffers?.car?.compression ?? 5;
    let cwtBufferComp = globals?.buffers?.counterweight?.compression ?? 5;
 
+   let sheaveArrangement = globals?.sling?.sheaveArrangement ?? 'Parallel';
+   let sheaveLocation = globals?.sling?.sheaveLocation ?? 'Overslung';
+
    // - Module
    let clearOverhead = module?.clearOverhead ?? 240;
    let comp1Name = module?.comp1Name ?? 'Block Up';
@@ -116,10 +163,17 @@
    let carBufferStyle = 'Oil';
    let cwtBufferStyle = 'Oil';
 
+   let sheaveDia = 20;
+   let sheaveChan = 8;
+
    // - Calculated
-   let floorToPlate = 0;
-   let floorToShoe = 0;
    let beamUnderside = 0;
+
+   // -- From sling
+   let floorToPlate = 0;
+   let floorToRail = 0;
+   let floorToShoe = 0;
+   let floorToTop = 0;
 
    // - UI
    let divEle;
@@ -128,10 +182,13 @@
 
    // - Objects
    let comp1Obj;
+   let comp2Obj;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: comp2Obj = slingComps[`${sheaveArrangement}${sheaveLocation}`];
+
    $: carBfrCompressHeight = carBfrGrpHeight - carBufferComp;
    // $: cwtBfrCompressHeight = cwtBfrGrpHeight - cwtBufferComp;
 
@@ -141,12 +198,12 @@
    $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist;
    $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
 
-   $: carTopClear = beamUnderside - (topChanDepth + underBeamHeight + cornerPostBrace);
+   $: carTopClear = beamUnderside - floorToTop;
    $: cwtTopClear = pitDepth + beamUnderside - (cwtEquipOffset + cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
 
    $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist;
 
-   $: railClear = beamUnderside + carEquipOffset - (cabHeight + railHeight + overTravel + 6);
+   $: railClear = beamUnderside + carEquipOffset - (floorToRail + overTravel + 6);
 
    // - Calcs
    $: carBfrGrpHeightCalc = Math.max(pitDepth - (carPitChan + carBufferGap + floorToPlate), carBufferHeight);
@@ -198,13 +255,23 @@
       <InputNumber bind:value={terminalSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
    </Fieldset>
 
-   {#if !Links.get('underBeamHeight')}
-      <Fieldset title="Sling Equipment">
+   <Fieldset title="Sling Properties">
+      <Select bind:value={sheaveArrangement} label="Sheave Arrangement" link={Links.get('sheaveArrangement')}>
+         <Option value="Parallel">Parallel</Option>
+         <Option value="Diagonal">Diagonal</Option>
+      </Select>
+
+      <Select bind:value={sheaveLocation} label="Sheave Mounting" link={Links.get('sheaveLocation')}>
+         <Option value="Overslung">Overslung</Option>
+         <Option value="Underslung" disabled>Underslung</Option>
+      </Select>
+
+      {#if !Links.get('underBeamHeight')}
          <InputLength bind:value={carSafetyHeight} label="Safety Height" />
          <InputLength bind:value={carShoeHeight} label="Car Shoe Height" />
          <InputLength bind:value={carShoePlateThick} label="Car Shoe Plate Thickness" />
-      </Fieldset>
-   {/if}
+      {/if}
+   </Fieldset>
 </div>
 
 <svelte:component
@@ -223,12 +290,16 @@
    {railClear}
 />
 
-<ParallelOverslung
+<svelte:component
+   this={comp2Obj || ParallelOverslung}
    bind:botChanDepth
    bind:cabHeight
    bind:cornerPost
+   bind:cornerPostBrace
    bind:floorToPlate
+   bind:floorToRail
    bind:floorToShoe
+   bind:floorToTop
    bind:platformThickness
    bind:railHeight
    bind:safetyHeight={carSafetyHeight}
@@ -238,6 +309,8 @@
    bind:toeGuardLen
    bind:topChanDepth
    bind:underBeamHeight
+   bind:sheaveDia
+   bind:sheaveChan
    {carShoeError}
    {Links}
    {metric}

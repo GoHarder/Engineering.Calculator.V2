@@ -22,10 +22,6 @@
    export let platformThickness = 0;
    export let railHeight = 0;
    export let safetyHeight = 0;
-
-   export let sheaveChannel = 0;
-   export let sheaveDia = 30;
-
    export let shoeHeight = 0;
    export let shoePlateThick = 0;
    export let strikePlateThick = 0;
@@ -54,9 +50,6 @@
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
 
-   $: sheaveChannel = 0;
-   $: sheaveDia = 30;
-
    // Events
    const onResize = (event) => {
       const width = event[0].contentRect.width;
@@ -76,12 +69,14 @@
 
    // Lifecycle
    onMount(() => {
-      Observer = new ResizeObserver(onResize);
-      Observer.observe(divEle);
+      // Observer = new ResizeObserver(onResize);
+      // Observer.observe(divEle);
    });
 </script>
 
-<div bind:this={divEle} class="container">
+Parrallel Underslung
+
+<!-- <div bind:this={divEle} class="container">
    <Fieldset title="Sling Dimensions">
       <div class="observer {sizeClass}">
          <hr class="hr-1" />
@@ -116,8 +111,7 @@
          </div>
       </div>
    </Fieldset>
-</div>
-
+</div> -->
 <style lang="scss">
    .container {
       display: flex;
