@@ -10,6 +10,7 @@
    import { InputLength, InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
 
+   import BackRoped from './components/BackRoped.svelte';
    import BlockUp from './components/BlockUp.svelte';
    import Standard from './components/Standard.svelte';
 
@@ -60,6 +61,7 @@
    const overheadComps = [
       { name: 'Standard', comp: Standard },
       { name: 'Block Up', comp: BlockUp },
+      { name: 'Back Roped', comp: BackRoped },
    ];
 
    // console.log(project);
@@ -100,12 +102,12 @@
 
    let carBufferGap = module?.car?.bufferGap ?? 6;
    let carBfrGrpHeight = module?.car?.bufferGroupHeight ?? 0;
-   let carEquipOffset = module?.car?.equipOffset ?? 17.5;
+   let carEquipOffset = module?.car?.equipOffset ?? 0;
    let carPitChan = module?.car?.pitChan ?? 2.625;
 
    let cwtBufferGap = module?.cwt?.bufferGap ?? 6;
    let cwtBfrGrpHeight = module?.cwt?.bufferGroupHeight ?? 0;
-   let cwtEquipOffset = module?.cwt?.equipOffset ?? 0;
+   let cwtEquipOffset = module?.cwt?.equipOffset ?? 17.5;
    let cwtPitChan = module?.cwt?.pitChan ?? 2.625;
 
    let o_carBfrGrpHeight = module?.car?.o_bufferGroupHeight ?? false;
@@ -140,7 +142,7 @@
    $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
 
    $: carTopClear = beamUnderside - (topChanDepth + underBeamHeight + cornerPostBrace);
-   $: cwtTopClear = pitDepth + beamUnderside - (cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
+   $: cwtTopClear = pitDepth + beamUnderside - (cwtEquipOffset + cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
 
    $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist;
 
@@ -185,9 +187,9 @@
 
    <Fieldset title="Properties">
       <Select bind:value={comp1Name} bind:selected={comp1Obj} label="Type" options={overheadComps}>
-         <Option value="Standard" disabled>Overhead Standard</Option>
+         <Option value="Standard">Overhead Standard</Option>
          <Option value="Block Up">Overhead Block-Up</Option>
-         <Option value="Back Roped" disabled>Overhead Back Roped</Option>
+         <Option value="Back Roped">Overhead Back Roped</Option>
          <Option value="Basement" disabled>Basement / Hoistway</Option>
          <Option value="MRL Over" disabled>MRL Overslung</Option>
          <Option value="MRL Under" disabled>MRL Underslung</Option>

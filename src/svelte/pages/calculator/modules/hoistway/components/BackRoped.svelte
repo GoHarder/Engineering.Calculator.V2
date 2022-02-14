@@ -24,13 +24,12 @@
    // Methods
    // Constants
    // Variables
-
    // Subscriptions
    // Contexts
    // Reactive Rules
    $: beamUnderside = clearOverhead - topToBeam;
 
-   $: carEquipOffset = 0; // Nothing above car
+   $: cwtEquipOffset = 0; // No sheave over the counterweight
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
@@ -55,7 +54,7 @@
 
             <InputLength bind:value={railClear} label="Rail" {metric} readonly />
 
-            <InputLength bind:value={cwtEquipOffset} label="Deflector Sheave" {metric} />
+            <InputLength bind:value={carEquipOffset} label="Deflector Sheave" {metric} />
 
             <InputLength value={cwtTopClear} label="Counterweight" invalid={cwtTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
@@ -66,7 +65,7 @@
             <InputLength bind:value={overTravel} label="Over Travel" {metric} readonly />
          </div>
 
-         <img src="/public/img/hoistway/standard.svg" alt="Standard Overhead" />
+         <img src="/public/img/hoistway/back_roped.svg" alt="Back Roped" />
       </div>
    </Fieldset>
 </div>
