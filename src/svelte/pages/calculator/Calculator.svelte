@@ -67,17 +67,19 @@
 
       let update = clone(moduleItems);
 
+      let i = 0;
+      let modules = project?.modules ?? {};
+
       Object.keys(update).forEach((key) => {
          update[key].show = false;
-         update[key].checked = false;
-      });
 
-      Object.keys(project?.modules ?? {}).forEach((key, i) => {
-         update[key].show = true;
-         update[key].href = `/Calculator/${capitalize(key)}`;
-         // update[key].index = i;
-         update[key].checked = i === 0;
-         maxIndex = i;
+         if (modules[key]) {
+            update[key].show = true;
+            update[key].href = `/Calculator/${capitalize(key)}`;
+            update[key].index = i;
+            maxIndex = i;
+            i++;
+         }
       });
 
       moduleItems = update;
@@ -94,13 +96,17 @@
 
    // Events
    const onNext = () => {
-      const key = Object.keys(moduleItems)[selectedIndex + 1];
-      history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+      Object.keys(moduleItems).forEach((key) => {
+         const index = moduleItems[key]?.index ?? -1;
+         if (index === selectedIndex + 1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+      });
    };
 
    const onPrevious = () => {
-      const key = Object.keys(moduleItems)[selectedIndex - 1];
-      history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+      Object.keys(moduleItems).forEach((key) => {
+         const index = moduleItems[key]?.index ?? -1;
+         if (index === selectedIndex + -1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
+      });
    };
 
    const onSave = async () => {

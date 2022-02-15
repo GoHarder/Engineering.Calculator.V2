@@ -12,7 +12,6 @@ import Sling from './sling/Sling.svelte';
 
 export default {
    platform: {
-      index: 0,
       title: 'Platform',
       description: '',
       img: 'public/img/products/sling-platform.png',
@@ -21,7 +20,6 @@ export default {
       show: true,
    },
    sling: {
-      index: 1,
       title: 'Sling',
       description: '',
       img: 'public/img/products/sling-platform.png',
@@ -30,7 +28,6 @@ export default {
       show: true,
    },
    counterweight: {
-      index: 2,
       title: 'Counterweight',
       description: '',
       img: 'public/img/products/counterweight.png',
@@ -39,7 +36,6 @@ export default {
       show: true,
    },
    machine: {
-      index: 3,
       title: 'Machine',
       description: '',
       img: 'public/img/products/machine.png',
@@ -48,7 +44,6 @@ export default {
       show: true,
    },
    buffers: {
-      index: 4,
       title: 'Buffers',
       description: '',
       img: 'public/img/products/buffers.png',
@@ -57,7 +52,6 @@ export default {
       show: true,
    },
    hoistway: {
-      index: 5,
       title: 'Hoistway',
       description: 'To calculate min and max hoistway heights.',
       img: 'public/img/products/hoistway.png',
@@ -66,7 +60,6 @@ export default {
       show: true,
    },
    overheadSteel: {
-      index: 6,
       title: 'Overhead Steel',
       description: '',
       img: 'public/img/products/steel.png',
