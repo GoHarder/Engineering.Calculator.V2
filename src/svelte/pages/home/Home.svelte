@@ -166,7 +166,7 @@
          projectStore.destroy();
       } else {
          // If not just modify
-         update.opened = update.opened.filter((person) => person.userId !== user._id);
+         update.opened = update.opened.filter((person) => person._id !== user._id);
 
          await projectStore.save(update);
 
