@@ -4,6 +4,7 @@
    import { MDCSelect } from '@material/select';
    import { MDCSelectIcon } from '@material/select/icon';
    import { classList, filterProps, forwardEvents, randomId } from '../../lib';
+   import { clone } from 'lib/main.mjs';
 
    // Components
    import Icon from '../common/Icon.svelte';
@@ -29,9 +30,12 @@
       Select.value = `${value}`;
 
       if (options === undefined) return;
-      options = options.sort((a, b) => Select.menuItemValues.indexOf(a.name) - Select.menuItemValues.indexOf(b.name));
 
-      selected = options[Select.selectedIndex] || {};
+      let copy = clone(options).filter((option) => Select.menuItemValues.includes(option.name));
+
+      copy = copy.sort((a, b) => Select.menuItemValues.indexOf(a.name) - Select.menuItemValues.indexOf(b.name));
+
+      selected = copy[Select.selectedIndex] || {};
    };
 
    // Constants
