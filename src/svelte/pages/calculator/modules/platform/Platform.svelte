@@ -1,6 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
+   import { deepMerge } from 'lib/main.mjs';
    import { round } from 'lib/math.mjs';
 
    import * as tables from './tables';
@@ -112,7 +113,8 @@
          }
       }
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.platform = moduleData;
    };
 

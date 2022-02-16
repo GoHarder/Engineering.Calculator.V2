@@ -1,6 +1,7 @@
 <script>
    import { onMount } from 'svelte';
 
+   import { deepMerge } from 'lib/main.mjs';
    import * as tables from './tables';
 
    import { HoistwayLinks as Links } from '../links';
@@ -11,8 +12,11 @@
    import { Option, Select } from 'components/material/select';
 
    import BackRoped from './components/BackRoped.svelte';
+   import Basement from './components/Basement.svelte';
    import BlockUp from './components/BlockUp.svelte';
+   import Overslung from './components/Overslung.svelte';
    import Standard from './components/Standard.svelte';
+   import Underslung from './components/Underslung.svelte';
 
    import DiagonalOverslung from './components/DiagonalOverslung.svelte';
    import DiagonalUnderslung from './components/DiagonalUnderslung.svelte';
@@ -34,15 +38,15 @@
          },
          sling: {
             botChanDepth,
+            safetyHeight: carSafetyHeight,
+            sheaveArrangement,
+            sheaveChanDepth,
+            sheaveLocation,
+            shoeHeight: carShoeHeight,
+            shoePlateThickness: carShoePlateThick,
             strikePlateThick,
             topChanDepth,
             underBeamHeight,
-            safetyHeight: carSafetyHeight,
-            shoeHeight: carShoeHeight,
-            shoePlateThickness,
-            carShoePlateThick,
-            sheaveArrangement,
-            sheaveLocation,
          },
          counterweight: {
             height: cwtHeight,
@@ -83,7 +87,8 @@
          },
       };
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.hoistway = moduleData;
    };
 
@@ -99,6 +104,9 @@
       { name: 'Standard', comp: Standard },
       { name: 'Block Up', comp: BlockUp },
       { name: 'Back Roped', comp: BackRoped },
+      { name: 'Basement', comp: Basement },
+      { name: 'MRL Over', comp: Overslung },
+      { name: 'MRL Under', comp: Underslung },
    ];
 
    const slingComps = {
@@ -137,6 +145,7 @@
 
    let sheaveArrangement = globals?.sling?.sheaveArrangement ?? 'Parallel';
    let sheaveLocation = globals?.sling?.sheaveLocation ?? 'Overslung';
+   let sheaveChanDepth = globals?.sling?.sheaveChanDepth ?? 8;
 
    // - Module
    let clearOverhead = module?.clearOverhead ?? 240;
@@ -164,7 +173,6 @@
    let cwtBufferStyle = 'Oil';
 
    let sheaveDia = 20;
-   let sheaveChan = 8;
 
    // - Calculated
    let beamUnderside = 0;
@@ -247,9 +255,9 @@
          <Option value="Standard">Overhead Standard</Option>
          <Option value="Block Up">Overhead Block-Up</Option>
          <Option value="Back Roped">Overhead Back Roped</Option>
-         <Option value="Basement" disabled>Basement / Hoistway</Option>
-         <Option value="MRL Over" disabled>MRL Overslung</Option>
-         <Option value="MRL Under" disabled>MRL Underslung</Option>
+         <Option value="Basement">Basement / Hoistway</Option>
+         <Option value="MRL Over">MRL Overslung</Option>
+         <Option value="MRL Under">MRL Underslung</Option>
       </Select>
 
       <InputNumber bind:value={terminalSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
@@ -263,7 +271,7 @@
 
       <Select bind:value={sheaveLocation} label="Sheave Mounting" link={Links.get('sheaveLocation')}>
          <Option value="Overslung">Overslung</Option>
-         <Option value="Underslung" disabled>Underslung</Option>
+         <Option value="Underslung">Underslung</Option>
       </Select>
 
       {#if !Links.get('underBeamHeight')}
@@ -310,7 +318,7 @@
    bind:topChanDepth
    bind:underBeamHeight
    bind:sheaveDia
-   bind:sheaveChan
+   bind:sheaveChanDepth
    {carShoeError}
    {Links}
    {metric}
@@ -326,12 +334,17 @@
 
       <fieldset class="pit-section-car">
          <legend>Car</legend>
+
          <hr />
+
          <InputLength bind:value={pitDepth} label="Pit Depth" />
 
          <InputLength bind:value={carBufferGap} label="Gap" />
+
          <InputLength bind:value={carBfrGrpHeight} bind:override={o_carBfrGrpHeight} label="Buffer Height" calc={carBfrGrpHeightCalc} />
+
          <InputLength bind:value={carBufferComp} label="Buffer Compression" link={Links.get('carBufferComp')} />
+
          <InputLength bind:value={carPitChan} label="Pit Channel" />
       </fieldset>
 
@@ -339,11 +352,17 @@
 
       <fieldset class="pit-section-cwt">
          <legend>Counterweight</legend>
+
          <hr />
+
          <InputLength bind:value={cwtHeight} label="Height" link={Links.get('cwtHeight')} />
+
          <InputLength bind:value={cwtBufferGap} label="Gap" />
+
          <InputLength bind:value={cwtBfrGrpHeight} bind:override={o_cwtBfrGrpHeight} label="Buffer Height" calc={cwtBufferHeight} />
+
          <InputLength bind:value={cwtBufferComp} label="Buffer Compression" link={Links.get('cwtBufferComp')} />
+
          <InputLength bind:value={cwtPitChan} label="Pit Channel" />
       </fieldset>
    </div>

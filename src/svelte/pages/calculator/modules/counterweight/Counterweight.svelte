@@ -1,7 +1,7 @@
 <script>
    import { onDestroy, onMount } from 'svelte';
 
-   import { clone } from 'lib/main.mjs';
+   import { clone, deepMerge } from 'lib/main.mjs';
    import { ceil, floor, round, roundInc } from 'lib/math.mjs';
 
    import * as gTables from '../tables';
@@ -98,7 +98,8 @@
 
       if (!['235', '236'].includes(cwtModel)) delete moduleData.stileChannel;
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.counterweight = moduleData;
    };
 

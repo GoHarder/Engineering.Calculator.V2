@@ -1,6 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
+   import { deepMerge } from 'lib/main.mjs';
    import { round } from 'lib/math.mjs';
 
    import { BufferLinks as Links } from '../links';
@@ -59,7 +60,8 @@
          },
       };
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.buffers = moduleData;
    };
 

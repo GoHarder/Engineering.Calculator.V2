@@ -1,7 +1,7 @@
 <script>
    import { onDestroy, onMount } from 'svelte';
 
-   import { clone } from 'lib/main.mjs';
+   import { clone, deepMerge } from 'lib/main.mjs';
    import { ceil, floor, round, roundInc } from 'lib/math.mjs';
    import { toCamelCase } from 'lib/string.mjs';
 
@@ -34,14 +34,15 @@
          },
          sling: {
             botChanDepth: botChannelObj.depth,
-            strikePlateThick: modelObj.strikePlate.thickness,
+            safetyHeight,
+            sheaveArrangement,
+            sheaveChanDepth: sheaveChannelObj.depth,
+            sheaveLocation,
+            shoeHeight,
+            shoePlateThickness: botShoePlate.thickness,
+            strikePlateThick: modelObj.strikePlate?.thickness ?? 0,
             topChanDepth: topChannelObj.depth,
             underBeamHeight,
-            safetyHeight,
-            shoePlateThickness: botShoePlate.thickness,
-            shoeHeight,
-            sheaveArrangement,
-            sheaveLocation,
          },
          rope: {
             pitch: ropePitch,
@@ -134,7 +135,8 @@
          delete moduleData.steel.bufferBlockUpLength;
       }
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.sling = moduleData;
    };
 

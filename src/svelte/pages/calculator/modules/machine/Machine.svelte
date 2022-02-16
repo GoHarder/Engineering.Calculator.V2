@@ -1,7 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
-   import { clone } from 'lib/main.mjs';
+   import { clone, deepMerge } from 'lib/main.mjs';
    import { ceil, floor, round } from 'lib/math.mjs';
 
    import * as gTables from '../tables';
@@ -59,7 +59,8 @@
          o_travelingCables,
       };
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.machine = moduleData;
    };
 
