@@ -35,7 +35,7 @@ router.post('/', checkAuth, async (req, res) => {
       role: (value) => validate.string(value) && ['user', 'admin', 'super'].includes(value),
    };
 
-   const test = validate.object(body, schema);
+   const test = validate.schema(body, schema);
 
    if (!test.valid) return res.status(400).json({ message: `${capitalize(test.errors[0])} is invalid` });
 

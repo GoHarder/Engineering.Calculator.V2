@@ -59,9 +59,9 @@
    // Reactive Rules
    $: currentIndex = getCompIndex(comp.name);
 
-   $: validSummary = validate.object(project, summarySchema).valid;
+   $: validSummary = validate.schema(project, summarySchema).valid;
 
-   $: validRequirements = validate.object(project.globals, requirementsSchema).valid;
+   $: validRequirements = validate.schema(project.globals, requirementsSchema).valid;
 
    $: parsePath(path);
 

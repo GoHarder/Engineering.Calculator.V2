@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
       longToken: (value) => validate.boolean(value),
    };
 
-   const test1 = validate.object(req.body, schema);
+   const test1 = validate.schema(req.body, schema);
 
    if (!test1.valid) return res.status(400).json({ message: `${capitalize(test1.errors[0])} is invalid` });
 
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
       hashedPassword: (value) => value === getHash(password),
    };
 
-   const test2 = validate.object(userDoc, docSchema);
+   const test2 = validate.schema(userDoc, docSchema);
 
    if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0])} is invalid` });
 

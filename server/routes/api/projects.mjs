@@ -145,7 +145,7 @@ router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
       length: (value) => value > 0,
    };
 
-   const test = validate.object(query, schema);
+   const test = validate.schema(query, schema);
 
    if (!test.valid) return res.status(400).json({ message: `${capitalize(test.errors[0])} is invalid` });
 
@@ -177,7 +177,7 @@ router.get('/search', [checkAuth, sanitizeQuery], async (req, res) => {
       length: (value) => value > 0,
    };
 
-   const test = validate.object(query, schema);
+   const test = validate.schema(query, schema);
 
    if (!test.valid) return res.status(400).json({ message: `${capitalize(test.errors[0])} is invalid` });
 
