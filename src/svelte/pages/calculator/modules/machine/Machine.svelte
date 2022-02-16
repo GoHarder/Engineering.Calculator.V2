@@ -187,32 +187,36 @@
    $: singleRopeLoad = ceil(totalRopeLoad / ropeQty); // Is min breaking Strength
 
    // - Rope Options
-   $: ropeSizeOpts = clone(gTables.ropeSizes).map((rope) => {
-      let diaTest = true;
-      let limitTest = true;
+   $: ropeSizeOpts = clone(gTables.ropeSizes)
+      .map((rope) => {
+         let diaTest = true;
+         let limitTest = true;
 
-      if (sheaveObj?.diameter) diaTest = round(rope.value * 40, 2) <= sheaveObj.diameter;
+         if (sheaveObj?.diameter) diaTest = round(rope.value * 40, 2) <= sheaveObj.diameter;
 
-      if (sheaveObj?.ropeSizeLimit) limitTest = sheaveObj.ropeSizeLimit.includes(rope.name);
+         if (sheaveObj?.ropeSizeLimit) limitTest = sheaveObj.ropeSizeLimit.includes(rope.name);
 
-      const pitch = o_ropePitch ? ropePitch : rope.value + 0.25;
+         const pitch = o_ropePitch ? ropePitch : rope.value + 0.25;
 
-      // Figure out how many ropes can be on a sheave if past 10 then set to 10
-      rope.maxQty = floor(((sheaveObj?.rimWidth ?? maxRimWidth) - (0.375 + rope.value)) / pitch);
-      rope.maxQty = rope.maxQty > 10 ? 10 : rope.maxQty;
+         // Figure out how many ropes can be on a sheave if past 10 then set to 10
+         rope.maxQty = floor(((sheaveObj?.rimWidth ?? maxRimWidth) - (0.375 + rope.value)) / pitch);
+         rope.maxQty = rope.maxQty > 10 ? 10 : rope.maxQty;
 
-      if (diaTest && limitTest) return rope;
-   });
+         if (diaTest && limitTest) return rope;
+      })
+      .filter((rope) => rope !== undefined);
 
-   $: ropeVariantOpts = clone(ropeVariants).map((rope) => {
-      let weightTest = true;
-      let maxLoadTest = true;
+   $: ropeVariantOpts = clone(ropeVariants)
+      .map((rope) => {
+         let weightTest = true;
+         let maxLoadTest = true;
 
-      if (ropeWeight) weightTest = rope.weight === round(ropeWeight * 12, 2);
-      if (ropeMaxLoad) maxLoadTest = rope.maxLoad === ropeMaxLoad;
+         if (ropeWeight) weightTest = rope.weight === round(ropeWeight * 12, 2);
+         if (ropeMaxLoad) maxLoadTest = rope.maxLoad === ropeMaxLoad;
 
-      if (weightTest && maxLoadTest) return rope;
-   });
+         if (weightTest && maxLoadTest) return rope;
+      })
+      .filter((rope) => rope !== undefined);
 
    $: ropeWeightOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope?.weight))].sort((a, b) => a - b);
    $: ropeMaxLoadOpts = [...new Set(clone(ropeVariantOpts).map((rope) => rope?.maxLoad))].sort((a, b) => a - b);
