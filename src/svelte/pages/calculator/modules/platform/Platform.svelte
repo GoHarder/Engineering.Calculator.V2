@@ -289,7 +289,7 @@
       {#if isolation}
          <Select bind:value={isolatorCombo} label="Isolators">
             {#each isolatorCombos as { name } (name)}
-               <Option {name}>{name}</Option>
+               <Option value={name}>{name}</Option>
             {/each}
          </Select>
       {/if}
