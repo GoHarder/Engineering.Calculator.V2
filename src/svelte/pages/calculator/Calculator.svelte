@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy, onMount } from 'svelte';
+   import { onDestroy } from 'svelte';
    import moduleLibrary from './modules/modules';
 
    import { clone } from 'lib/main.mjs';
@@ -128,12 +128,8 @@
    };
 
    // Lifecycle
-   onMount(() => {
-      console.log('Calculator onMount');
-   });
 
    onDestroy(() => {
-      console.log('Calculator onDestory');
       clearPath();
       clearProject();
    });
