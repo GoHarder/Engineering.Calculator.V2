@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy } from 'svelte';
+   import { onDestroy, onMount } from 'svelte';
    import moduleLibrary from './modules/modules';
 
    import { clone } from 'lib/main.mjs';
@@ -96,6 +96,8 @@
 
    // Events
    const onNext = () => {
+      updateModule();
+
       Object.keys(moduleItems).forEach((key) => {
          const index = moduleItems[key]?.index ?? -1;
          if (index === selectedIndex + 1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
@@ -103,6 +105,8 @@
    };
 
    const onPrevious = () => {
+      updateModule();
+
       Object.keys(moduleItems).forEach((key) => {
          const index = moduleItems[key]?.index ?? -1;
          if (index === selectedIndex + -1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
@@ -124,7 +128,12 @@
    };
 
    // Lifecycle
+   onMount(() => {
+      console.log('Calculator onMount');
+   });
+
    onDestroy(() => {
+      console.log('Calculator onDestory');
       clearPath();
       clearProject();
    });
@@ -191,7 +200,7 @@
 
       {#each Object.keys(moduleItems) as key (key)}
          {#if moduleItems[key].show}
-            <Item href={moduleItems[key].href}>{moduleItems[key].title}</Item>
+            <Item href={moduleItems[key].href} update={updateModule}>{moduleItems[key].title}</Item>
          {/if}
       {/each}
    </Drawer>

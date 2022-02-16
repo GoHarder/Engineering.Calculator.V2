@@ -3,6 +3,7 @@
    // Stores
    // Properties
    export let href = undefined;
+   export let update = undefined;
 
    // Methods
    // Constants
@@ -13,6 +14,9 @@
    // Events
    const onClick = (event) => {
       event.preventDefault();
+
+      update?.();
+
       history.pushState({ path: href }, '');
    };
 
