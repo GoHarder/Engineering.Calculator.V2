@@ -23,8 +23,10 @@
    // Contexts
    // Reactive Rules
    // Events
-   const onSelected = () => {
-      checked = !checked;
+   const onSelected = (event) => {
+      if (!['BUTTON', 'I'].includes(event.target.nodeName)) {
+         checked = !checked;
+      }
    };
 
    // Lifecycle
