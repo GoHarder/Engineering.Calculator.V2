@@ -43,7 +43,7 @@ const saveProject = async (project, userId = undefined) => {
 
       fetchStore.loading(false);
 
-      return res.body;
+      return body;
    } catch (error) {
       fetchStore.setError({ res, error });
       return false;
