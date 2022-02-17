@@ -123,13 +123,20 @@ const destroy = () => {
 const save = async (project, userId = undefined) => {
    let update = {};
 
+   // Update locally first
    _update((store) => {
       update = { ...store, ...project };
 
       return update;
    });
 
-   return await saveProject(update, userId);
+   // Save to server
+   update = await saveProject(update, userId);
+
+   // If response is good then update store
+   if (update) _set(update);
+
+   return update;
 };
 
 /**
