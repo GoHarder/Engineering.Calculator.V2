@@ -149,7 +149,7 @@
 
    // - Module
    let clearOverhead = module?.clearOverhead ?? 240;
-   let comp1Name = module?.comp1Name ?? 'Block Up';
+   let comp1Name = module?.comp1Name ?? 'Standard';
    let pitDepth = module?.pitDepth ?? 72;
    let topToBeam = module?.topToBeam ?? 14;
    let cornerPostBrace = module?.cornerPostBrace ?? 0;
