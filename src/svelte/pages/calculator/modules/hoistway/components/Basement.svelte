@@ -30,10 +30,14 @@
    // Reactive Rules
    $: beamUnderside = clearOverhead - topToBeam;
 
-   $: carEquipOffset = 0; // Nothing above car
+   // NOTE: 2-18-2022 3:09 PM - Fix the math
+   $: carEquipOffset = 0;
+   $: cwtEquipOffset = 0;
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
+
+   $: imgSrc = `/public/img/hoistway/basement_1.svg`;
 
    // Events
    // Lifecycle
@@ -43,9 +47,10 @@
    <Fieldset title="Clearance Dimensions">
       <div class="flex">
          <div>
-            <InputLength bind:value={topToBeam} label="Beam And Slab" {metric} />
+            <!-- NOTE: 2-18-2022 3:08 PM - needs changed -->
+            <!-- <InputLength bind:value={topToBeam} label="Beam And Slab" {metric} /> -->
 
-            <InputLength value={carTopClear} label="Car" invalid={carTopClearError} {metric} readonly>
+            <InputLength value={carTopClear} label="Car Clearance" invalid={carTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
                   <HelperText validation>{toLengthString(minCarTopClear)} Required</HelperText>
                </svelte:fragment>
@@ -53,11 +58,9 @@
 
             <InputLength bind:value={clearOverhead} label="Clear Overhead" {metric} />
 
-            <InputLength bind:value={railClear} label="Rail" {metric} readonly />
+            <InputLength bind:value={railClear} label="Rail Clearance" {metric} readonly />
 
-            <InputLength bind:value={cwtEquipOffset} label="Deflector Sheave" {metric} />
-
-            <InputLength value={cwtTopClear} label="Counterweight" invalid={cwtTopClearError} {metric} readonly>
+            <InputLength value={cwtTopClear} label="Counterweight Clearance" invalid={cwtTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
                   <HelperText validation>{toLengthString(minCwtTopClear)} Required</HelperText>
                </svelte:fragment>
@@ -66,7 +69,7 @@
             <InputLength bind:value={overTravel} label="Over Travel" {metric} readonly />
          </div>
 
-         <img src="/public/img/hoistway/standard.svg" alt="Standard Overhead" />
+         <img src={imgSrc} alt="Basement / Hoistway" />
       </div>
    </Fieldset>
 </div>
