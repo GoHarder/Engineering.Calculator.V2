@@ -1,7 +1,7 @@
 <script>
    import { onDestroy } from 'svelte';
 
-   import { clone } from 'lib/main.mjs';
+   import { clone, deepMerge } from 'lib/main.mjs';
 
    // Components
    import { Fieldset } from 'components/common';
@@ -27,7 +27,8 @@
          // reactLinks,
       };
 
-      project.globals = { ...project.globals, ...globalData };
+      // project.globals = { ...project.globals, ...globalData };
+      project.globals = deepMerge(project.globals, globalData);
       project.modules.overheadSteel = moduleData;
    };
 
