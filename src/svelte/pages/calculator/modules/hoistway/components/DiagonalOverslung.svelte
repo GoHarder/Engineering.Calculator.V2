@@ -23,7 +23,7 @@
    export let railHeight = 0;
    export let safetyHeight = 0;
 
-   export let sheaveChannel = 0;
+   export let sheaveChanDepth = 0;
    export let sheaveDia = 30;
 
    export let shoeHeight = 0;
@@ -54,7 +54,7 @@
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
 
-   $: sheaveError = underBeamHeight < sheaveChannel + cabHeight + sheaveDia / 2 + 4;
+   $: sheaveError = underBeamHeight < sheaveChanDepth + cabHeight + sheaveDia / 2 + 4;
 
    // Events
    const onResize = (event) => {
@@ -95,7 +95,7 @@
 
             <InputLength bind:value={topChanDepth} label="Top Channel" link={Links.get('slingTopChanDepth')} {metric} />
 
-            <InputLength bind:value={sheaveChannel} label="Sheave Channel" {metric} />
+            <InputLength bind:value={sheaveChanDepth} label="Sheave Channel" {metric} />
 
             <InputLength bind:value={sheaveDia} label="Sheave Diameter" {metric} invalid={sheaveError}>
                <svelte:fragment slot="helperText">

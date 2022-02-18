@@ -23,7 +23,7 @@
    export let railHeight = 0;
    export let safetyHeight = 0;
 
-   export let sheaveChannel = 0;
+   export let sheaveChanDepth = 0;
    export let sheaveDia = 30;
 
    export let shoeHeight = 0;
@@ -54,7 +54,7 @@
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
 
-   $: sheaveChannel = 0;
+   $: sheaveChanDepth = 0;
    $: sheaveDia = 30;
 
    // Events

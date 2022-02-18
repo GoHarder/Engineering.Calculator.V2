@@ -30,6 +30,9 @@
    export let topChanDepth = 0;
    export let underBeamHeight = 0;
 
+   export let sheaveChanDepth = 0;
+   export let sheaveDia = 0;
+
    // Methods
    // Constants
    // Variables
@@ -43,12 +46,15 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: imgSrc = `/public/img/hoistway/parallel_overslung${cornerPost ? '_corner' : ''}.svg`;
+   $: imgSrc = `/public/img/hoistway/diagonal_underslung${cornerPost ? '_corner' : ''}.svg`;
 
    $: floorToPlate = platformThickness + botChanDepth + strikePlateThick;
    $: floorToShoe = platformThickness + botChanDepth + safetyHeight + shoePlateThick + shoeHeight;
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
+
+   $: sheaveChanDepth = 0;
+   $: sheaveDia = 0;
 
    // Events
    const onResize = (event) => {
@@ -74,9 +80,7 @@
    });
 </script>
 
-Diagonal Underslung
-
-<!-- <div bind:this={divEle} class="container">
+<div bind:this={divEle} class="container">
    <Fieldset title="Sling Dimensions">
       <div class="observer {sizeClass}">
          <hr class="hr-1" />
@@ -111,7 +115,8 @@ Diagonal Underslung
          </div>
       </div>
    </Fieldset>
-</div> -->
+</div>
+
 <style lang="scss">
    .container {
       display: flex;
