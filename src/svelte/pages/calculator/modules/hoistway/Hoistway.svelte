@@ -195,6 +195,7 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: comp1Obj = overheadComps.find((row) => row.name === comp1Name);
    $: comp2Obj = slingComps[`${sheaveArrangement}${sheaveLocation}`];
 
    $: carBfrCompressHeight = carBfrGrpHeight - carBufferComp;
@@ -251,7 +252,7 @@
    </Fieldset>
 
    <Fieldset title="Properties">
-      <Select bind:value={comp1Name} bind:selected={comp1Obj} label="Type" options={overheadComps}>
+      <Select bind:value={comp1Name} label="Type">
          <Option value="Standard">Overhead Standard</Option>
          <Option value="Block Up">Overhead Block-Up</Option>
          <Option value="Back Roped">Overhead Back Roped</Option>
@@ -260,8 +261,7 @@
          <Option value="MRL Under">MRL Underslung</Option>
       </Select>
 
-      <!-- FIXME: 2-18-2022 8:37 AM - This needs to be trip speed -->
-      <InputNumber bind:value={tripSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
+      <InputNumber bind:value={tripSpeed} label="Trip Speed" link={Links.get('tripSpeed')} />
    </Fieldset>
 
    <Fieldset title="Sling Properties">
