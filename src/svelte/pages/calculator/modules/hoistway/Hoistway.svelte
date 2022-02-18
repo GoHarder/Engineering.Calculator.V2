@@ -28,7 +28,6 @@
    export let project;
    export const updateModule = () => {
       const globalData = {
-         terminalSpeed,
          cab: {
             height: cabHeight,
          },
@@ -60,6 +59,7 @@
                height: cwtBufferHeight,
                compression: cwtBufferComp,
             },
+            tripSpeed,
          },
       };
 
@@ -120,7 +120,7 @@
 
    // Variables
    // - Globals
-   let terminalSpeed = globals?.terminalSpeed ?? 0;
+   let tripSpeed = globals?.buffers?.tripSpeed ?? 0;
 
    let cabHeight = globals?.cab?.height ?? 96;
 
@@ -200,8 +200,8 @@
    $: carBfrCompressHeight = carBfrGrpHeight - carBufferComp;
    // $: cwtBfrCompressHeight = cwtBfrGrpHeight - cwtBufferComp;
 
-   $: carStopDist = tables.getStopDist(carBufferStyle, terminalSpeed);
-   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, terminalSpeed);
+   $: carStopDist = tables.getStopDist(carBufferStyle, tripSpeed);
+   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, tripSpeed);
 
    $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist;
    $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
@@ -260,7 +260,8 @@
          <Option value="MRL Under">MRL Underslung</Option>
       </Select>
 
-      <InputNumber bind:value={terminalSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
+      <!-- FIXME: 2-18-2022 8:37 AM - This needs to be trip speed -->
+      <InputNumber bind:value={tripSpeed} label="Terminal Speed" link={Links.get('terminalSpeed')} />
    </Fieldset>
 
    <Fieldset title="Sling Properties">

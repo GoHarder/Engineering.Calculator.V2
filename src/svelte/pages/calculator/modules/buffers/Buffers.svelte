@@ -28,6 +28,7 @@
                height: cwtHeight,
                style: cwtStyle,
             },
+            tripSpeed: carTripSpeed, // Car should trip first
          },
          car: {
             weight: carWeight,
@@ -35,7 +36,6 @@
          counterweight: {
             weight: cwtWeight,
          },
-         terminalSpeed,
       };
 
       const moduleData = {
@@ -58,6 +58,7 @@
             o_compression: o_cwtCompression,
             o_springQty: o_cwtSpringQty,
          },
+         terminalSpeed,
       };
 
       // project.globals = { ...project.globals, ...globalData };
@@ -109,6 +110,8 @@
    // - Calculated
    let carHeight = 0;
    let cwtHeight = 0;
+   let carTripSpeed = 0;
+   let cwtTripSpeed = 0;
 
    // - UI
    let cwtWeightDisplay = false;
@@ -135,13 +138,13 @@
 
 <div class="container">
    <Fieldset title="Car Properties">
-      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} type="weight" />
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step="0.1" type="weight" />
 
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
    </Fieldset>
 
    <Fieldset title="Counterweight Properties">
-      <InputNumber bind:value={cwtWeight} label="Counterweight" link={Links.get('cwtWeight')} {metric} readonly={cwtWeightDisplay} type="weight" />
+      <InputNumber bind:value={cwtWeight} label="Counterweight" link={Links.get('cwtWeight')} {metric} readonly={cwtWeightDisplay} step="0.1" type="weight" />
    </Fieldset>
 </div>
 
@@ -170,6 +173,7 @@
       bind:springModel={carSpringModel}
       bind:springQty={carSpringQty}
       bind:style={carStyle}
+      bind:tripSpeed={carTripSpeed}
       bind:o_compression={o_carCompression}
       bind:o_springQty={o_carSpringQty}
       grossLoad={carGrossLoad}
@@ -187,6 +191,7 @@
       bind:springModel={cwtSpringModel}
       bind:springQty={cwtSpringQty}
       bind:style={cwtStyle}
+      bind:tripSpeed={cwtTripSpeed}
       bind:o_compression={o_cwtCompression}
       bind:o_springQty={o_cwtSpringQty}
       grossLoad={cwtGrossLoad}

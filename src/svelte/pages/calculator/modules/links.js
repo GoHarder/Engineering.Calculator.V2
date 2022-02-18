@@ -41,7 +41,7 @@ const inheritance = {
    carBufferStyle: ['buffers', 'hoistway'],
    cwtBufferComp: ['buffers', 'hoistway'],
    cwtBufferHeight: ['buffers', 'hoistway'],
-   terminalSpeed: ['buffers', 'hoistway'],
+   tripSpeed: ['buffers', 'hoistway'],
    cwtBufferStyle: ['buffers', 'hoistway'],
 };
 
