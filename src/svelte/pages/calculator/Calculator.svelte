@@ -128,11 +128,11 @@
    };
 
    // Lifecycle
-
    onDestroy(() => {
       clearPath();
       clearProject();
    });
+
 </script>
 
 <svelte:head>
