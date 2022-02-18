@@ -20,6 +20,7 @@
    export let metric = false;
    export let oilModel;
    export let terminalSpeed = 0;
+   export let tripSpeed = 0;
    export let spaceBelow;
    export let springModel;
    export let springQty;
@@ -111,8 +112,11 @@
 
    // - Trip Speed
    $: tripSpeedRow = tables.tripSpeed.find((row) => row.carSpeed >= terminalSpeed);
+
    $: carTripSpeed = spaceBelow ? tripSpeedRow.carTripWithCwtSafety : tripSpeedRow.carTrip;
+
    $: cwtTripSpeed = spaceBelow ? tripSpeedRow.cwtTrip : tripSpeedRow.carTrip;
+
    $: tripSpeed = location === 'car' ? carTripSpeed : cwtTripSpeed;
 
    $: impact = ceilInc((2 * grossLoad * (1 + ((1.25 * terminalSpeed) / 60) ** 2 / (64.4 * (compression / 12)))) / bufferQty, 10);
