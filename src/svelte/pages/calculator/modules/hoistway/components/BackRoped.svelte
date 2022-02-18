@@ -44,7 +44,7 @@
          <div>
             <InputLength bind:value={topToBeam} label="Beam And Slab" {metric} />
 
-            <InputLength value={carTopClear} label="Car" invalid={carTopClearError} {metric} readonly>
+            <InputLength value={carTopClear} label="Car Clearance" invalid={carTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
                   <HelperText validation>{toLengthString(minCarTopClear)} Required</HelperText>
                </svelte:fragment>
@@ -52,11 +52,11 @@
 
             <InputLength bind:value={clearOverhead} label="Clear Overhead" {metric} />
 
-            <InputLength bind:value={railClear} label="Rail" {metric} readonly />
+            <InputLength bind:value={railClear} label="Rail Clearance" {metric} readonly />
 
             <InputLength bind:value={carEquipOffset} label="Deflector Sheave" {metric} />
 
-            <InputLength value={cwtTopClear} label="Counterweight" invalid={cwtTopClearError} {metric} readonly>
+            <InputLength value={cwtTopClear} label="Counterweight Clearance" invalid={cwtTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
                   <HelperText validation>{toLengthString(minCwtTopClear)} Required</HelperText>
                </svelte:fragment>
