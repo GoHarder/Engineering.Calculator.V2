@@ -130,6 +130,7 @@
    let platformThickness = globals?.platform?.thickness ?? 0;
 
    let botChanDepth = globals?.sling?.botChanDepth ?? 8;
+   let bufferBlockUpDepth = globals?.sling?.bufferBlockUpDepth ?? 0;
    let strikePlateThick = globals?.sling?.strikePlateThick ?? 1;
    let topChanDepth = globals?.sling?.topChanDepth ?? 8;
    let underBeamHeight = globals?.sling?.underBeamHeight ?? 114;
@@ -148,6 +149,7 @@
    let sheaveArrangement = globals?.sling?.sheaveArrangement ?? 'Parallel';
    let sheaveLocation = globals?.sling?.sheaveLocation ?? 'Overslung';
    let sheaveChanDepth = globals?.sling?.sheaveChanDepth ?? 8;
+   let sheaveDia = globals?.sling?.sheaveDia ?? 0;
 
    // - Module
    let clearOverhead = module?.clearOverhead ?? 240;
@@ -174,8 +176,6 @@
 
    let carBufferStyle = 'Oil';
    let cwtBufferStyle = 'Oil';
-
-   let sheaveDia = 20;
 
    // - Calculated
    let carBeamUnderside = 0;
@@ -326,6 +326,7 @@
    bind:underBeamHeight
    bind:sheaveDia
    bind:sheaveChanDepth
+   bind:bufferBlockUpDepth
    {carShoeError}
    {Links}
    {metric}

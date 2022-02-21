@@ -9,6 +9,7 @@
    // Stores
    // Properties
    export let botChanDepth = 0;
+   export let bufferBlockUpDepth = 0;
    export let cabHeight = 0;
    export let carShoeError = false;
    export let cornerPost = false;
@@ -22,6 +23,8 @@
    export let platformThickness = 0;
    export let railHeight = 0;
    export let safetyHeight = 0;
+   export let sheaveChanDepth = 0;
+   export let sheaveDia = 30;
    export let shoeHeight = 0;
    export let shoePlateThick = 0;
    export let strikePlateThick = 0;
@@ -29,9 +32,6 @@
    export let toeGuardLen = 0;
    export let topChanDepth = 0;
    export let underBeamHeight = 0;
-
-   export let sheaveChanDepth = 0;
-   export let sheaveDia = 30;
 
    // Methods
    // Constants
@@ -53,7 +53,9 @@
    $: floorToRail = cabHeight + railHeight;
    $: floorToTop = underBeamHeight + topChanDepth + (cornerPost ? cornerPostBrace : 0);
 
-   $: sheaveDia = 30;
+   $: sheaveDia;
+
+   $: bufferBlockUpDepth;
 
    // Events
    const onResize = (event) => {
