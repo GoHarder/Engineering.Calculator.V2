@@ -8,6 +8,7 @@ import Hoistway from './hoistway/Hoistway.svelte';
 import Machine from './machine/Machine.svelte';
 import OverheadSteel from './overhead-steel/OverheadSteel.svelte';
 import Platform from './platform/Platform.svelte';
+import Sheaves from './sheaves/Sheaves.svelte';
 import Sling from './sling/Sling.svelte';
 
 export default {
@@ -57,6 +58,14 @@ export default {
       img: 'public/img/products/hoistway.png',
       checked: true,
       comp: Hoistway,
+      show: true,
+   },
+   sheaves: {
+      title: 'Sheaves',
+      description: 'To calculate sheave loads.',
+      img: 'public/img/products/sheave.png',
+      checked: true,
+      comp: Sheaves,
       show: true,
    },
    overheadSteel: {
