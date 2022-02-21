@@ -59,7 +59,7 @@
 
    // Events
    const onResize = (event) => {
-      const width = event[0].contentRect.width;
+      const width = event[0].contentRect.width + (metric ? 0 : 210);
 
       if (width < 890) {
          sizeClass = 'small';
