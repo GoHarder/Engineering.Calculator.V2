@@ -67,7 +67,7 @@
          clearOverhead,
          comp1Name,
          pitDepth,
-         topToBeam,
+
          cornerPostBrace,
          toeGuardLen,
          railHeight,
@@ -76,6 +76,7 @@
             bufferGroupHeight: carBfrGrpHeight,
             equipOffset: carEquipOffset,
             pitChan: carPitChan,
+            topToBeam: topToCarBeam,
             o_bufferGroupHeight: o_carBfrGrpHeight,
          },
          counterweight: {
@@ -83,6 +84,7 @@
             bufferGroupHeight: cwtBfrGrpHeight,
             equipOffset: cwtEquipOffset,
             pitChan: cwtPitChan,
+            topToBeam: topToCwtBeam,
             o_bufferGroupHeight: o_cwtBfrGrpHeight,
          },
       };
@@ -151,7 +153,6 @@
    let clearOverhead = module?.clearOverhead ?? 240;
    let comp1Name = module?.comp1Name ?? 'Standard';
    let pitDepth = module?.pitDepth ?? 72;
-   let topToBeam = module?.topToBeam ?? 14;
    let cornerPostBrace = module?.cornerPostBrace ?? 0;
    let toeGuardLen = module?.toeGuardLen ?? 50.625;
    let railHeight = module?.railHeight ?? 42;
@@ -160,11 +161,13 @@
    let carBfrGrpHeight = module?.car?.bufferGroupHeight ?? 0;
    let carEquipOffset = module?.car?.equipOffset ?? 0;
    let carPitChan = module?.car?.pitChan ?? 2.625;
+   let topToCarBeam = module?.car?.topToBeam ?? 14;
 
    let cwtBufferGap = module?.cwt?.bufferGap ?? 6;
    let cwtBfrGrpHeight = module?.cwt?.bufferGroupHeight ?? 0;
    let cwtEquipOffset = module?.cwt?.equipOffset ?? 17.5;
    let cwtPitChan = module?.cwt?.pitChan ?? 2.625;
+   let topToCwtBeam = module?.car?.topToBeam ?? 14;
 
    let o_carBfrGrpHeight = module?.car?.o_bufferGroupHeight ?? false;
    let o_cwtBfrGrpHeight = module?.cwt?.o_bufferGroupHeight ?? false;
@@ -175,7 +178,8 @@
    let sheaveDia = 20;
 
    // - Calculated
-   let beamUnderside = 0;
+   let carBeamUnderside = 0;
+   let cwtBeamUnderside = 0;
 
    // -- From sling
    let floorToPlate = 0;
@@ -201,26 +205,26 @@
    $: carBfrCompressHeight = carBfrGrpHeight - carBufferComp;
    // $: cwtBfrCompressHeight = cwtBfrGrpHeight - cwtBufferComp;
 
-   $: carStopDist = tables.getStopDist(carBufferStyle, tripSpeed);
-   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, tripSpeed);
+   $: carStopDist = tables.getStopDist(carBufferStyle, tripSpeed); // check
+   $: cwtStopDist = tables.getStopDist(cwtBufferStyle, tripSpeed); // check
 
-   $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist;
-   $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18;
+   $: minCarTopClear = cwtBufferGap + cwtBufferComp + 24 + cwtStopDist; // check
+   $: minCwtTopClear = carBufferGap + carBufferComp + 6 + carStopDist + 18; // check
 
-   $: carTopClear = beamUnderside - floorToTop;
-   $: cwtTopClear = pitDepth + beamUnderside - (cwtEquipOffset + cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
+   $: carTopClear = carBeamUnderside - floorToTop;
+   $: cwtTopClear = cwtBeamUnderside + pitDepth - (cwtEquipOffset + cwtHeight + cwtBufferComp + cwtBfrGrpHeight + cwtPitChan);
 
-   $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist;
+   $: overTravel = cwtBufferGap + cwtBufferComp + cwtStopDist; // check
 
-   $: railClear = beamUnderside + carEquipOffset - (floorToRail + overTravel + 6);
+   $: railClear = carBeamUnderside + carEquipOffset - (floorToRail + overTravel + 6);
 
    // - Calcs
    $: carBfrGrpHeightCalc = Math.max(pitDepth - (carPitChan + carBufferGap + floorToPlate), carBufferHeight);
 
    // - Errors
-   $: toeGuardError = toeGuardLen + 1 - floorToPlate > carBfrCompressHeight + carPitChan;
+   $: toeGuardError = toeGuardLen + 1 - floorToPlate > carBfrCompressHeight + carPitChan; // check
 
-   $: carShoeError = floorToShoe - floorToPlate + 0.5 > carBfrCompressHeight + carPitChan;
+   $: carShoeError = floorToShoe - floorToPlate + 0.5 > carBfrCompressHeight + carPitChan; // check
 
    // Events
    const onResize = (event) => {
@@ -285,11 +289,13 @@
 
 <svelte:component
    this={comp1Obj?.comp ?? Standard}
-   bind:beamUnderside
+   bind:carBeamUnderside
+   bind:cwtBeamUnderside
    bind:clearOverhead
    bind:carEquipOffset
    bind:cwtEquipOffset
-   bind:topToBeam
+   bind:topToCarBeam
+   bind:topToCwtBeam
    {carTopClear}
    {cwtTopClear}
    {metric}

@@ -7,11 +7,13 @@
 
    // Stores
    // Properties
-   export let beamUnderside;
+   export let carBeamUnderside;
+   export let cwtBeamUnderside;
    export let clearOverhead;
    export let carEquipOffset;
    export let cwtEquipOffset;
-   export let topToBeam;
+   export let topToCarBeam;
+   export let topToCwtBeam;
 
    export let carTopClear = 0;
    export let cwtTopClear = 0;
@@ -24,20 +26,27 @@
    // Methods
    // Constants
    // Variables
+   let imgSrc = `/public/img/hoistway/basement_1.svg`;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: beamUnderside = clearOverhead - topToBeam;
+   $: carBeamUnderside = clearOverhead - topToCarBeam;
+   $: cwtBeamUnderside = clearOverhead - topToCwtBeam;
 
-   // NOTE: 2-18-2022 3:09 PM - Fix the math
-   $: carEquipOffset = 0;
-   $: cwtEquipOffset = 0;
+   $: carEquipOffset = 0; // Nothing above car
+   $: cwtEquipOffset = 0; // Nothing above counterweight
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
 
-   $: imgSrc = `/public/img/hoistway/basement_1.svg`;
+   $: if (topToCarBeam === topToCwtBeam) {
+      imgSrc = `/public/img/hoistway/basement_2.svg`;
+   } else if (topToCarBeam < topToCwtBeam) {
+      imgSrc = `/public/img/hoistway/basement_1.svg`;
+   } else {
+      imgSrc = `/public/img/hoistway/basement_3.svg`;
+   }
 
    // Events
    // Lifecycle
@@ -48,7 +57,7 @@
       <div class="flex">
          <div>
             <!-- NOTE: 2-18-2022 3:08 PM - needs changed -->
-            <!-- <InputLength bind:value={topToBeam} label="Beam And Slab" {metric} /> -->
+            <InputLength bind:value={topToCarBeam} label="Car Beam" {metric} />
 
             <InputLength value={carTopClear} label="Car Clearance" invalid={carTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
@@ -59,6 +68,8 @@
             <InputLength bind:value={clearOverhead} label="Clear Overhead" {metric} />
 
             <InputLength bind:value={railClear} label="Rail Clearance" {metric} readonly />
+
+            <InputLength bind:value={topToCwtBeam} label="Counterweight Beam" {metric} />
 
             <InputLength value={cwtTopClear} label="Counterweight Clearance" invalid={cwtTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">

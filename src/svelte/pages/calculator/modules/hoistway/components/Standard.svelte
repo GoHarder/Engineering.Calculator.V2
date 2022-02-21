@@ -7,11 +7,13 @@
 
    // Stores
    // Properties
-   export let beamUnderside;
+   export let carBeamUnderside;
+   export let cwtBeamUnderside;
    export let clearOverhead;
    export let carEquipOffset;
    export let cwtEquipOffset;
-   export let topToBeam;
+   export let topToCarBeam;
+   export let topToCwtBeam;
 
    export let carTopClear = 0;
    export let cwtTopClear = 0;
@@ -28,9 +30,12 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: beamUnderside = clearOverhead - topToBeam;
+   $: carBeamUnderside = clearOverhead - topToCarBeam;
+   $: cwtBeamUnderside = clearOverhead - topToCwtBeam;
 
    $: carEquipOffset = 0; // Nothing above car
+
+   $: topToCwtBeam = topToCarBeam; // Bean locations are equal
 
    $: carTopClearError = carTopClear < minCarTopClear;
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
@@ -43,7 +48,7 @@
    <Fieldset title="Clearance Dimensions">
       <div class="flex">
          <div>
-            <InputLength bind:value={topToBeam} label="Beam And Slab" {metric} />
+            <InputLength bind:value={topToCarBeam} label="Beam And Slab" {metric} />
 
             <InputLength value={carTopClear} label="Car Clearance" invalid={carTopClearError} {metric} readonly>
                <svelte:fragment slot="helperText">
