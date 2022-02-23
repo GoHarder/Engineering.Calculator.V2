@@ -1,6 +1,6 @@
 <script>
    import { clone, range } from 'lib/main.mjs';
-   import { round } from 'lib/math.mjs';
+   import { round, roundInc } from 'lib/math.mjs';
 
    import * as gTables from '../../pages/calculator/modules/tables';
 
@@ -124,10 +124,13 @@
    // Reactive Rules
 
    // - Options
-   $: filteredCompSheaves = clone(compSheaves).map((sheave) => {
-      sheave.ropes = sheave.ropes.filter((rope) => rope.value === compRopeSize && rope.qty.includes(ropeChainQty));
-      if (sheave.ropes.length > 0) return sheave;
-   });
+   $: filteredCompSheaves = clone(compSheaves)
+      .map((sheave) => {
+         sheave.ropes = sheave.ropes.filter((rope) => rope.value === compRopeSize && rope.qty.includes(ropeChainQty));
+         if (sheave.ropes.length > 0) return sheave;
+      })
+      .filter((sheave) => sheave !== undefined);
+
    $: filteredCompSheaves1 = filteredCompSheaves.filter((sheave) => sheave.shvQty === 1 && sheave.tiedown === false);
    $: filteredCompSheaves2 = filteredCompSheaves.filter((sheave) => sheave.shvQty === 1 && sheave.tiedown === true);
    $: filteredCompSheaves3 = filteredCompSheaves.filter((sheave) => sheave.shvQty === 2 && sheave.tiedown === false);
@@ -140,10 +143,12 @@
       if (rope.qty <= 12) return rope;
    });
 
-   $: filteredCompChains = clone(compChains).map((chain) => {
-      chain.diff = round(Math.abs(round(compWeight / travel, 4) - chain.weight * ropeChainQty), 1);
-      if (chain.diff === 0) return chain;
-   });
+   $: filteredCompChains = clone(compChains)
+      .map((chain) => {
+         chain.diff = round(Math.abs(round(compWeight / travel, 4) - chain.weight * ropeChainQty), 1);
+         if (chain.diff === 0) return chain;
+      })
+      .filter((chain) => chain !== undefined);
 
    $: filteredCompChains1 = filteredCompChains.filter((chain) => chain.group === 1);
    $: filteredCompChains2 = filteredCompChains.filter((chain) => chain.group === 2);
