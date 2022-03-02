@@ -179,6 +179,8 @@
    $: sheaves = machineObj?.sheaves ?? [];
    $: ropeVariants = ropeObj?.variants ?? [];
 
+   $: ropeGripLoad = carWeight + capacity + cwtWeight + totalRopeWeight + compWeight;
+
    // - Rope Calcs
    // NOTE: 8-17-2021 2:41 PM - Ben doesn't know why the totalRopeLoad2 formula exists I don't either. It doesn't make sense
    $: totalRopeWeight = round(ropeQty * ropeWeight * overallTravel * roping);
@@ -291,9 +293,6 @@
    onDestroy(() => {
       updateModule();
    });
-
-   // $: console.table(ropeSizeOpts);
-   // $: console.log(ropeObj);
 </script>
 
 <div class="container">
