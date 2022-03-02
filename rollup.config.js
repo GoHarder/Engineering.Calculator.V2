@@ -13,7 +13,7 @@ const production = !process.env.ROLLUP_WATCH;
 
 let includePathConfig = {
    include: {},
-   paths: ['', 'src/svelte', 'public'],
+   paths: ['', 'src/svelte', 'src', 'public'],
    external: [],
    extensions: ['.js', '.mjs'],
 };
