@@ -17,7 +17,7 @@ export const getChannels = (supplied, shape) => {
       { $match: { shape: 'channel', material: 'ASTM A36', name: new RegExp(`^${shape}`) } },
       { $sort: sortStep },
       { $unset: ['_nameSort', '_specialSort', '_stockStatusSort'] },
-      { $project: { area: 0, flangeWidth: 0, gage: 0, material: 0, webThickness: 0, shape: 0 } },
+      { $project: { area: 0, flangeWidth: 0, gage: 0, material: 0, webThickness: 0, shape: 0, _depthSort: 0 } },
    ];
 };
 
@@ -36,6 +36,6 @@ export const getBeams = (supplied, shape) => {
       { $match: { shape: 'beam', name: new RegExp(`^${shape}`) } },
       { $sort: sortStep },
       { $unset: ['_nameSort', '_specialSort', '_stockStatusSort'] },
-      { $project: { area: 0, flangeWidth: 0, gage: 0, material: 0, maxLength: 0, shape: 0, webThickness: 0 } },
+      { $project: { area: 0, flangeWidth: 0, gage: 0, material: 0, maxLength: 0, shape: 0, webThickness: 0, _depthSort: 0 } },
    ];
 };
