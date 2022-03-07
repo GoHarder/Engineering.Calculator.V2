@@ -44,7 +44,8 @@
    const helperId = `helper-text-${randomId()}`;
 
    // Variables
-   let divEle;
+   let divEle1;
+   let divEle2;
    let SelectIcon;
    let Select;
    let menuItemValues = [];
@@ -108,22 +109,36 @@
       override = calc !== value;
    };
 
+   const onClick = () => {
+      setTimeout(() => {
+         if (divEle2.classList.contains('mdc-menu-surface--open')) {
+            let { transformOrigin, maxHeight } = divEle2.style;
+
+            maxHeight = parseFloat(maxHeight.replace(/px/, ''));
+
+            if (transformOrigin === 'center bottom' && maxHeight > 450) {
+               divEle2.style.maxHeight = '450px';
+            }
+         }
+      }, 1000);
+   };
+
    const onLink = () => history.pushState({ path: link }, '');
 
    const onReset = () => (override = false);
 
    // Lifecycle
    onMount(() => {
-      Select = new MDCSelect(divEle);
+      Select = new MDCSelect(divEle1);
 
       if (calc !== undefined) {
-         const icon = divEle.querySelector('.mdc-select__icon');
+         const icon = divEle1.querySelector('.mdc-select__icon');
          SelectIcon = new MDCSelectIcon(icon);
       }
 
       if ($$slots.helperText) {
-         const p = divEle.nextElementSibling;
-         // const anchor = divEle.querySelector('.mdc-select__anchor');
+         const p = divEle1.nextElementSibling;
+         // const anchor = divEle1.querySelector('.mdc-select__anchor');
 
          p.id = helperId;
          // anchor.ariaDescribedBy = helperId;
@@ -146,7 +161,7 @@
 </script>
 
 <div class="input" class:full-width={fullWidth}>
-   <div bind:this={divEle} use:events on:MDCSelect:change={onChange} class={divClass} {...props}>
+   <div bind:this={divEle1} use:events on:click={onClick} on:MDCSelect:change={onChange} class={divClass} {...props}>
       <div class="mdc-select__anchor" role="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="demo-label demo-selected-text" aria-describedby={helperId}>
          <input type="hidden" />
          <span class="mdc-select__ripple" />
@@ -185,7 +200,7 @@
          <span class="mdc-line-ripple" />
       </div>
 
-      <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+      <div bind:this={divEle2} class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
          <ul class="mdc-deprecated-list mdc-deprecated-list--dense" role="listbox" aria-label={id}>
             <slot />
          </ul>
