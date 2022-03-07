@@ -186,7 +186,7 @@
       </div>
 
       <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-         <ul class="mdc-deprecated-list" role="listbox" aria-label={id}>
+         <ul class="mdc-deprecated-list mdc-deprecated-list--dense" role="listbox" aria-label={id}>
             <slot />
          </ul>
       </div>
