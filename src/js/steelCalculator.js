@@ -448,4 +448,37 @@ export default class SteelCalculator {
    get rB() {
       return this.#getReactions(this.member)[1]?.weight ?? 0;
    }
+
+   static getOptions(...opts) {
+      opts = opts.filter((x) => x.length > 0);
+
+      if (opts.length > 1) {
+         opts = opts.reduce((array, opt) => {
+            array = [...array, ...opt];
+            return array;
+         }, []);
+
+         const hashTable = {};
+         const duplicates = [];
+
+         opts.forEach((item) => {
+            if (hashTable[item]) {
+               if (hashTable[item] === 1) {
+                  duplicates.push(item);
+               }
+               hashTable[item] = hashTable[item] + 1;
+            } else {
+               hashTable[item] = 1;
+            }
+         });
+
+         opts = duplicates;
+      } else {
+         opts = opts[0];
+      }
+
+      if (!opts) return [];
+
+      return opts.map((opt) => JSON.parse(opt));
+   }
 }
