@@ -4,6 +4,8 @@ import { round, roundInc } from 'lib/math.mjs';
 
 let data = undefined;
 
+let cache = {};
+
 // Getting steel data
 const getData = async () => {
    const token = localStorage.getItem('token');
@@ -93,6 +95,7 @@ const integrate = (sections, nth = 0) => {
 // The main class export
 export default class SteelCalculator {
    #_loads;
+   #_steel;
 
    constructor() {
       this.steel = [];
@@ -351,8 +354,23 @@ export default class SteelCalculator {
       return round(max / (29 * 10 ** 6 * inertia), 4);
    }
 
+   #getCacheKey() {
+      if (this.#_loads) {
+         const loadString = this.#_loads.reduce((string, load) => {
+            string += `-(${load.length}x${load.weight})`;
+            return string;
+         }, '');
+
+         return `${this.#_steel}${loadString}-(${this.lengthRb}x${this.length})-${this.axis}-${this.existing ? 1 : 0}`;
+      }
+   }
+
    // Public Methods
    get options() {
+      const key = this.#getCacheKey();
+
+      if (key in cache) return cache[key];
+
       const testDeflection = round((this.length / 1666) * -1, 4);
       let output = [];
 
@@ -396,12 +414,16 @@ export default class SteelCalculator {
          output.push(JSON.stringify(member));
       }
 
+      // Stash results in cache
+      if (key) cache[key] = output;
+
       return output;
    }
 
    set shape(key) {
       if (key in data) {
          this.steel = clone(data[key]);
+         this.#_steel = key;
       } else {
          this.steel = [];
       }
