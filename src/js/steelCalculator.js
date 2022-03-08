@@ -92,6 +92,8 @@ const integrate = (sections, nth = 0) => {
 
 // The main class export
 export default class SteelCalculator {
+   #_loads;
+
    constructor() {
       this.steel = [];
       this.length = 0;
@@ -103,9 +105,11 @@ export default class SteelCalculator {
 
    // Private Methods
    #getReactions(member) {
+      this.#_loads = clone(this.loads).filter((load) => load.length !== 0 && load.weight !== 0);
+
       const distLoad = { length: roundInc(this.length / 2), weight: this.length * (member?.weight ?? 0) };
-      const sumOfForces = [...this.loads, distLoad].reduce((total, load) => total + load.weight, 0);
-      const sumOfMoments = [...this.loads, distLoad].reduce((total, load) => total + load.weight * load.length, 0);
+      const sumOfForces = [...this.#_loads, distLoad].reduce((total, load) => total + load.weight, 0);
+      const sumOfMoments = [...this.#_loads, distLoad].reduce((total, load) => total + load.weight * load.length, 0);
 
       const rB = round(sumOfMoments / (this.lengthRb || 1), 2);
       const rA = round(sumOfForces - rB, 2);
@@ -118,7 +122,7 @@ export default class SteelCalculator {
 
    #getShearFormulas(member, reactions) {
       // Prepare the loads for processing
-      let temp = clone(this.loads).map((load) => {
+      let temp = clone(this.#_loads).map((load) => {
          load.weight *= -1;
          return { length: load.length, weight: load.weight };
       });
@@ -162,7 +166,8 @@ export default class SteelCalculator {
          const key = `c${i + 1}`;
          const constant = algebra.parse(min).eval(memo).solveFor(key);
 
-         memo[key] = constant.valueOf();
+         // memo[key] = constant.valueOf();
+         memo[key] = constant;
       }
 
       return output.map((section) => {
@@ -317,6 +322,7 @@ export default class SteelCalculator {
 
       const results = clone(formulas).reduce((array, section) => {
          let x = algebra.parse(`0 = ${section.formula}`).solveFor('x');
+
          x = x.filter((num) => num >= section.min && num <= section.max);
 
          if (x.length > 0) array.push(round(x[0], 1));
