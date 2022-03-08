@@ -1,26 +1,33 @@
 <script>
-   import { round } from 'lib/math.mjs';
+   import SteelCalculator from 'js/steelCalculator';
+
+   import { clone } from 'lib/main.mjs';
 
    // Components
    import { Button } from 'components/material/button';
-   import { InputLength } from 'components/material/input';
+   import { InputLength, InputNumber } from 'components/material/input';
 
    import Load from './Load.svelte';
 
    // Stores
    // Properties
+   export let existing = false;
    export let label;
    export let length = 0;
    export let lengthRb = 0;
-   export let memberObj = {};
+   export let name;
+   export let options = [];
    export let pointLoads = [];
    export let rA = 0;
    export let rB = 0;
+   export let shape;
 
    export let o_lengthRb = false;
 
    // Methods
    // Constants
+   const Calc = new SteelCalculator();
+
    // Variables
    let loadIndex = 1;
 
@@ -28,21 +35,22 @@
    // Contexts
    // Reactive Rules
 
-   // - Reaction Calcs
-   $: weightPerInch = memberObj?.weight ?? 0;
+   // - Calculator Inputs
 
-   // The distributed load of the member itself
-   $: distLoad = { length: length / 2, weight: length * weightPerInch };
+   $: Calc.shape = shape;
+   $: Calc.length = length;
+   $: Calc.lengthRb = lengthRb;
+   $: Calc.loads = pointLoads;
+   $: Calc.existing = existing;
+   $: Calc.name = name;
 
-   // The sum of all the forces / moments in the Y direction
-   $: sumOfForces = [...pointLoads, distLoad].reduce((total, load) => total + load.weight, 0);
-   $: sumOfMoments = [...pointLoads, distLoad].reduce((total, load) => total + load.weight * load.length, 0);
+   // - Calculator Outputs
+   $: options = Calc.options;
 
-   // The reactions
-   $: rB = round(sumOfMoments / lengthRb, 2);
-   $: rA = round(sumOfForces - rB, 2);
+   $: console.log(Calc);
 
-   // Shear Forces
+   $: rA = Calc.rA;
+   $: rB = Calc.rB;
 
    // Events
    const onAddLoad = () => {
@@ -67,13 +75,20 @@
 </script>
 
 <p>{label}</p>
+
 <hr />
+
 <div class="content">
    <div class="member">
       <InputLength bind:value={length} label="Length" />
+
       <InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} />
 
       <slot />
+
+      <InputNumber value={rA} label="Force at R<sub>a</sub>" readonly type="weight" />
+
+      <InputNumber value={rB} label="Force at R<sub>b</sub>" readonly type="weight" />
    </div>
 
    <div class="vr" />
@@ -86,7 +101,6 @@
       <Button on:click={onAddLoad} variant="contained">Add Load</Button>
    </div>
 </div>
-
 
 <style>
    p {
