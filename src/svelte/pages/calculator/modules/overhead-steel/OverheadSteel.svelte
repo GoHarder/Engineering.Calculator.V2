@@ -13,8 +13,6 @@
    import SteelSet from './components/SteelSet.svelte';
 
    // Stores
-   import fetchStore from 'stores/fetch';
-
    // Properties
    export let project;
    export const updateModule = () => {
@@ -33,32 +31,6 @@
    };
 
    // Methods
-   const getEngineeringData = async (supplied) => {
-      const token = localStorage.getItem('token');
-
-      // Run fetch
-      fetchStore.loading(true);
-      let res, body;
-
-      try {
-         res = await fetch(`api/engineering/overhead-steel?supplied=${supplied}`, {
-            method: 'GET',
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         });
-
-         if (res.body && res.status !== 204) body = await res.json();
-
-         if (!res.ok) throw new Error(body.message);
-
-         fetchStore.loading(false);
-
-         steel = clone(body);
-      } catch (error) {
-         fetchStore.setError({ res, error });
-      }
-   };
 
    // Constants
    const { modules } = project;
@@ -70,25 +42,16 @@
    let steelSets = module?.steelSets ?? [];
    // let reactLinks = module?.reactLinks ?? [];
 
-   // - Database information
-   let steel = {
-      cChannels: [],
-      mcChannels: [],
-      sBeams: [],
-      wBeams: [],
-   };
-
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: getEngineeringData(supplied);
-
    // Events
 
    const onAddSet = () => {
       const id = `set-${Date.now()}`;
 
       const newSet = {
+         axis: 'x',
          id,
          label: 'Unnamed Set',
          shape: '',
@@ -119,8 +82,6 @@
    onDestroy(() => {
       updateModule();
    });
-
-   // $: console.log(steelSets);
 </script>
 
 <div class="container">
@@ -134,8 +95,8 @@
 </div>
 
 <div class="container">
-   {#each steelSets as { id, name, shape, members, reactions, label } (id)}
-      <SteelSet on:delete={onDeleteSet} bind:label bind:members bind:name bind:shape {id} {steel} {supplied} />
+   {#each steelSets as { axis, id, name, shape, members, reactions, label } (id)}
+      <SteelSet on:delete={onDeleteSet} bind:axis bind:label bind:members bind:name bind:shape {existing} {id} {supplied} />
    {/each}
 </div>
 
