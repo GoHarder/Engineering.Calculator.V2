@@ -1,17 +1,21 @@
 <script>
+   import { createEventDispatcher } from 'svelte';
+
    import SteelCalculator from 'js/steelCalculator';
 
-   import { clone } from 'lib/main.mjs';
-
    // Components
-   import { Button } from 'components/material/button';
-   import { InputLength, InputNumber } from 'components/material/input';
+   import { Button, Icon, IconButton } from 'components/material/button';
+   import { InputLength } from 'components/material/input';
+   import { ToolTip } from 'components/material/tool-tip';
 
    import Load from './Load.svelte';
 
    // Stores
    // Properties
+   export let axis;
    export let existing = false;
+   export let i;
+   export let id;
    export let label;
    export let length = 0;
    export let lengthRb = 0;
@@ -21,12 +25,14 @@
    export let rA = 0;
    export let rB = 0;
    export let shape;
+   export let qty;
 
    export let o_lengthRb = false;
 
    // Methods
    // Constants
    const Calc = new SteelCalculator();
+   const dispatch = createEventDispatcher();
 
    // Variables
    let loadIndex = 1;
@@ -36,8 +42,8 @@
    // Reactive Rules
 
    // - Calculator Inputs
-
    $: Calc.shape = shape;
+   $: Calc.axis = axis;
    $: Calc.length = length;
    $: Calc.lengthRb = lengthRb;
    $: Calc.loads = pointLoads;
@@ -46,9 +52,6 @@
 
    // - Calculator Outputs
    $: options = Calc.options;
-
-   $: console.log(Calc);
-
    $: rA = Calc.rA;
    $: rB = Calc.rB;
 
@@ -67,6 +70,10 @@
       loadIndex++;
    };
 
+   const onDelete = () => {
+      dispatch('delete', id);
+   };
+
    const onDeleteLoad = (event) => {
       pointLoads = [...pointLoads].filter((pointLoad) => pointLoad.id !== event.detail);
    };
@@ -74,9 +81,24 @@
    // Lifecycle
 </script>
 
-<p>{label}</p>
+{#if qty === 2}
+   {#if i === 2}
+      <hr />
+   {/if}
 
-<hr />
+   <header>
+      <p class="label" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
+      <ToolTip {id}>Edit Label</ToolTip>
+
+      {#if i === 2}
+         <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
+            <Icon>close</Icon>
+         </IconButton>
+      {/if}
+   </header>
+
+   <hr />
+{/if}
 
 <div class="content">
    <div class="member">
@@ -85,10 +107,6 @@
       <InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} />
 
       <slot />
-
-      <InputNumber value={rA} label="Force at R<sub>a</sub>" readonly type="weight" />
-
-      <InputNumber value={rB} label="Force at R<sub>b</sub>" readonly type="weight" />
    </div>
 
    <div class="vr" />
@@ -98,13 +116,21 @@
          <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} />
       {/each}
 
-      <Button on:click={onAddLoad} variant="contained">Add Load</Button>
+      <Button on:click={onAddLoad} style="margin: 8px;" variant="contained">Add Load</Button>
    </div>
 </div>
 
-<style>
-   p {
-      margin: 0;
+<style lang="scss">
+   @use './src/scss/theme' as vantage;
+
+   header {
+      display: flex;
+      align-items: center;
+   }
+
+   .label {
+      margin: 8px auto 8px 0;
+      @include vantage.edit-label;
    }
 
    .content {
@@ -113,11 +139,20 @@
 
    .vr {
       width: 1px;
-      margin: 0 8px;
+      // margin: 0 8px;
       background-color: rgba(0, 0, 0, 0.12);
    }
 
+   hr {
+      margin: 0;
+   }
+
    .loads {
-      width: 300px;
+      width: 308px;
+   }
+
+   .member {
+      margin-top: 8px;
+      margin-right: 8px;
    }
 </style>
