@@ -1,5 +1,5 @@
 <script>
-   import { createEventDispatcher } from 'svelte';
+   import { createEventDispatcher, onMount } from 'svelte';
 
    import SteelCalculator from 'js/steelCalculator';
 
@@ -14,6 +14,7 @@
    // Stores
    // Properties
    export let axis;
+   export let delay = 0;
    export let existing = false;
    export let id;
    export let label;
@@ -29,6 +30,7 @@
    // Variables
    let options1 = [];
    let options2 = [];
+   let show = false;
 
    // Subscriptions
    // Contexts
@@ -57,9 +59,16 @@
    };
 
    // Lifecycle
+   onMount(() => {
+      setTimeout(() => {
+         setTimeout(() => {
+            show = true;
+         }, delay);
+      }, 0);
+   });
 </script>
 
-<fieldset>
+<fieldset class:steel-set-skeleton={!show}>
    <header>
       <div class="label-div" data-tooltip-id={id}>
          {#if members.length === 1}
@@ -95,6 +104,7 @@
       bind:rB={members[0].reactions.rB}
       bind:o_lengthRb={members[0].o_lengthRb}
       {axis}
+      {delay}
       {existing}
       i={members[0].i}
       id={members[0].id}
@@ -139,6 +149,7 @@
          bind:rB={members[1].reactions.rB}
          bind:o_lengthRb={members[1].o_lengthRb}
          {axis}
+         {delay}
          {existing}
          i={members[1].i}
          id={members[1].id}
@@ -175,5 +186,56 @@
 
    hr {
       border: 1px solid vantage.$primary;
+   }
+
+   :global {
+      .steel-set-skeleton {
+         pointer-events: none;
+         .label-div,
+         .label {
+            animation: skeleton-loading 1s linear infinite alternate;
+            opacity: 0.7;
+            color: transparent;
+            border-radius: 4px;
+         }
+
+         .mdc-icon-button {
+            animation: skeleton-loading 1s linear infinite alternate;
+            opacity: 0.7;
+            color: transparent;
+            border-radius: 500px;
+         }
+
+         .mdc-button {
+            animation: skeleton-loading 1s linear infinite alternate;
+            opacity: 0.7;
+            border-radius: 4px;
+            .mdc-button__label {
+               color: transparent;
+            }
+            box-shadow: none;
+         }
+
+         .mdc-text-field,
+         .mdc-select {
+            animation: skeleton-loading 1s linear infinite alternate;
+            opacity: 0.7;
+            border-radius: 4px;
+            color: transparent;
+
+            > * {
+               display: none;
+            }
+         }
+      }
+
+      @keyframes skeleton-loading {
+         0% {
+            background-color: hsl(200, 0%, 70%);
+         }
+         100% {
+            background-color: hsl(200, 0%, 95%);
+         }
+      }
    }
 </style>

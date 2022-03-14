@@ -1,5 +1,5 @@
 <script>
-   import { createEventDispatcher } from 'svelte';
+   import { createEventDispatcher, onMount } from 'svelte';
 
    import SteelCalculator from 'js/steelCalculator';
 
@@ -13,6 +13,7 @@
    // Stores
    // Properties
    export let axis;
+   export let delay = 0;
    export let existing = false;
    export let i;
    export let id;
@@ -36,6 +37,7 @@
 
    // Variables
    let loadIndex = 1;
+   let run = false;
 
    // Subscriptions
    // Contexts
@@ -51,7 +53,7 @@
    $: Calc.name = name;
 
    // - Calculator Outputs
-   $: options = Calc.options;
+   $: options = run ? Calc.options : [];
    $: rA = Calc.rA;
    $: rB = Calc.rB;
 
@@ -70,6 +72,8 @@
       loadIndex++;
    };
 
+   const onAddReaction = () => dispatch('addReaction', id);
+
    const onDelete = () => {
       dispatch('delete', id);
    };
@@ -79,6 +83,14 @@
    };
 
    // Lifecycle
+
+   onMount(() => {
+      setTimeout(() => {
+         setTimeout(() => {
+            run = true;
+         }, delay + 500);
+      }, 0);
+   });
 </script>
 
 {#if qty === 2}
@@ -117,6 +129,7 @@
       {/each}
 
       <Button on:click={onAddLoad} style="margin: 8px;" variant="contained">Add Load</Button>
+      <Button on:click={onAddReaction} style="margin: 8px;" variant="contained">Add Reaction</Button>
    </div>
 </div>
 

@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy } from 'svelte';
+   import { onDestroy, onMount } from 'svelte';
 
    import { clone, deepMerge } from 'lib/main.mjs';
 
@@ -31,12 +31,12 @@
    };
 
    // Methods
-
    // Constants
    const { modules } = project;
    const { overheadSteel: module } = modules;
 
    // Variables
+
    let existing = module?.existing ?? false;
    let supplied = module?.existing ?? false;
    let steelSets = module?.steelSets ?? [];
@@ -51,6 +51,7 @@
       const id = `set-${Date.now()}`;
 
       const newSet = {
+         show: false,
          axis: 'x',
          id,
          label: 'Unnamed Set',
@@ -79,6 +80,16 @@
    const onDeleteSet = (event) => (steelSets = [...steelSets].filter((set) => set.id !== event.detail));
 
    // Lifecycle
+   onMount(() => {
+      const { modules } = project;
+      const { overheadSteel: module } = modules;
+
+      module.steelSets = module.steelSets.map((set, i) => {
+         set.delay = i + 1 * 2000;
+         return set;
+      });
+   });
+
    onDestroy(() => {
       updateModule();
    });
@@ -95,8 +106,8 @@
 </div>
 
 <div class="container">
-   {#each steelSets as { axis, id, name, shape, members, reactions, label } (id)}
-      <SteelSet on:delete={onDeleteSet} bind:axis bind:label bind:members bind:name bind:shape {existing} {id} {supplied} />
+   {#each steelSets as { axis, delay, id, name, shape, members, reactions, label } (id)}
+      <SteelSet on:delete={onDeleteSet} bind:axis bind:label bind:members bind:name bind:shape {existing} {delay} {id} {supplied} />
    {/each}
 </div>
 
