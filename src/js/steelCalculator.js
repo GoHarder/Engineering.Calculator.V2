@@ -1,6 +1,8 @@
 import fetchStore from '../svelte/stores/fetch';
 import { clone } from 'lib/main.mjs';
-import { round, roundInc } from 'lib/math.mjs';
+import { round, roundInc, solveCubic } from 'lib/math.mjs';
+import nerdamer from 'nerdamer/nerdamer.core.js';
+import Solve from 'nerdamer/Solve.js';
 
 let data = undefined;
 
@@ -54,38 +56,27 @@ const weightSum = (sections, i) => {
 const intTerm = (str) => {
    str = str.trim();
 
-   const hasX = str.match(/x(\^\d)?/g);
-   if (!hasX) return `${str}*x`;
+   if (!str.match(/x(\^\d)?/g)) return `${str}*x`;
 
-   let exponent = str.match(/\d$/g);
+   // Break down string
+   const sign = str.match(/-/g)?.[0] ?? '';
+   let number = str.match(/(\d+(\.\d+)?)/g)[0];
+   let exponent = parseInt(str.match(/\^(\d+)/)?.[1]) + 1 || 2;
 
-   if (!exponent) str += '^1';
+   number = nerdamer(`${number}/${exponent}`).text();
+   nerdamer.clear('all');
 
-   exponent = exponent ? parseInt(exponent) : 1;
-
-   str = str.replace(/\d$/, `${exponent + 1}`);
-
-   let convert = algebra.parse(`(${str})/${exponent + 1}`);
-
-   convert = convert.toString();
-
-   return convert;
+   return `${sign}${number}x^${exponent}`;
 };
 
 const integrate = (sections, nth = 0) => {
    const cStep = sections.length * nth;
 
-   const copy = clone(sections);
-
-   return copy.map((section, i) => {
+   return sections.map((section, i) => {
       section.formula = section.formula.replace(/\s-\s/g, ' + -');
-
       const terms = section.formula.split('+').map((term) => intTerm(term));
-
       const c = `c${i + 1 + cStep}`;
-
       section.formula = `${terms.join(' + ')} + ${c}`;
-
       section.formula = section.formula.replace(/\s\+\s\-/g, ' - ');
 
       return section;
@@ -108,171 +99,184 @@ export default class SteelCalculator {
 
    // Private Methods
    #getReactions(member) {
-      this.#_loads = clone(this.loads).filter((load) => load.length !== 0 && load.weight !== 0);
-
-      const distLoad = { length: roundInc(this.length / 2), weight: this.length * (member?.weight ?? 0) };
-      const sumOfForces = [...this.#_loads, distLoad].reduce((total, load) => total + load.weight, 0);
-      const sumOfMoments = [...this.#_loads, distLoad].reduce((total, load) => total + load.weight * load.length, 0);
-
-      const rB = round(sumOfMoments / (this.lengthRb || 1), 2);
-      const rA = round(sumOfForces - rB, 2);
-
-      return [
-         { length: 0, weight: rA },
-         { length: this.lengthRb, weight: rB },
+      const output = [
+         { length: 0, weight: 0 },
+         { length: this.lengthRb, weight: 0 },
       ];
+
+      // Sanitize the member input
+      if (!member) return output;
+
+      // Sanitize loads input
+      this.#_loads = clone(this.loads).reduce(
+         (table, load, i) => {
+            // Build a table to sort and combine the loads
+            // - The length is made into a integer so the table has a natural sort
+            const key = round(load.length, 5) * 100000;
+
+            if (!table[key]) table[key] = { length: load.length, weight: 0 };
+
+            table[key].weight += load.weight;
+
+            if (i !== this.loads.length - 1) return table;
+
+            // Once the table is built return the table as an array
+            return Object.keys(table).map((key) => {
+               table[key].weight *= -1;
+               return table[key];
+            });
+         },
+         this.loads.length === 0 ? [] : {}
+      );
+
+      const distLoad = { length: roundInc(this.length / 2), weight: this.length * member.weight };
+
+      const sums = [...this.#_loads, distLoad].reduce(
+         (table, load) => {
+            table.forces += Math.abs(load.weight);
+            table.moments += load.length * Math.abs(load.weight);
+
+            return table;
+         },
+         { forces: 0, moments: 0 }
+      );
+
+      const rB = round(sums.moments / (this.lengthRb || 1), 2);
+      const rA = round(sums.forces - rB, 2);
+
+      output[0].weight = rA;
+      output[1].weight = rB;
+
+      return output;
    }
 
-   #getShearFormulas(member, reactions) {
-      // Prepare the loads for processing
-      let temp = clone(this.#_loads).map((load) => {
-         load.weight *= -1;
-         return { length: load.length, weight: load.weight };
-      });
-
-      temp = [reactions[0], ...temp, reactions[1]];
-
-      temp = temp.sort((loadA, loadB) => loadA.length - loadB.length);
-
-      if (temp[temp.length - 1].length !== this.length) temp.push({ length: this.length, weight: -1 });
-
-      // Create the sections
+   #getShearSections(member, reactions) {
       const sections = [];
 
-      for (let i = 0; i < temp.length - 1; i++) {
-         const formula = `-${member.weight}x + ${round(weightSum(temp, i))}`;
-         const min = temp[i].length;
-         const max = temp[i + 1].length;
+      if (!member) return sections;
 
+      // Prepare the loads for processing
+      const loads = [...reactions, ...this.#_loads].sort((loadA, loadB) => loadA.length - loadB.length);
+
+      if (loads[loads.length - 1].length !== this.length) loads.push({ length: this.length, weight: -1 });
+
+      // Create the sections
+      for (let i = 0; i < loads.length - 1; i++) {
+         const formula = `-${member.weight}*x+${round(weightSum(loads, i))}`;
+         const min = loads[i].length;
+         const max = loads[i + 1].length;
          let support = -1;
-         if (temp[i].weight >= 0) support = temp[i].length;
-         if (temp[i + 1].weight >= 0) support = temp[i + 1].length;
-
+         if (loads[i].weight >= 0) support = loads[i].length;
+         if (loads[i + 1].weight >= 0) support = loads[i + 1].length;
          sections.push({ min, max, support, formula });
       }
 
       return sections;
    }
 
-   #getMomentFormulas(formulas) {
-      const output = integrate(formulas);
+   #getMomentSections(sections) {
+      const output = integrate(sections);
       const memo = {};
-      let max = '0 = ';
+      let max = '=0';
 
       for (let i = 0; i < output.length; i++) {
          const section = output[i];
-         const formula = algebra.parse(section.formula);
 
-         const min = `${max}${formula.eval({ x: section.min }).toString()}`;
-         max = `${formula.eval({ x: section.max }).toString()} = `;
+         let min = `${nerdamer(section.formula, { x: section.min }).text()}${max}`;
+         max = `=${nerdamer(section.formula, { x: section.max }).text()}`;
+         min = nerdamer(min, memo);
 
          const key = `c${i + 1}`;
-         const constant = algebra.parse(min).eval(memo).solveFor(key);
+         memo[key] = min.solveFor(key);
 
-         // memo[key] = constant.valueOf();
-         memo[key] = constant;
+         section.formula = nerdamer(section.formula, memo).text();
       }
 
-      return output.map((section) => {
-         const solved = algebra.parse(section.formula).eval(memo).toString();
-         section.formula = solved;
-         return section;
-      });
+      nerdamer.clear('all');
+      return output;
    }
 
-   #getMax(formulas) {
+   #getMaxMoment(sections) {
       let max = 0;
 
       for (let i = 0; i < this.length + 1; i++) {
-         const section = formulas.find((sect) => i <= sect.max);
-         const formula = algebra.parse(`m = ${section.formula}`);
-         const moment = formula.eval({ x: i }).solveFor('m').valueOf();
-
-         if (Math.abs(moment) > max) max = Math.abs(moment);
+         const section = sections.find((sect) => i <= sect.max);
+         const moment = nerdamer(section.formula, { x: i }).text();
+         if (Math.abs(parseFloat(moment)) > max) max = Math.abs(moment);
       }
 
       return max;
    }
 
-   #getSlopeFormulas(formulas) {
-      const sections = integrate(formulas);
+   #getSlopeFormulas(sections) {
+      const newSections = integrate(sections);
       const boundaries = [];
-      let max = '0 = ';
+      let max = '=0';
 
-      for (let i = 0; i < sections.length; i++) {
-         const section = sections[i];
-         const formula = algebra.parse(section.formula);
-
-         let min = `${max}${formula.eval({ x: section.min }).toString()}`;
-         max = `${formula.eval({ x: section.max }).toString()} = `;
-
+      for (let i = 0; i < newSections.length; i++) {
+         const section = newSections[i];
+         const min = `${nerdamer(section.formula, { x: section.min }).text()}${max}`;
+         max = `=${nerdamer(section.formula, { x: section.max }).text()}`;
          boundaries.push(min);
       }
 
       boundaries.shift();
 
-      return { sections, boundaries };
+      nerdamer.clear('all');
+      return { sections: newSections, boundaries };
    }
 
-   #getDeflectFormulas(formulas) {
-      const sections = integrate(formulas, 1);
+   #getDeflectFormulas(sections) {
+      const newSections = integrate(sections, 1);
       let boundaries = [];
       const solved = [];
-      let max = '';
+      let max = '=0';
 
-      for (let i = 0; i < sections.length; i++) {
-         const section = sections[i];
-         const formula = algebra.parse(section.formula);
+      for (let i = 0; i < newSections.length; i++) {
+         const section = newSections[i];
 
-         let min = `${max}${formula.eval({ x: section.min }).toString()}`;
-         max = `${formula.eval({ x: section.max }).toString()} = `;
+         const min = `${nerdamer(section.formula, { x: section.min }).text()}${max}`;
+         max = `=${nerdamer(section.formula, { x: section.max }).text()}`;
 
          if (section.min === section.support) {
-            min += ' = 0';
             solved.push(min);
-         } else {
-            if (min.match(/=\s0/) === null) {
-               if (min.match(/^c\d+$/) !== null) min += ' = 0';
-
-               boundaries.push(min);
-            }
          }
 
          if (section.max === section.support) {
-            max += '0';
+            max = `0${max}`;
             solved.push(max);
+         }
+
+         if (section.min !== section.support) {
+            boundaries.push(min);
          }
       }
 
-      boundaries = [...solved, ...boundaries];
-
-      return { sections, boundaries };
+      nerdamer.clear('all');
+      return { sections: newSections, boundaries: [...solved, ...boundaries] };
    }
 
    #solveConstants(formulas) {
       const output = {};
-      let hardFormula = '';
-      let hardConstants = [];
+      let formula2 = undefined;
+      let constants2 = [];
 
-      // NOTE: 3-04-2022 4:30 PM - Debug this loop
       for (let i = 0; i < formulas.length; i++) {
-         const formula = formulas[i];
-         const constants = formula.match(/c\d+/g);
+         let formula1 = formulas[i];
 
-         if (!constants) continue;
+         const constants1 = formula1.match(/c\d+/g);
+
+         if (!constants1) continue;
 
          // Solve simple equations c5 = 0
-         if (constants.length === 1) {
-            const key = constants[0];
-            const fraction = algebra.parse(formula).solveFor(key);
-            // output[key] = fraction.valueOf();
-            output[key] = fraction;
+         if (constants1.length === 1) {
+            const key = constants1[0];
+            const value = nerdamer(formula1).solveFor(key).toString();
+            output[key] = value;
 
             // Remove solved equations
             formulas.splice(i, 1);
-
-            // Update the equations
-            formulas = formulas.map((formula) => algebra.parse(formula).eval(output).toString());
+            formulas = formulas.map((formula) => nerdamer(formula, output).text());
 
             // Reset loop
             i = -1;
@@ -280,36 +284,40 @@ export default class SteelCalculator {
          }
 
          // If there isn't a simple formula find one with 3 constants
-         if (constants.length === 3 && !hardFormula) {
-            hardFormula = formula;
-            hardConstants = constants;
+         if (constants1.length === 3 && !formula2) {
+            formula2 = formula1;
+            constants2 = constants1;
 
             // Reset loop
             i = -1;
             continue;
          }
 
-         // Find a formula with 2 similar variables
-         let test = [...hardConstants, ...constants];
-         test = [...new Set(test)];
+         if (!formula2) continue;
 
-         if (test.length === 3 && hardFormula) {
-            let copy = formula;
-            let solveVar = hardFormula.match(/c\d+/g)[0];
-            hardFormula = algebra.parse(hardFormula).solveFor(solveVar).toString();
-            copy = algebra.parse(copy).solveFor(solveVar).toString();
+         // Find a formula with 2 similar constants
+         const test = [...new Set([...constants1, ...constants2])];
 
-            const reduction = `${hardFormula} = ${copy}`;
-            solveVar = reduction.match(/c\d+/g)[1];
-            const fraction = algebra.parse(reduction).solveFor(solveVar);
-            output[solveVar] = fraction.valueOf();
+         if (test.length === 3 && formula1 !== formula2) {
+            let solveVar = formula2.match(/c\d+/g)[0];
+            formula1 = nerdamer(formula1).solveFor(solveVar);
+            formula2 = nerdamer(formula2).solveFor(solveVar);
 
-            // Update the equations
-            formulas = formulas.map((formula) => algebra.parse(formula).eval(output).toString());
+            formula1 = `${formula1.toString()}=${formula2.toString()}`;
+            formula2 = undefined;
+            constants2 = [];
 
-            // Reset search
-            hardFormula = '';
-            hardConstants = [];
+            solveVar = formula1.match(/c\d+/g).find((c, i, array) => {
+               const others = [...array];
+               others[i] = undefined;
+               return !others.includes(c);
+            });
+
+            const value = nerdamer(formula1).solveFor(solveVar).toString();
+            output[solveVar] = value;
+
+            // Update formulas
+            formulas = formulas.map((formula) => nerdamer(formula, output).text());
 
             // Reset loop
             i = -1;
@@ -320,38 +328,63 @@ export default class SteelCalculator {
       return output;
    }
 
-   #getPossibleX(formulas) {
-      const ends = [0, this.length];
+   #getPossibleXs(sections, constants) {
+      const results = sections.reduce((array, section) => {
+         let formula = nerdamer(`${section.formula}`, constants);
+         formula = formula.toString().replace(/(x\^?\d?)/g, '$1 ');
 
-      const results = clone(formulas).reduce((array, section) => {
-         let x = algebra.parse(`0 = ${section.formula}`).solveFor('x');
+         const variables = formula.split(' ').reduce((output, chunk) => {
+            chunk = chunk.replace(/[\(\)\+]/g, '');
+            let key = 'd';
 
-         x = x.filter((num) => num >= section.min && num <= section.max);
+            if (chunk.includes('*x^3')) {
+               key = 'a';
+               chunk = chunk.replace(/\*x\^3/, '');
+            }
 
-         if (x.length > 0) array.push(round(x[0], 1));
+            if (chunk.includes('*x^2')) {
+               key = 'b';
+               chunk = chunk.replace(/\*x\^2/, '');
+            }
+
+            if (chunk.includes('*x')) {
+               key = 'c';
+               chunk = chunk.replace(/\*x/, '');
+            }
+
+            chunk = chunk.split('/');
+            output[key] = parseInt(chunk[0]) / (parseInt(chunk[1]) || 1);
+
+            return output;
+         }, {});
+
+         let answers = solveCubic(variables.a, variables.b, variables.c, variables.d);
+
+         answers = answers.filter((x) => section.min <= x && x <= section.max);
+
+         array = [...array, ...answers];
 
          return array;
       }, []);
 
-      return [...ends, ...results];
+      return [0, ...results, this.length];
    }
 
-   #getMaxDeflection(x, formulas, member) {
+   #getMaxDeflection(sections, possibleXs, constants, member) {
       let max = 0;
       let inertia = this.axis === 'x' ? member.inertiaX : member.inertiaY;
 
-      for (let i = 0; i < x.length; i++) {
-         const solveFor = algebra.parse(`${x[i]}`);
-         let formula = formulas.find((section) => x[i] <= section.max).formula;
+      for (let i = 0; i < possibleXs.length; i++) {
+         let x = round(possibleXs[i], 2);
+         const section = sections.find((section) => possibleXs[i] <= section.max);
+         const formula = nerdamer(section.formula, { ...constants, x });
+         let answer = formula.toString().split('/');
+         answer = round(parseInt(answer[0]) / parseInt(answer[1] || '1'), 5);
 
-         formula = algebra.parse(`d = ${formula}`).eval({ x: solveFor }).solveFor('d');
-
-         if (formula.valueOf() < max) {
-            max = round(formula.valueOf(), 3);
-         }
+         if (Math.abs(answer) > Math.abs(max)) max = answer;
       }
 
-      return round(max / (29 * 10 ** 6 * inertia), 4);
+      return round(max / (29 * 10 ** 6 * inertia), 5);
    }
 
    #getCacheKey() {
@@ -378,35 +411,24 @@ export default class SteelCalculator {
 
       for (let i = 0; i < this.steel.length; i++) {
          const member = this.steel[i];
-         const reactions = this.#getReactions(member);
-         const shearFormulas = this.#getShearFormulas(member, clone(reactions));
-         const momentFormulas = this.#getMomentFormulas(clone(shearFormulas));
-         const maxMoment = this.#getMax(clone(momentFormulas));
+         if (this.length === 0) output.push(JSON.stringify(member));
 
-         const reqSx = round(maxMoment / (this.existing ? 17600 : 19300), 2);
-         const testSx = this.axis === 'x' ? member.modulusX : member.modulusY;
+         const reactions = this.#getReactions(member);
+         const shearSections = this.#getShearSections(member, clone(reactions));
+         const momentSections = this.#getMomentSections(clone(shearSections));
+         const maxMoment = this.#getMaxMoment(clone(momentSections));
+
+         const reqSectionModulus = round(maxMoment / (this.existing ? 17600 : 19300), 2);
+         const sectionModulus = this.axis === 'x' ? member.modulusX : member.modulusY;
 
          // If member doesn't meet section modulus move on
-         if (testSx <= reqSx) continue;
+         if (sectionModulus <= reqSectionModulus) continue;
 
-         let slopeFormulas = this.#getSlopeFormulas(clone(momentFormulas));
-         let deflectFormulas = this.#getDeflectFormulas(clone(slopeFormulas.sections));
-
+         const slopeFormulas = this.#getSlopeFormulas(clone(momentSections));
+         const deflectFormulas = this.#getDeflectFormulas(clone(slopeFormulas.sections));
          const constants = this.#solveConstants([...clone(slopeFormulas.boundaries), ...clone(deflectFormulas.boundaries)]);
-
-         slopeFormulas = slopeFormulas.sections.map((section) => {
-            section.formula = algebra.parse(section.formula).eval(constants).toString();
-            return section;
-         });
-
-         deflectFormulas = deflectFormulas.sections.map((section) => {
-            section.formula = algebra.parse(section.formula).eval(constants).toString();
-            return section;
-         });
-
-         const x = this.#getPossibleX(slopeFormulas);
-
-         const maxDeflection = this.#getMaxDeflection(x, deflectFormulas, member);
+         const possibleXs = this.#getPossibleXs(clone(slopeFormulas.sections), constants);
+         const maxDeflection = this.#getMaxDeflection(clone(deflectFormulas.sections), possibleXs, constants, member);
 
          // If member doesn't meet deflection move on
          if (testDeflection >= maxDeflection) continue;
@@ -449,7 +471,7 @@ export default class SteelCalculator {
       return this.#getReactions(this.member)[1]?.weight ?? 0;
    }
 
-   static getOptions(...opts) {
+   static sortOptions(...opts) {
       opts = opts.filter((x) => x.length > 0);
 
       if (opts.length > 1) {
@@ -479,6 +501,11 @@ export default class SteelCalculator {
 
       if (!opts) return [];
 
-      return opts.map((opt) => JSON.parse(opt));
+      opts = opts.map((opt) => JSON.parse(opt));
+
+      return opts.sort((a, b) => {
+         if (b.depth === a.depth) return a.weight - b.weight;
+         return a.depth - b.depth;
+      });
    }
 }
