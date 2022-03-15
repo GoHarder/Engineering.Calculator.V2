@@ -110,9 +110,10 @@
    @use 'src/scss/theme' as vantage;
    @use '@material/dialog';
    @include dialog.core-styles;
-   .mdc-dialog .mdc-dialog__title.error,
-   .mdc-dialog .mdc-dialog__content.error {
-      color: vantage.$error;
+
+   .mdc-dialog__surface,
+   .mdc-dialog__content {
+      overflow: visible;
    }
 
    .drag-bar {
