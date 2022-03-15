@@ -644,7 +644,7 @@
          bind:override={o_balanceWeight}
          label="Balance Weight"
          calc={balanceWeightCalc}
-         invalid={balanceWeightRows > 2}
+         invalid={balanceWeightRows > 2 && balanceWeight !== 0}
          step={0.01}
          {metric}
          type="weight"
@@ -654,11 +654,13 @@
          </svelte:fragment>
       </InputNumber>
 
-      <InputNumber value={balanceWeightRows} label="Balance Weight Rows" invalid={balanceWeightRows > 2} readonly>
-         <svelte:fragment slot="helperText">
-            <HelperText validation>Platform Can Hold 2 Rows</HelperText>
-         </svelte:fragment>
-      </InputNumber>
+      {#if balanceWeight !== 0}
+         <InputNumber value={balanceWeightRows} label="Balance Weight Rows" invalid={balanceWeightRows > 2} readonly>
+            <svelte:fragment slot="helperText">
+               <HelperText validation>Platform Can Hold 2 Rows</HelperText>
+            </svelte:fragment>
+         </InputNumber>
+      {/if}
 
       {#if ['12#', '15#'].includes(railSize)}
          <Checkbox bind:checked={railLock} label="Rail Locks" />
