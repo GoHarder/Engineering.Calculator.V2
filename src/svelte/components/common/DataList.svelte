@@ -14,15 +14,19 @@
    // Contexts
    // Reactive Rules
    // Events
-   const onClick = (event) => onChange({ target: { value: event.target.dataset.value } });
+   const onClick = (event) => {
+      if (event.target.dataset?.value) {
+         onChange({ target: { value: event.target.dataset.value } });
+      }
+   };
 
    // Lifecycle
 </script>
 
 {#if focused}
    <div class="mdc-menu mdc-menu-surface mdc-menu-surface--open" in:slide out:slide={{ delay: 250 }}>
-      <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
-         <slot {onClick} />
+      <ul on:click={onClick} class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+         <slot />
       </ul>
    </div>
 {/if}
