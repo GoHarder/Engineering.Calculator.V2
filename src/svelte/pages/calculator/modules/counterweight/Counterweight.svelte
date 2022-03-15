@@ -443,10 +443,10 @@
 
       <InputLength bind:value={dbg} label="D.B.G." {metric}>
          <svelte:fragment slot="datalist" let:focused let:onChange>
-            <DataList {focused} {onChange} let:onClick>
-               <Option on:click={onClick} value="30.125">2' - 6.125"</Option>
-               <Option on:click={onClick} value="38.75">3' - 2.75"</Option>
-               <Option on:click={onClick} value="57.25">4' - 9.25</Option>
+            <DataList {focused} {onChange}>
+               <Option value="30.125">2' - 6.125"</Option>
+               <Option value="38.75">3' - 2.75"</Option>
+               <Option value="57.25">4' - 9.25"</Option>
             </DataList>
          </svelte:fragment>
       </InputLength>
