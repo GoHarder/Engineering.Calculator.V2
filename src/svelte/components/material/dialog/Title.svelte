@@ -18,5 +18,10 @@
 
 <h2 class={h2Class}><slot /></h2>
 
-<style>
+<style global lang="scss">
+   @use './src/scss/theme' as vantage;
+
+   .mdc-dialog__title.error {
+      color: vantage.$error;
+   }
 </style>
