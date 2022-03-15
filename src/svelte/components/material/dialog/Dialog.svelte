@@ -2,7 +2,7 @@
    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCDialog } from '@material/dialog';
-   import { classList, forwardEvents } from '../../lib';
+   import { forwardEvents, randomId } from '../../lib';
 
    // Components
    // Stores
@@ -14,7 +14,7 @@
    // Constants
    const dispatch = createEventDispatcher();
    const events = forwardEvents(get_current_component(), ['MDCDialog:closed', 'MDCDialog:opened']);
-   const id = Math.random().toString(36).substr(2, 9);
+   const id = `dialog-${randomId()}`;
 
    // Variables
    let divEle;
@@ -110,11 +110,6 @@
    @use 'src/scss/theme' as vantage;
    @use '@material/dialog';
    @include dialog.core-styles;
-
-   .mdc-dialog__surface,
-   .mdc-dialog__content {
-      overflow: visible;
-   }
 
    .drag-bar {
       content: '';
