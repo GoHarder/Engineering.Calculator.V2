@@ -1,6 +1,6 @@
 {
    "name": "hw_engineering_calculator",
-   "version": "0.4.4",
+   "version": "0.4.5",
    "description": "H-W Engineering Calculator",
    "main": "index.mjs",
    "scripts": {
