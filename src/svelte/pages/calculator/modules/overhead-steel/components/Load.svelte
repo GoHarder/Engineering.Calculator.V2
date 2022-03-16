@@ -33,8 +33,12 @@
 
 <div>
    <header>
-      <p class="label" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
-      <ToolTip {id}>Edit Label</ToolTip>
+      {#if reaction}
+         <p class="label">{label}</p>
+      {:else}
+         <p class="label edit" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
+         <ToolTip {id}>Edit Label</ToolTip>
+      {/if}
 
       <IconButton bind:on={show} toggle class="density-3" toolTip={show ? 'Minimize' : 'Maximize'}>
          <Icon class="mdc-icon-button__icon--on">minimize</Icon>
@@ -56,9 +60,7 @@
 
       <InputLength bind:value={length} label="Length From R<sub>a</sub>" />
 
-      {#if !reaction}
-         <InputNumber bind:value={weight} label="Weight" type="weight" />
-      {/if}
+      <InputNumber bind:value={weight} label="Weight" readonly={!reaction} type="weight" />
    {/if}
 </div>
 
@@ -81,6 +83,11 @@
 
    .label {
       margin: 8px auto 8px 0;
-      @include vantage.edit-label;
+      user-select: none;
+
+      &.edit {
+         @include vantage.edit-label;
+         user-select: text;
+      }
    }
 </style>
