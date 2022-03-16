@@ -9,6 +9,7 @@
    // Properties
    export let dense = false;
    export let interactive = true;
+   export let singleSelection = false;
 
    // Methods
    // Constants
@@ -40,6 +41,7 @@
 
       if (interactive) {
          List = new MDCList(ulEle);
+         List.singleSelection = singleSelection;
       }
    });
 
@@ -54,7 +56,10 @@
 
 <style lang="scss" global>
    @use './src/scss/theme' as vantage;
-   @use '@material/theme' with ($primary: vantage.$secondary, $secondary: vantage.$primary);
+   @use '@material/theme' with (
+      $primary: vantage.$secondary,
+      $secondary: vantage.$primary
+   );
    @use '@material/list';
    @include list.deprecated-core-styles;
 
