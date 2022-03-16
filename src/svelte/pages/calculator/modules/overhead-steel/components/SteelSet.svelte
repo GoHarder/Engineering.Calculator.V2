@@ -2,12 +2,16 @@
    import { createEventDispatcher, onMount } from 'svelte';
 
    import SteelCalculator from 'js/steelCalculator';
+   import { clone } from 'lib/main.mjs';
 
    // Components
    import { StockStatusOptions } from 'components/common';
    import { Icon, IconButton } from 'components/material/button';
    import { Option, Select } from 'components/material/select';
    import { ToolTip } from 'components/material/tool-tip';
+
+   // Temporary
+   import { InputNumber } from 'components/material/input';
 
    import SteelMember from './SteelMember.svelte';
 
@@ -20,6 +24,7 @@
    export let label;
    export let members = [];
    export let name;
+   export let reactions;
    export let shape;
    export let supplied;
 
@@ -30,12 +35,31 @@
    // Variables
    let options1 = [];
    let options2 = [];
+   let ranDelay = false;
    let show = false;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
    $: steelSizes = SteelCalculator.sortOptions(options1, options2) || [];
+
+   $: reactions = clone(members).reduce(
+      (output, member) => {
+         output.rA += member.reactions.rA;
+         output.rB += member.reactions.rB;
+
+         return output;
+      },
+      { rA: 0, rB: 0 }
+   );
+
+   $: if (members[0].length === 0) {
+      show = true;
+   }
+
+   $: if (ranDelay && steelSizes.length > 0) {
+      show = true;
+   }
 
    // Events
    const onCopy = () => {
@@ -62,7 +86,7 @@
    onMount(() => {
       setTimeout(() => {
          setTimeout(() => {
-            show = true;
+            ranDelay = true;
          }, delay);
       }, 0);
    });
@@ -94,21 +118,25 @@
    <hr />
 
    <SteelMember
+      on:addReaction
+      on:deleteReaction
       on:delete={onDeleteMember}
       bind:label={members[0].label}
       bind:length={members[0].length}
       bind:lengthRb={members[0].lengthRb}
       bind:options={options1}
       bind:pointLoads={members[0].pointLoads}
+      bind:reactLoads={members[0].reactLoads}
       bind:rA={members[0].reactions.rA}
       bind:rB={members[0].reactions.rB}
       bind:o_lengthRb={members[0].o_lengthRb}
       {axis}
-      {delay}
+      delay={delay - 1000}
       {existing}
       i={members[0].i}
       id={members[0].id}
       {name}
+      setId={id}
       {shape}
       qty={members.length}
    >
@@ -137,23 +165,30 @@
       {/if}
    </SteelMember>
 
+   <InputNumber value={reactions.rA} label="Reaction at R<sub>a</sub>" readonly type="weight" />
+   <InputNumber value={reactions.rB} label="Reaction at R<sub>b</sub>" readonly type="weight" />
+
    {#if members.length === 2}
       <SteelMember
+         on:addReaction
+         on:deleteReaction
          on:delete={onDeleteMember}
          bind:label={members[1].label}
          bind:length={members[1].length}
          bind:lengthRb={members[1].lengthRb}
          bind:options={options2}
          bind:pointLoads={members[1].pointLoads}
+         bind:reactLoads={members[1].reactLoads}
          bind:rA={members[1].reactions.rA}
          bind:rB={members[1].reactions.rB}
          bind:o_lengthRb={members[1].o_lengthRb}
          {axis}
-         {delay}
+         delay={delay - 500}
          {existing}
          i={members[1].i}
          id={members[1].id}
          {name}
+         setId={id}
          {shape}
          qty={members.length}
       />
@@ -216,11 +251,12 @@
             box-shadow: none;
          }
 
-         .mdc-text-field,
-         .mdc-select {
+         // .mdc-text-field,
+         // .mdc-select {
+
+         .input {
             animation: skeleton-loading 1s linear infinite alternate;
             opacity: 0.7;
-            border-radius: 4px;
             color: transparent;
 
             > * {
