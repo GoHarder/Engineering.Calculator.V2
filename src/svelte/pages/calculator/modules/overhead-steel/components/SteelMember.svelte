@@ -23,8 +23,10 @@
    export let name;
    export let options = [];
    export let pointLoads = [];
+   export let reactLoads = [];
    export let rA = 0;
    export let rB = 0;
+   export let setId = '';
    export let shape;
    export let qty;
 
@@ -48,7 +50,7 @@
    $: Calc.axis = axis;
    $: Calc.length = length;
    $: Calc.lengthRb = lengthRb;
-   $: Calc.loads = pointLoads;
+   $: Calc.loads = [...pointLoads, ...reactLoads];
    $: Calc.existing = existing;
    $: Calc.name = name;
 
@@ -72,23 +74,29 @@
       loadIndex++;
    };
 
-   const onAddReaction = () => dispatch('addReaction', id);
+   const onAddReaction = () => dispatch('addReaction', { set: setId, member: id });
 
    const onDelete = () => {
       dispatch('delete', id);
    };
 
    const onDeleteLoad = (event) => {
-      pointLoads = [...pointLoads].filter((pointLoad) => pointLoad.id !== event.detail);
+      if (event.detail.includes('load')) {
+         pointLoads = [...pointLoads].filter((pointLoad) => pointLoad.id !== event.detail);
+      }
+
+      if (event.detail.includes('link')) {
+         dispatch('deleteReaction', event.detail);
+         reactLoads = [...reactLoads].filter((reactLoad) => reactLoad.id !== event.detail);
+      }
    };
 
    // Lifecycle
-
    onMount(() => {
       setTimeout(() => {
          setTimeout(() => {
             run = true;
-         }, delay + 500);
+         }, delay);
       }, 0);
    });
 </script>
@@ -124,18 +132,27 @@
    <div class="vr" />
 
    <div class="loads">
-      {#each pointLoads as { id, label, length, weight, type, show } (id)}
-         <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} />
+      {#each reactLoads as { id, label, length, weight, type, show } (id)}
+         <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} reaction={true} />
       {/each}
 
-      <Button on:click={onAddLoad} style="margin: 8px;" variant="contained">Add Load</Button>
-      <Button on:click={onAddReaction} style="margin: 8px;" variant="contained">Add Reaction</Button>
+      {#each pointLoads as { id, label, length, weight, type, show } (id)}
+         <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} reaction={false} />
+      {/each}
+
+      <div class="buttons">
+         <Button on:click={onAddLoad} style="margin: 8px; width:125px;" variant="contained">Add Load</Button>
+         <Button on:click={onAddReaction} style="margin: 8px; width:125px;" variant="contained">Add Reaction</Button>
+      </div>
    </div>
 </div>
 
 <style lang="scss">
    @use './src/scss/theme' as vantage;
 
+   .buttons {
+      display: flex;
+   }
    header {
       display: flex;
       align-items: center;
