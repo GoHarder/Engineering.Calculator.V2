@@ -11,6 +11,8 @@
    import { Dialog, Title } from 'components/material/dialog';
    import { Item, List, SubHeader } from 'components/material/list';
 
+   import { ImageList, Item as ImageListItem } from 'components/material/image-list';
+
    import SteelSet from './components/SteelSet.svelte';
 
    // Stores
@@ -44,6 +46,7 @@
 
    // - Reaction dialog
    let reactionDialog = false;
+   let templateDialog = false;
    let member1 = undefined;
    let reaction = undefined;
 
@@ -96,6 +99,10 @@
 
       steelSets = update;
    }
+
+   $: console.log(steelSets);
+
+   $: console.log(reactLinks);
 
    // Events
    const onAddSet = () => {
@@ -160,10 +167,12 @@
       const { modules } = project;
       const { overheadSteel: module } = modules;
 
-      module.steelSets = module.steelSets.map((set, i) => {
-         set.delay = (i + 1) * 2000;
-         return set;
-      });
+      if (module?.steelSets) {
+         module.steelSets = module.steelSets.map((set, i) => {
+            set.delay = (i + 1) * 2000;
+            return set;
+         });
+      }
    });
 
    onDestroy(() => {
@@ -202,6 +211,26 @@
    </svelte:fragment>
 </Dialog>
 
+<Dialog bind:show={templateDialog} fullScreen>
+   <svelte:fragment slot="title">
+      <Title>Load Template</Title>
+   </svelte:fragment>
+
+   <ImageList textProtection>
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+      <ImageListItem on:click={() => (templateDialog = false)} alt="Test Image" label="Image Label" select src="https://picsum.photos/300/300" />
+   </ImageList>
+
+   <svelte:fragment slot="actions">
+      <Button on:click={() => (templateDialog = false)} variant="outlined" color="secondary">Cancel</Button>
+   </svelte:fragment>
+</Dialog>
+
 <div class="container">
    <Fieldset title="Properties">
       <div class="properties">
@@ -210,6 +239,15 @@
          <Checkbox bind:checked={supplied} label="H-W Supplied Steel" disabled={existing} />
       </div>
    </Fieldset>
+
+   {#if steelSets.length !== 0}
+      <Button on:click={() => (templateDialog = true)} variant="contained">
+         Load Template
+         <svelte:fragment slot="trailingIcon">
+            <Icon>file_open</Icon>
+         </svelte:fragment></Button
+      >
+   {/if}
 </div>
 
 <div class="container">
@@ -233,6 +271,15 @@
 </div>
 
 <div class="container">
+   {#if steelSets.length === 0}
+      <Button on:click={() => (templateDialog = true)} variant="contained">
+         Load Template
+         <svelte:fragment slot="trailingIcon">
+            <Icon>file_open</Icon>
+         </svelte:fragment>
+      </Button>
+   {/if}
+
    <Button on:click={onAddSet} variant="contained">
       Add Steel
       <svelte:fragment slot="trailingIcon">
