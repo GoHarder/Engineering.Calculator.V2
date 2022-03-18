@@ -21,9 +21,10 @@ export const checkAuth = (req, res, next) => {
 
    token = verifyToken(token);
 
-   if (!token) return res.status(401).json({ message: 'Authorization is invalid' });
+   if (token?.message) return res.status(401).json({ message: token.message });
 
    try {
+      // Convert the users id string into a mongodb id object
       token._id = new ObjectId(token._id);
    } catch (error) {
       return res.status().json({ message: error.message });

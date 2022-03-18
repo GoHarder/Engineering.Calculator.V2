@@ -76,7 +76,13 @@ export const verifyToken = (token) => {
 
       return payload;
    } catch (error) {
-      console.log(error);
-      return undefined;
+      if (error.name === 'TokenExpiredError') {
+         return { message: `Session has expired at ${error.expiredAt}` };
+      }
+
+      let message = error.message.replace('jwt', 'Authorization');
+      message = message.replace('malformed', 'is malformed');
+
+      return { message };
    }
 };

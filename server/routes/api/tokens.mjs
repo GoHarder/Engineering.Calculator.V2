@@ -53,11 +53,13 @@ router.post('/', async (req, res) => {
    if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0])} is invalid` });
 
    // Create the token and send it
-   const exp = Math.floor(Date.now() / 1000) + 60 * 60 * (longToken ? 336 : 1);
+   const iat = Math.floor(Date.now() / 1000); // Issue date
+   const exp = Math.floor(Date.now() / 1000) + 60 * 60 * (longToken ? 336 : 1); // Expiration date
 
    let token = {
       _id: userDoc._id,
       role: userDoc.role,
+      iat,
       exp,
    };
 
