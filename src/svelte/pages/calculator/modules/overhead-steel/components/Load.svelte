@@ -60,7 +60,7 @@
 
       <InputLength bind:value={length} label="Length From R<sub>a</sub>" />
 
-      <InputNumber bind:value={weight} label="Weight" readonly={!reaction} type="weight" />
+      <InputNumber bind:value={weight} label="Weight" readonly={reaction} type="weight" />
    {/if}
 </div>
 
