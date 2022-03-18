@@ -2,12 +2,13 @@
    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
    import { get_current_component } from 'svelte/internal';
    import { MDCDialog } from '@material/dialog';
-   import { forwardEvents, randomId } from '../../lib';
+   import { classList, forwardEvents, randomId } from '../../lib';
 
    // Components
    // Stores
    // Properties
    export let draggable = false;
+   export let fullScreen = false;
    export let show = undefined;
 
    // Methods
@@ -33,6 +34,8 @@
          Dialog.close();
       }
    }
+
+   $: divClass = classList(['mdc-dialog', fullScreen ? 'mdc-dialog--fullscreen' : '']);
 
    // Events
    const onClosed = () => {
@@ -78,7 +81,7 @@
 
 <svelte:window on:mousemove={onMouseMove} on:mouseup={onMouseUp} />
 
-<div bind:this={divEle} use:events on:MDCDialog:opened={onOpened} on:MDCDialog:closed={onClosed} class="mdc-dialog">
+<div bind:this={divEle} use:events on:MDCDialog:opened={onOpened} on:MDCDialog:closed={onClosed} class={divClass}>
    <div class="mdc-dialog__container">
       <div
          class="mdc-dialog__surface"
@@ -93,7 +96,9 @@
          {/if}
 
          {#if $$slots.title}
-            <slot name="title" />
+            <div class="mdc-dialog__header">
+               <slot name="title" />
+            </div>
          {/if}
 
          <div class="mdc-dialog__content" id="dialog-content-{id}"><slot /></div>
@@ -106,6 +111,33 @@
    <div class="mdc-dialog__scrim" />
 </div>
 
+<!-- <div class="mdc-dialog mdc-dialog--open mdc-dialog--fullscreen">
+   <div class="mdc-dialog__container">
+
+
+      <div class="mdc-dialog__surface" role="dialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
+         <div class="mdc-dialog__header">
+            <h2 class="mdc-dialog__title" id="my-dialog-title">Full-Screen Dialog Title</h2>
+            <button class="mdc-icon-button material-icons mdc-dialog__close" data-mdc-dialog-action="close"> close </button>
+         </div>
+         <div class="mdc-dialog__content" id="my-dialog-content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed scelerisque metus dapibus, maximus massa pulvinar, commodo nunc. Quisque vitae luctus lectus, ut
+            tempus ipsum. Sed suscipit gravida scelerisque. Aenean vulputate elementum est, quis consectetur orci consectetur ac. Quisque accumsan vel nisi id dapibus.
+            Suspendisse nec urna eu massa ornare rutrum. Vivamus at nisi sit amet nulla pretium volutpat sit amet in justo. Donec mi metus, interdum ac tincidunt at, vehicula
+            vitae nisl. Morbi fermentum dapibus massa, nec lobortis massa vestibulum eu.
+         </div>
+         <div class="mdc-dialog__actions">
+            <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="ok">
+               <div class="mdc-button__ripple" />
+               <span class="mdc-button__label">OK</span>
+            </button>
+         </div>
+      </div>
+
+
+   </div>
+   <div class="mdc-dialog__scrim" />
+</div> -->
 <style lang="scss" global>
    @use 'src/scss/theme' as vantage;
    @use '@material/dialog';
@@ -122,4 +154,6 @@
          cursor: grabbing;
       }
    }
+
+   @include vantage.scrollbar('.mdc-dialog__content', vantage.$white);
 </style>
