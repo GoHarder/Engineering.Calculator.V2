@@ -116,8 +116,9 @@
 
             maxHeight = parseFloat(maxHeight.replace(/px/, ''));
 
-            if (transformOrigin === 'center bottom' && maxHeight > 450) {
-               divEle2.style.maxHeight = '450px';
+            // if (transformOrigin === 'center bottom' && maxHeight > 400) {
+            if (maxHeight > 400) {
+               divEle2.style.maxHeight = '400px';
             }
          }
       }, 1000);
