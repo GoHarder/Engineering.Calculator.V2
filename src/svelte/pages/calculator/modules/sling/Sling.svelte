@@ -605,29 +605,27 @@
             {/each}
          </Select>
 
-         {#if sheaveQty > 1}
-            <Select bind:value={sheaveArrangement} label="Arrangement">
-               <Option value="Parallel">Parallel</Option>
-               <Option value="Diagonal">Diagonal</Option>
+         <Select bind:value={sheaveArrangement} label="Arrangement">
+            <Option value="Parallel">Parallel</Option>
+            <Option value="Diagonal">Diagonal</Option>
+         </Select>
+
+         <Select bind:value={sheaveLocation} label="Mounting">
+            <Option value="Overslung">Overslung</Option>
+            <Option value="Underslung">Underslung</Option>
+         </Select>
+
+         <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
+            <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
+         </InputImg>
+
+         {#if sheaveConfig === 'parallelUnderslung'}
+            <InputLength bind:value={railToBalance} label="Rail To Sheaves" {metric} />
+
+            <Select bind:value={balanceLocation} label="Sheave Location" type="number">
+               <Option value="1">Behind the Rail</Option>
+               <Option value="-1">Front of the Rail</Option>
             </Select>
-
-            <Select bind:value={sheaveLocation} label="Mounting">
-               <Option value="Overslung">Overslung</Option>
-               <Option value="Underslung">Underslung</Option>
-            </Select>
-
-            <InputImg src={sheaveOffsetImg} alt="Strike Plate Offset" width="300">
-               <InputLength bind:value={sheaveOffset} label="Sheave Offset" {metric} />
-            </InputImg>
-
-            {#if sheaveConfig === 'parallelUnderslung'}
-               <InputLength bind:value={railToBalance} label="Rail To Sheaves" {metric} />
-
-               <Select bind:value={balanceLocation} label="Sheave Location" type="number">
-                  <Option value="1">Behind the Rail</Option>
-                  <Option value="-1">Front of the Rail</Option>
-               </Select>
-            {/if}
          {/if}
       </Fieldset>
    {/if}
