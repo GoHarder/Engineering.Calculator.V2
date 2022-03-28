@@ -423,7 +423,7 @@
          </Select>
 
          {#if cwtModel !== '236'}
-            <Select bind:value={sheaveHangerModel} bind:selected={sheaveHangerObj} label="Hanger Model" options={sheaveHangerOptions}>
+            <Select bind:value={sheaveHangerModel} bind:selected={sheaveHangerObj} label="Hanger Model" options={tables.sheaveHangers}>
                {#each sheaveHangerOptions as name (name)}
                   <Option value={name}>{name}</Option>
                {/each}
@@ -444,7 +444,7 @@
       <InputLength bind:value={dbg} label="D.B.G." {metric}>
          <svelte:fragment slot="datalist" let:focused let:onChange>
             <DataList {focused} {onChange}>
-               <Option value="30.125">2' - 6.125"</Option>
+               <Option Pvalue="30.125">2' - 6.125"</Option>
                <Option value="38.75">3' - 2.75"</Option>
                <Option value="57.25">4' - 9.25"</Option>
             </DataList>
