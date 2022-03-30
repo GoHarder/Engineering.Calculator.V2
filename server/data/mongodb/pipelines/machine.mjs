@@ -34,7 +34,17 @@ export const getMachines = (counterbalance, speed, capacity, type, location, rop
             },
          },
       },
-      { $group: { _id: '$_id', name: { $first: '$name' }, location: { $first: '$location' }, type: { $first: '$type' }, sheaves: { $push: '$sheaves' } } },
+      {
+         $group: {
+            _id: '$_id',
+            name: { $first: '$name' },
+            location: { $first: '$location' },
+            type: { $first: '$type' },
+            sheaves: { $push: '$sheaves' },
+            centerOfGravity: { $first: '$centerOfGravity' },
+            sheaveLocation: { $first: '$sheaveLocation' },
+         },
+      },
       { $project: { _id: 0, location: 0, type: 0, 'sheaves.limits': 0 } },
       { $sort: { name: 1 } },
    ];
