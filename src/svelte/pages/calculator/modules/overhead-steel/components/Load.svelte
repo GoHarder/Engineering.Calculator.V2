@@ -14,8 +14,8 @@
    export let length = 0;
    export let reaction = false;
    export let show;
-   export let type;
-   export let weight = 0;
+   export let liveLoad = 0;
+   export let deadLoad = 0;
 
    // Methods
    // Constants
@@ -51,16 +51,15 @@
    </header>
 
    {#if show}
-      {#if !reaction}
-         <Select bind:value={type} label="Type">
-            <Option value="Dead">Dead</Option>
-            <Option value="Live">Live</Option>
-         </Select>
-      {/if}
-
       <InputLength bind:value={length} label="Length From R<sub>a</sub>" />
 
-      <InputNumber bind:value={weight} label="Weight" readonly={reaction} type="weight" />
+      {#if !reaction}
+         <InputNumber bind:value={liveLoad} label="Live Load" type="weight" />
+
+         <InputNumber bind:value={deadLoad} label="Dead Load" type="weight" />
+      {:else}
+         <InputNumber bind:value={deadLoad} label="Dead Load" readonly type="weight" />
+      {/if}
    {/if}
 </div>
 

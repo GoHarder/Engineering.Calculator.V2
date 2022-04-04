@@ -1,6 +1,6 @@
 <script>
    import { createEventDispatcher, onMount } from 'svelte';
-
+   import { clone } from 'lib/main.mjs';
    import SteelCalculator from 'js/steelCalculator';
 
    // Components
@@ -44,13 +44,17 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: _pointLoads = clone(pointLoads).map((load) => {
+      load.weight = load.liveLoad + load.deadLoad;
+      return load;
+   });
 
    // - Calculator Inputs
    $: Calc.shape = shape;
    $: Calc.axis = axis;
    $: Calc.length = length;
    $: Calc.lengthRb = lengthRb;
-   $: Calc.loads = [...pointLoads, ...reactLoads];
+   $: Calc.loads = [..._pointLoads, ...reactLoads];
    $: Calc.existing = existing;
    $: Calc.name = name;
 
@@ -65,8 +69,8 @@
          id: `load-${Date.now()}`,
          label: `Load ${loadIndex}`,
          length: 0,
-         weight: 0,
-         type: 'Dead',
+         liveLoad: 0,
+         deadLoad: 0,
          show: true,
       };
 
@@ -132,12 +136,12 @@
    <div class="vr" />
 
    <div class="loads">
-      {#each reactLoads as { id, label, length, weight, type, show } (id)}
-         <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} reaction={true} />
+      {#each reactLoads as { id, label, length, liveLoad, deadLoad, show } (id)}
+         <Load on:delete={onDeleteLoad} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} reaction={true} />
       {/each}
 
-      {#each pointLoads as { id, label, length, weight, type, show } (id)}
-         <Load on:delete={onDeleteLoad} bind:label bind:length bind:weight bind:type bind:show {id} reaction={false} />
+      {#each pointLoads as { id, label, length, liveLoad, deadLoad, show } (id)}
+         <Load on:delete={onDeleteLoad} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} reaction={false} />
       {/each}
 
       <div class="buttons">

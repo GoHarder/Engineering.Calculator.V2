@@ -73,20 +73,20 @@
          const toSet = update.find((set) => set.id === link.to.set);
          const toMember = toSet?.members.find((member) => member.id === link.to.member);
          const reactLoad = toMember?.reactLoads.find((load) => load.id === link.id);
+         const label = from.members.length === 1 ? from.members[0].label : from.label;
 
          if (!toMember) toDelete.push(link.id);
 
          if (reactLoad) {
-            reactLoad.weight = from.reactions[link.use];
-            reactLoad.label = `${link.label} ${link.use === 'rA' ? 'Ra' : 'Rb'}`;
+            reactLoad.deadLoad = from.reactions[link.use];
+            reactLoad.label = `${label} ${link.use === 'rA' ? 'Ra' : 'Rb'}`;
          } else {
             const newLoad = {
                id: link.id,
-               label: `${link.label} ${link.use === 'rA' ? 'Ra' : 'Rb'}`,
-               weight: from.reactions[link.use],
+               label: `${label} ${link.use === 'rA' ? 'Ra' : 'Rb'}`,
+               deadLoad: from.reactions[link.use],
                length: 0,
                show: true,
-               type: 'Dead',
             };
 
             toMember?.reactLoads.push(newLoad);
@@ -99,10 +99,6 @@
 
       steelSets = update;
    }
-
-   $: console.log(steelSets);
-
-   $: console.log(reactLinks);
 
    // Events
    const onAddSet = () => {
