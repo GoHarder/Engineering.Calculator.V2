@@ -118,7 +118,7 @@
       DiagonalUnderslung,
    };
 
-   console.log(project);
+   // console.log(project);
 
    // Variables
    // - Globals
