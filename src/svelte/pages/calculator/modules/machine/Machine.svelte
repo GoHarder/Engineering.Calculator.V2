@@ -10,8 +10,11 @@
 
    // Components
    import { CompInput, Fieldset } from 'components/common';
+   import { Checkbox } from 'components/material/checkbox';
    import { HelperText, Input, InputNumber, InputLength } from 'components/material/input';
    import { HelperText as SelHelperText, Option, OptGroup, Select } from 'components/material/select';
+
+   import BlockUp from './components/BlockUp.svelte';
 
    // Stores
    import fetchStore from 'stores/fetch';
@@ -48,6 +51,10 @@
          rope: {
             maxLoad: ropeMaxLoad,
             weight: ropeWeight,
+         },
+         ropeGripper: {
+            model: ropeGripModel,
+            qty: ropeGripQty,
          },
          sheave: {
             arcOfContact,
@@ -145,19 +152,26 @@
    let ropeMaxLoad = module?.rope?.maxLoad ?? 0;
 
    // Compensation
-   let compChainModel = module.compensation?.chianModel ?? '';
-   let compPercentage = module.compensation?.percentage ?? 1;
-   let compRopeChainQty = module.compensation?.ropeChainQty ?? 2;
-   let compRopeSize = module.compensation?.ropeSize ?? 0.375;
-   let compSheaveModel = module.compensation?.sheave?.model ?? '';
-   let compSheaveWeight = module.compensation?.sheave?.weight ?? 0;
+   let compChainModel = module?.compensation?.chianModel ?? '';
+   let compPercentage = module?.compensation?.percentage ?? 1;
+   let compRopeChainQty = module?.compensation?.ropeChainQty ?? 2;
+   let compRopeSize = module?.compensation?.ropeSize ?? 0.375;
+   let compSheaveModel = module?.compensation?.sheave?.model ?? '';
+   let compSheaveWeight = module?.compensation?.sheave?.weight ?? 0;
+
+   // Rope Gripper
+   let ropeGripModel = module?.ropeGripper?.model ?? '620';
+   let ropeGripQty = module?.ropeGripper?.qty ?? 1;
+
+   // NOTE: 4-05-2022 9:43 AM - This is a sandbox for variables
+   let machineBeams = true;
+   let machineBlockUp = true;
 
    // - Database
    let machines = [];
    let maxRimWidth = 0;
 
    // - Calculated
-
    let minRopes = 3;
    let tractionRatioCond1 = 0;
    let tractionRatioCond2 = 0;
@@ -178,8 +192,6 @@
 
    $: sheaves = machineObj?.sheaves ?? [];
    $: ropeVariants = ropeObj?.variants ?? [];
-
-   $: ropeGripLoad = carWeight + capacity + cwtWeight + totalRopeWeight + compWeight;
 
    // - Rope Calcs
    // NOTE: 8-17-2021 2:41 PM - Ben doesn't know why the totalRopeLoad2 formula exists I don't either. It doesn't make sense
@@ -227,6 +239,13 @@
    $: maxRopes = ropeObj?.maxQty ?? 100;
    $: ropeLoadError = minRopes >= maxRopes;
 
+   // - Rope Gripper
+   $: ropeGripLoad = carWeight + capacity + cwtWeight + totalRopeWeight + compWeight;
+   $: ropeGripOptions = (machineObj?.ropeGrippers ?? []).filter((gripper) => {
+      const maxLoad = gripper.maxLoad * ropeGripQty;
+      return gripper.minLoad <= ropeGripLoad && ropeGripLoad <= maxLoad;
+   });
+
    // - Groove Calcs
    $: ropeTension = round(
       (2 *
@@ -258,7 +277,6 @@
    $: tractionRatio = Math.max(tractionRatioCond1, tractionRatioCond2, tractionRatioCond3, tractionRatio125);
 
    // -- Groove Options
-
    $: grooveOpts = clone(tables.sheaveGrooves).map((groove) => {
       const sheaveDia = sheaveObj?.diameter ?? 1;
       const optimalTraction = round(tractionRatio + 0.1, 4);
@@ -343,6 +361,29 @@
             <Option value="None">None</Option>
             <Option value="Chain">Chain</Option>
             <Option value="Rope">Rope</Option>
+         </Select>
+      {/if}
+
+      <!-- <Checkbox bind:checked={machineBeams} label="Machine Beams" />
+
+      {#if machineBeams}
+         <Checkbox bind:checked={machineBlockUp} label="Block Up" />
+      {/if} -->
+   </Fieldset>
+
+   <Fieldset title="Equipment">
+      {#if machineObj.ropeGrippers}
+         <Select bind:value={ropeGripQty} label="Rope Gripper Qty" type="number">
+            <Option value="1">1</Option>
+            <Option value="2">2</Option>
+         </Select>
+      {/if}
+
+      {#if ropeGripOptions.length > 0}
+         <Select bind:value={ropeGripModel} label="Rope Gripper Model">
+            {#each ropeGripOptions as { name } (name)}
+               <Option value={name}>{name}</Option>
+            {/each}
          </Select>
       {/if}
    </Fieldset>
@@ -431,6 +472,11 @@
    {/if}
 </div>
 
+<!-- {#if machineBlockUp}
+   <div class="container">
+      <BlockUp />
+   </div>
+{/if} -->
 <style>
    .container {
       display: flex;
