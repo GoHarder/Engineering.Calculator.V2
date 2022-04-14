@@ -7,7 +7,16 @@
 export const compensation = [{ name: 'None' }, { name: 'Chain' }, { name: 'Rope' }];
 
 /** Standard rail sizes */
-export const railSizes = [{ name: '6.25#' }, { name: '8#' }, { name: '11#' }, { name: '12#' }, { name: '15#' }, { name: '18.5#' }, { name: '22.5#' }, { name: '30#' }];
+export const railSizes = [
+   { name: '6.25#' },
+   { name: '8#', stressX: 43200, deflectX: Number('4.3848e8'), stressY: 52200, deflectY: Number('4.9764e8') },
+   { name: '11#', stressX: 85800, deflectX: Number('1.23888e9'), stressY: 111600, deflectY: Number('1.54164e9') },
+   { name: '12#', stressX: 85800, deflectX: Number('1.23888e9'), stressY: 111600, deflectY: Number('1.54164e9') },
+   { name: '15#', stressX: 132600, deflectX: Number('1.92444e9'), stressY: 113400, deflectY: Number('1.65996e9') },
+   { name: '18.5#', stressX: 162000, deflectX: Number('2.5926e9'), stressY: 195600, deflectY: Number('3.37908e9') },
+   { name: '22.5#', stressX: 187200, deflectX: Number('2.9928e9'), stressY: 249000, deflectY: Number('3.82104e9') },
+   { name: '30#', stressX: 255000, deflectX: Number('4.06464e9'), stressY: 419400, deflectY: Number('7.9692e9') },
+];
 
 // NOTE: 9-07-2021 9:18 AM
 // variants.weight is in lb per foot
