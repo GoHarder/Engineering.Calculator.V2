@@ -131,3 +131,14 @@ export const ropeSizes = [
    { name: '16mm', value: 0.629921, weightAv: 0.63 },
    { name: '18mm', value: 0.708661, weightAv: 0.78 },
 ];
+
+/** Freight classes */
+export const freightClasses = [
+   { name: 'None', types: ['Passenger'] },
+   { name: 'A', types: ['Passenger', 'Freight'] },
+   { name: 'B-Auto', types: ['Freight'] },
+   { name: 'B-Truck', types: ['Freight'] },
+   { name: 'C1', types: ['Passenger', 'Freight'] },
+   { name: 'C2', types: ['Passenger', 'Freight'] },
+   { name: 'C3', types: ['Passenger', 'Freight'] },
+];

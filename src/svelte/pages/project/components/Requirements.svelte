@@ -1,7 +1,6 @@
 <script>
    import { onDestroy } from 'svelte';
-
-   import { round } from 'lib/math.mjs';
+   import * as gTables from '../../calculator/modules/tables';
 
    // Components
    import { DataList } from 'components/common';
@@ -37,15 +36,15 @@
       { name: 'ASME A17-1 2000', ibc: false },
    ];
 
-   const freightClassOpts = [
-      { name: 'None', types: ['Passenger'] },
-      { name: 'A', types: ['Passenger', 'Freight'] },
-      { name: 'B-Auto', types: ['Freight'] },
-      { name: 'B-Truck', types: ['Freight'] },
-      { name: 'C1', types: ['Passenger', 'Freight'] },
-      { name: 'C2', types: ['Passenger', 'Freight'] },
-      { name: 'C3', types: ['Passenger', 'Freight'] },
-   ];
+   // const freightClassOpts = [
+   //    { name: 'None', types: ['Passenger'] },
+   //    { name: 'A', types: ['Passenger', 'Freight'] },
+   //    { name: 'B-Auto', types: ['Freight'] },
+   //    { name: 'B-Truck', types: ['Freight'] },
+   //    { name: 'C1', types: ['Passenger', 'Freight'] },
+   //    { name: 'C2', types: ['Passenger', 'Freight'] },
+   //    { name: 'C3', types: ['Passenger', 'Freight'] },
+   // ];
 
    const ibcTable = [
       { name: 'A', ip: 0, minSDS: 0, maxSDS: 0, zone: 0 },
@@ -219,7 +218,7 @@
       </Select>
 
       <Select bind:value={freightClass} label="Freight Class">
-         {#each freightClassOpts as { name, types } (name)}
+         {#each gTables.freightClasses as { name, types } (name)}
             {#if types.includes(loadingType)}
                <Option value={name}>{name}</Option>
             {/if}
