@@ -55,7 +55,7 @@
          });
 
          Object.keys(modules).forEach((key) => {
-            update[key].checked = true;
+            if (update[key]) update[key].checked = true;
          });
 
          moduleCards = update;
