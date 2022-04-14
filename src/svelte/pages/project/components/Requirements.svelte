@@ -36,16 +36,6 @@
       { name: 'ASME A17-1 2000', ibc: false },
    ];
 
-   // const freightClassOpts = [
-   //    { name: 'None', types: ['Passenger'] },
-   //    { name: 'A', types: ['Passenger', 'Freight'] },
-   //    { name: 'B-Auto', types: ['Freight'] },
-   //    { name: 'B-Truck', types: ['Freight'] },
-   //    { name: 'C1', types: ['Passenger', 'Freight'] },
-   //    { name: 'C2', types: ['Passenger', 'Freight'] },
-   //    { name: 'C3', types: ['Passenger', 'Freight'] },
-   // ];
-
    const ibcTable = [
       { name: 'A', ip: 0, minSDS: 0, maxSDS: 0, zone: 0 },
       { name: 'B', ip: 0, minSDS: 0, maxSDS: 0, zone: 0 },
