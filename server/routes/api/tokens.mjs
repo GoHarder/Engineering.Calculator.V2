@@ -11,6 +11,7 @@ import { capitalize } from '../../../lib/string.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
 import { hash as getHash, signToken } from '../../lib/crypto.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';
+import { clone } from '../../../lib/main.mjs';
 
 /** The router for the module */
 export const router = express.Router();
@@ -50,7 +51,7 @@ router.post('/', async (req, res) => {
 
    const test2 = validate.schema(userDoc, docSchema);
 
-   if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0])} is invalid` });
+   if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0]).replace('Hashed', '')} is invalid` });
 
    // Create the token and send it
    const iat = Math.floor(Date.now() / 1000); // Issue date
@@ -70,12 +71,20 @@ router.post('/', async (req, res) => {
 
 // - Put
 router.put('/', checkAuth, (req, res) => {
-   let { token } = req;
+   const copy = clone(req.token);
+   const { _id, role } = copy;
+   const iat = Math.floor(Date.now() / 1000);
 
    // See if the token need to be renewed
-   const newExp = Math.floor(Date.now() / 1000) + 60 * 60;
+   let exp = Math.floor(Date.now() / 1000) + 60 * 60;
+   if (copy.exp > exp) exp = copy.exp;
 
-   if (token.exp < newExp) token.exp = newExp;
+   let token = {
+      _id,
+      role,
+      iat,
+      exp,
+   };
 
    token = signToken(token);
 
