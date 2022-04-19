@@ -10,8 +10,9 @@
  * @param {string} type The machine type
  * @param {string} location The machine location
  * @param {number} roping The elevator roping
+ * @param {number} shaftLoad The sheave shaft load
  */
-export const getMachines = (counterbalance, speed, capacity, type, location, roping) => {
+export const getMachines = (counterbalance, speed, capacity, type, location, roping, shaftLoad) => {
    const cbKey = `capAt${counterbalance.toFixed(3).replace(/0\.(\d{2})(\d)/, '$1_$2')}`;
 
    const validCB = ['capAt40_0', 'capAt42_5', 'capAt45_0', 'capAt50_0'].includes(cbKey);
@@ -27,11 +28,19 @@ export const getMachines = (counterbalance, speed, capacity, type, location, rop
 
    return [
       { $unwind: { path: '$sheaves' } },
-      { $match: { type, location, roping, 'sheaves.limits': { $elemMatch: match } } },
+      {
+         $match: {
+            type,
+            location,
+            roping,
+            'sheaves.limits': { $elemMatch: match },
+            'sheaves.maxSystemLoad': { $elemMatch: { speed: { $gte: speed }, load: { $gte: shaftLoad } } },
+         },
+      },
       { $unwind: { path: '$ropeGrippers' } },
       {
          $addFields: {
-            'sheaves.limits': { $filter: { input: '$sheaves.limits', as: 'limit', cond } },
+            // 'sheaves.limits': { $filter: { input: '$sheaves.limits', as: 'limit', cond } },
             'ropeGrippers.ropings': { $filter: { input: '$ropeGrippers.ropings', as: 'nth', cond: { $eq: ['$$nth.roping', 1] } } },
          },
       },
@@ -82,7 +91,7 @@ export const getMachines = (counterbalance, speed, capacity, type, location, rop
             bases: 1,
             centerOfGravity: 1,
             ropeGrippers: { name: 1, maxLoad: 1, minLoad: 1, outToOut: 1, weight: 1 },
-            sheaves: { diameter: 1, maxGroovePressure: 1, name: 1, rimWidth: 1, maxSystemLoad: 1 },
+            sheaves: { diameter: 1, maxGroovePressure: 1, name: 1, rimWidth: 1 },
          },
       },
       { $sort: { name: 1 } },

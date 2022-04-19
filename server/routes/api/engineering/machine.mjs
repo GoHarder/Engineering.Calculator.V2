@@ -28,12 +28,13 @@ router.get('/', async (req, res) => {
    const capacity = parseInt(query.capacity);
    const counterbalance = parseFloat(query.counterbalance);
    const roping = parseInt(query.roping);
+   const shaftLoad = parseFloat(query.shaftLoad);
 
    let machines = [];
    let maxRimWidth = 0;
 
    try {
-      const _machines = getMachines(counterbalance, speed, capacity, type, location, roping);
+      const _machines = getMachines(counterbalance, speed, capacity, type, location, roping, shaftLoad);
 
       machines = await engDB.collection('machines').aggregate(_machines).toArray();
 

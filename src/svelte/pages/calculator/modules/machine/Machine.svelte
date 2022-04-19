@@ -14,7 +14,7 @@
    import { HelperText, Input, InputNumber, InputLength } from 'components/material/input';
    import { HelperText as SelHelperText, Option, OptGroup, Select } from 'components/material/select';
 
-   import BlockUp from './components/BlockUp.svelte';
+   // import BlockUp from './components/BlockUp.svelte';
 
    // Stores
    import fetchStore from 'stores/fetch';
@@ -72,7 +72,7 @@
    };
 
    // Methods
-   const getEngineeringData = async (type, location) => {
+   const getEngineeringData = async (type, location, shaftLoad) => {
       const query = [
          `type=${type}`,
          `location=${location}`,
@@ -80,6 +80,7 @@
          `capacity=${machineCapacity}`,
          `counterbalance=${counterbalance}`,
          `roping=${roping}`,
+         `shaftLoad=${shaftLoad}`,
       ].join('&');
 
       const token = localStorage.getItem('token');
@@ -186,12 +187,15 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: getEngineeringData(type, location);
+   $: getEngineeringData(type, location, shaftLoad);
 
    $: cwtWeight = round(carWeight + capacity * counterbalance, 2);
 
    $: sheaves = machineObj?.sheaves ?? [];
    $: ropeVariants = ropeObj?.variants ?? [];
+
+   $: shaftLoad = round(carWeight + capacity + cwtWeight + totalRopeWeight + compWeight + travelingCables / roping, 2);
+   $: upPull = round(shaftLoad * 2, 2);
 
    // - Rope Calcs
    // NOTE: 8-17-2021 2:41 PM - Ben doesn't know why the totalRopeLoad2 formula exists I don't either. It doesn't make sense
@@ -315,7 +319,7 @@
 
 <div class="container">
    <Fieldset title="Globals">
-      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} type="weight" />
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step="0.01" type="weight" />
 
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
@@ -351,10 +355,14 @@
             {/each}
          </Select>
 
-         <InputNumber bind:value={arcOfContact} label="Arc Of Contact" step="0.1" type="angle" />
+         <InputNumber bind:value={arcOfContact} label="Arc Of Contact" readonly step="0.1" type="angle" />
       {/if}
 
       <InputNumber bind:value={travelingCables} bind:override={o_travelingCables} label="Traveling Cable Weight" calc={travelingCablesCalc} {metric} type="weight" />
+
+      {#if location === 'Basement'}
+         <InputNumber value={upPull} label="Up-Pull Force" {metric} readonly step="0.01" type="weight" />
+      {/if}
 
       {#if compType === 'None'}
          <Select bind:value={compType} label="Compensation">
