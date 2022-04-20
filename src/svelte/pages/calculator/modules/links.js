@@ -5,12 +5,12 @@ const inheritance = {
    apta: ['platform', 'sling'],
    cabHeight: ['platform', 'hoistway'],
    cabWeight: ['platform', 'sling'],
-   cabWidth: ['platform', 'sling'],
+   cabWidth: ['platform', 'sling', 'railBrackets'],
    cornerPost: ['platform', 'sling', 'hoistway'],
    door1Weight: ['platform', 'sling'],
    door2Weight: ['platform', 'sling'],
-   platformDepth: ['platform', 'sling'],
-   platformFrontToRail: ['platform', 'sling'],
+   platformDepth: ['platform', 'sling', 'railBrackets'],
+   platformFrontToRail: ['platform', 'sling', 'railBrackets'],
    platformIsolation: ['platform', 'sling'],
    platformThickness: ['platform', 'sling', 'hoistway'],
    platformWeight: ['platform', 'sling'],
@@ -18,8 +18,9 @@ const inheritance = {
    toeGuard1Weight: ['platform', 'sling'],
    toeGuard2Weight: ['platform', 'sling'],
    // Sling
-   carWeight: ['sling', 'counterweight', 'machine', 'buffers'],
-   cwtWeight: ['sling', 'counterweight', 'buffers'],
+   carWeight: ['sling', 'counterweight', 'machine', 'buffers', 'overheadSteel'],
+   cenToCenOfShoes: ['sling', 'railBrackets'],
+   cwtWeight: ['sling', 'counterweight', 'buffers', 'overheadSteel'],
    sheaveArrangement: ['sling', 'hoistway'],
    sheaveLocation: ['sling', 'hoistway'],
    slingBotChanDepth: ['sling', 'hoistway'],
@@ -30,10 +31,11 @@ const inheritance = {
    cwtHeight: ['counterweight', 'hoistway'],
    // Machine
    compType: ['machine', 'sling', 'counterweight'],
-   compWeight: ['machine', 'sling'],
+   compWeight: ['machine', 'sling', 'overheadSteel'],
    ropeSize: ['machine', 'sling'],
    ropeQty: ['machine', 'sling'],
    ropePitch: ['machine', 'sling'],
+   totalRopeWeight: ['machine', 'overheadSteel'],
    o_ropePitch: ['machine', 'sling'],
    // Buffers
    carBufferComp: ['buffers', 'hoistway'],
@@ -77,5 +79,7 @@ class LinkTree {
 export const BufferLinks = new LinkTree('buffers');
 export const CounterweightLinks = new LinkTree('counterweight');
 export const HoistwayLinks = new LinkTree('hoistway');
+export const OverheadSteelLinks = new LinkTree('overheadSteel');
 export const MachineLinks = new LinkTree('machine');
+export const RailBracketLinks = new LinkTree('railBrackets');
 export const SlingLinks = new LinkTree('sling');

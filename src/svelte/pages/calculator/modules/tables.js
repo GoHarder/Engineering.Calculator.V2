@@ -132,13 +132,47 @@ export const ropeSizes = [
    { name: '18mm', value: 0.708661, weightAv: 0.78 },
 ];
 
-/** Freight classes */
+const classA = new (function () {
+   this.loadingR1 = (capacity, e, h) => (capacity * e) / (8 * h);
+   this.runningR1 = (...params) => this.loadingR1(...params); // Way to copy the same formula from loadingR1
+   this.loadingR2 = (...params) => this.loadingR1(...params); // Change E to A
+   this.runningR2 = (...params) => this.loadingR1(...params);
+})();
+
+const classB = new (function () {
+   this.loadingR1 = (capacity, e, h) => (capacity * (e - 96)) / (2 * h);
+   this.runningR1 = (...params) => this.loadingR1(...params);
+   this.loadingR2 = (capacity, a, h) => (3 * capacity * (a - 30)) / (8 * h);
+   this.runningR2 = (...params) => this.loadingR2(...params);
+})();
+
+const classC1 = new (function () {
+   this.loadingR1 = (capacity, e, h) => (capacity * e) / (4 * h);
+   this.runningR1 = (...params) => this.loadingR1(...params);
+   this.loadingR2 = (capacity, a, h) => (2 * capacity * (a - 15)) / (5 * h);
+   this.runningR2 = (...params) => this.loadingR2(...params);
+})();
+
+const classC2 = new (function () {
+   this.loadingR1 = (capacity, e, h) => (3 * capacity * e) / (8 * h);
+   this.runningR1 = (capacity, e, h) => (capacity * e) / (4 * h);
+   this.loadingR2 = (capacity, a, h) => (3 * capacity * (a - 15)) / (5 * h);
+   this.runningR2 = (capacity, a, h) => (2 * capacity * (a - 15)) / (5 * h);
+})();
+
+/**
+ * Freight classes
+ * Variables for formulas above:
+ * E = Inside width of cab
+ * H = Center to center of shoes
+ * A = Max distance from center of rails to front or back of platform
+ */
 export const freightClasses = [
-   { name: 'None', types: ['Passenger'] },
-   { name: 'A', types: ['Passenger', 'Freight'] },
-   { name: 'B-Auto', types: ['Freight'] },
-   { name: 'B-Truck', types: ['Freight'] },
-   { name: 'C1', types: ['Passenger', 'Freight'] },
-   { name: 'C2', types: ['Passenger', 'Freight'] },
-   { name: 'C3', types: ['Passenger', 'Freight'] },
+   { name: 'None', types: ['Passenger'], ...classA },
+   { name: 'A', types: ['Passenger', 'Freight'], ...classA },
+   { name: 'B-Auto', types: ['Freight'], ...classB },
+   { name: 'B-Truck', types: ['Freight'], ...classB },
+   { name: 'C1', types: ['Passenger', 'Freight'], ...classC1 },
+   { name: 'C2', types: ['Passenger', 'Freight'], ...classC2 },
+   { name: 'C3', types: ['Passenger', 'Freight'], ...classC1 },
 ];
