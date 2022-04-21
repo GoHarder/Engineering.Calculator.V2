@@ -4,14 +4,16 @@
    import { clone, deepMerge } from 'lib/main.mjs';
    import { floorInc } from 'lib/math.mjs';
 
+   import { OverheadSteelLinks as Links } from '../links';
+
    // Components
    import { Fieldset } from 'components/common';
    import { Button, Icon } from 'components/material/button';
    import { Checkbox } from 'components/material/checkbox';
    import { Dialog, Title } from 'components/material/dialog';
-   import { Item, List, SubHeader } from 'components/material/list';
-
+   import { InputNumber } from 'components/material/input';
    import { ImageList, Item as ImageListItem } from 'components/material/image-list';
+   import { Item, List, SubHeader } from 'components/material/list';
 
    import SteelSet from './components/SteelSet.svelte';
 
@@ -19,7 +21,20 @@
    // Properties
    export let project;
    export const updateModule = () => {
-      const globalData = {};
+      const globalData = {
+         car: {
+            weight: carWeight,
+         },
+         compensation: {
+            weight: compWeight,
+         },
+         counterweight: {
+            weight: cwtWeight,
+         },
+         rope: {
+            totalWeight: ropeWeight,
+         },
+      };
 
       const moduleData = {
          existing,
@@ -35,10 +50,50 @@
 
    // Methods
    // Constants
-   const { modules } = project;
+   const { globals, metric, modules } = project;
    const { overheadSteel: module } = modules;
+   const { capacity } = globals;
+
+   Links.setProject(modules);
+
+   console.log(project);
+
+   // // OH Loading 1:1 2 car sheaves 2 cwt sheaves
+
+   // const sheaveLoad1_1 = roping === 1 ? 2 * (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight1 : 'Job is 2:1';
+   // const sheaveLoad2_1 = roping === 1 ? 2 * (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight2 : 'Job is 2:1';
+   // const sheaveLoad3_1 = roping === 1 ? 2 * (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight3 : 'Job is 2:1';
+   // const sheaveLoad4_1 = roping === 1 ? 2 * (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight4 : 'Job is 2:1';
+
+   // // OH Loading 1:1 2 car sheaves 1 cwt sheaves
+
+   // const sheaveLoad1_2 = roping === 1 ? 2 * (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight1 : 'Job is 2:1';
+   // const sheaveLoad2_2 = roping === 1 ? 2 * (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight2 : 'Job is 2:1';
+   // const sheaveLoad3_2 = roping === 1 ? 4 * (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight3 : 'Job is 2:1';
+
+   // // OH Loading 1:1 2 car sheaves 1 cwt sheaves
+
+   // const sheaveLoad1_3 = roping === 1 ? 4 * (carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight1 : 'Job is 2:1';
+   // const sheaveLoad2_3 = roping === 1 ? 2 * (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight3 : 'Job is 2:1';
+   // const sheaveLoad3_3 = roping === 1 ? 2 * (cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight) + sheaveWeight3 : 'Job is 2:1';
+
+   // // OH Loading 2:1 2 car sheaves 2 cwt sheaves
+
+   // const deadEndHitch1_4 = roping === 2 ? carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight + 50 : 'Job is 1:1';
+   // const sheaveLoad1_4 = roping === 2 ? carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight + sheaveWeight1 : 'Job is 1:1';
+   // const sheaveLoad2_4 = roping === 2 ? carWeight + capacity + 0.5 * ropeWeight + 0.5 * compWeight + sheaveWeight2 : 'Job is 1:1';
+   // const sheaveLoad3_4 = roping === 2 ? cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight + sheaveWeight3 : 'Job is 1:1';
+   // const sheaveLoad4_4 = roping === 2 ? cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight + sheaveWeight4 : 'Job is 1:1';
+   // const deadEndHitch2_4 = roping === 2 ? cwtWeight + 0.5 * ropeWeight + 0.5 * compWeight + 50 : 'Job is 1:1';
 
    // Variables
+   // - Globals
+   let carWeight = globals?.car?.weight ?? 0;
+   let compWeight = globals?.compensation?.weight ?? 0;
+   let cwtWeight = globals?.counterweight?.weight ?? 0;
+   let ropeWeight = globals?.rope?.totalWeight ?? 0;
+
+   // - Module
    let existing = module?.existing ?? false;
    let supplied = module?.existing ?? false;
    let steelSets = module?.steelSets ?? [];
@@ -228,22 +283,34 @@
 </Dialog>
 
 <div class="container">
+   <Fieldset title="Globals">
+      <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
+
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} type="weight" />
+
+      <InputNumber bind:value={cwtWeight} label="Counterweight Weight" link={Links.get('cwtWeight')} {metric} type="weight" />
+
+      <InputNumber bind:value={compWeight} label="Compensation Weight" link={Links.get('compWeight')} {metric} type="weight" />
+
+      <InputNumber bind:value={ropeWeight} label="Rope Weight" link={Links.get('totalRopeWeight')} {metric} type="weight" />
+   </Fieldset>
+
    <Fieldset title="Properties">
       <div class="properties">
          <Checkbox bind:checked={existing} label="Existing Steel" disabled={supplied} />
 
          <Checkbox bind:checked={supplied} label="H-W Supplied Steel" disabled={existing} />
       </div>
-   </Fieldset>
 
-   {#if steelSets.length !== 0}
-      <Button on:click={() => (templateDialog = true)} variant="contained">
-         Load Template
-         <svelte:fragment slot="trailingIcon">
-            <Icon>file_open</Icon>
-         </svelte:fragment></Button
-      >
-   {/if}
+      {#if steelSets.length !== 0}
+         <Button on:click={() => (templateDialog = true)} variant="contained">
+            Load Template
+            <svelte:fragment slot="trailingIcon">
+               <Icon>file_open</Icon>
+            </svelte:fragment>
+         </Button>
+      {/if}
+   </Fieldset>
 </div>
 
 <div class="container">

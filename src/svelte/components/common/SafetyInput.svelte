@@ -18,6 +18,7 @@
    export let railSize = '';
    export let safetyObj = {};
    export let speed = 0;
+   export let type = 'B';
    export let weight = 0;
 
    // Methods
@@ -65,6 +66,7 @@
    $: if (safetyObj.weight) {
       height = safetyObj.height;
       weight = safetyObj.weight;
+      type = safetyObj.type;
    }
 
    $: if (optional) {
@@ -88,6 +90,11 @@
    <InputNumber bind:value={weight} label="Safety Weight" {metric} type="weight" />
 
    <InputLength bind:value={height} label="Safety Height" {metric} />
+
+   <Select bind:value={type} label="Safety Type">
+      <Option value="A">A</Option>
+      <Option value="B">B</Option>
+   </Select>
 {/if}
 
 <style>

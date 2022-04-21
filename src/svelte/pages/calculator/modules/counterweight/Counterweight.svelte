@@ -30,6 +30,7 @@
          counterweight: {
             height: cwtHeight,
             weight: cwtWeight,
+            railSize,
          },
          rope: {
             pitch: ropePitch,
@@ -60,16 +61,13 @@
             },
             shoe: {
                model: shoeModel,
-
                height: shoeHeight,
-
                weight: shoeWeight,
                useShoePlates,
             },
          },
          lead,
          model: cwtModel,
-         railSize,
          stackHeight,
          stileChannel,
          weightWidth,
@@ -165,6 +163,7 @@
    // - Globals
    let carWeight = globals?.car?.weight ?? 0;
    let compType = globals?.compensation?.type ?? 'None';
+   let railSize = globals?.counterweight?.railSize ?? '8#';
 
    // -- Ropes
    let ropePitch = globals?.rope?.pitch ?? 0;
@@ -177,7 +176,6 @@
    let dbg = module?.dbg ?? 38.75;
    let gap = module?.gap ?? 24;
    let lead = module?.lead ?? false;
-   let railSize = module?.railSize ?? '8#';
    let stackHeight = module?.stackHeight ?? 0;
    let stileChannel = module?.stileChannel ?? 'MC8X22.8';
    let weightWidth = module?.weightWidth ?? 8;

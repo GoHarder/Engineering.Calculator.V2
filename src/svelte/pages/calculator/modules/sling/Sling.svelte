@@ -24,6 +24,7 @@
       const globalData = {
          car: {
             weight: carWeight,
+            railSize,
          },
          compensation: {
             type: compType,
@@ -35,7 +36,9 @@
          sling: {
             botChanDepth: botChannelObj?.depth ?? 0,
             bufferBlockUpDepth: bufferBlockUpObj?.depth ?? 0,
+            cenToCenOfShoes: dimH,
             safetyHeight,
+            safetyType,
             sheaveArrangement,
             sheaveChanDepth: sheaveChannelObj?.depth ?? 0,
             sheaveDia: sheaveObj?.diameter ?? 0,
@@ -80,7 +83,6 @@
             },
          },
          model: slingModel,
-         railSize,
          sheaves: {
             model: sheaveModel,
             mounting: sheaveMounting,
@@ -220,30 +222,35 @@
    // - Saved
    // -- Globals
    let apta = globals?.apta ?? false;
+
+   let railSize = globals?.car?.railsize ?? '15#';
+
    let cabWeight = globals?.cab?.weight ?? 0;
    let cabWidth = globals?.cab?.width ?? 0;
+
    let compType = globals?.compensation?.type ?? 'None';
    let compWeight = globals?.compensation?.weight ?? 0;
-   let cornerPost = globals?.platform?.cornerPost ?? false;
+
    let door1Weight = globals?.doors?.door1?.weight ?? 0;
    let door2Weight = globals?.doors?.door2?.weight ?? 0;
-   let platformDepth = globals?.platform?.depth ?? 0;
+   let toeGuard1Weight = globals?.doors?.door1?.toeGuardWeight ?? 0;
+   let toeGuard2Weight = globals?.doors?.door2?.toeGuardWeight ?? 0;
+
    let platformFrontToRail = globals?.platform?.frontToRail ?? 0;
    let platformIsolation = globals?.platform?.isolation ?? false;
    let platformThickness = globals?.platform?.thickness ?? 0;
    let platformWeight = globals?.platform?.weight ?? 0;
    let platformWidth = globals?.platform?.width ?? 0;
-   let toeGuard1Weight = globals?.doors?.door1?.toeGuardWeight ?? 0;
-   let toeGuard2Weight = globals?.doors?.door2?.toeGuardWeight ?? 0;
+   let platformDepth = globals?.platform?.depth ?? 0;
+   let cornerPost = globals?.platform?.cornerPost ?? false;
 
    let underBeamHeight = globals?.sling?.underBeamHeight ?? 114;
-
    let sheaveArrangement = globals?.sling?.sheaveArrangement ?? 'Parallel';
    let sheaveLocation = globals?.sling?.sheaveLocation ?? 'Overslung';
+   let safetyType = globals?.sling?.safetyType ?? 'B';
 
    // -- General
    let dbg = module?.dbg ?? 0;
-   let railSize = module?.railsize ?? '15#';
    let slingModel = module?.model ?? '';
 
    // -- Dimensions
@@ -257,7 +264,6 @@
    let o_ropePitch = globals?.rope?.o_pitch ?? false;
 
    // -- Sheaves
-
    let sheaveModel = module?.sheaves?.model ?? '';
    let sheaveMounting = module?.sheaves?.mounting ?? 'Support Plate';
    let sheaveOffset = module?.sheaves?.offset ?? 0;
@@ -666,7 +672,7 @@
 
       <ShoeInput bind:height={shoeHeight} bind:model={shoeModel} bind:weight={shoeWeight} {capacity} {railSize} {speed} />
 
-      <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:weight={safetyWeight} {railSize} {speed} />
+      <SafetyInput bind:height={safetyHeight} bind:model={safetyModel} bind:type={safetyType} bind:weight={safetyWeight} {railSize} {speed} />
 
       <Select bind:value={compType} label="Compensation" link={Links.get('compType')}>
          {#each gTables.compensation as { name } (name)}
