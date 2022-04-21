@@ -2,7 +2,9 @@
 node_modules
 .dockerignore
 .env
+docker-compose.yml
 Dockerfile
+nginx.conf
 notes.txt
 Project.md
 temp
