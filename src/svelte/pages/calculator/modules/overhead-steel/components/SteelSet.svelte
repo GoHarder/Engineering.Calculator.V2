@@ -131,7 +131,7 @@
       bind:rB={members[0].reactions.rB}
       bind:o_lengthRb={members[0].o_lengthRb}
       {axis}
-      delay={delay - 1000}
+      delay={delay + 1000}
       {existing}
       i={members[0].i}
       id={members[0].id}
@@ -183,7 +183,7 @@
          bind:rB={members[1].reactions.rB}
          bind:o_lengthRb={members[1].o_lengthRb}
          {axis}
-         delay={delay - 500}
+         delay={delay + 2000}
          {existing}
          i={members[1].i}
          id={members[1].id}
