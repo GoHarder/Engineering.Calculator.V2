@@ -1,0 +1,9 @@
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+
+Country Name (2 letter code) [AU]:US
+State or Province Name (full name) [Some-State]:Illinois
+Locality Name (eg, city) []:Quincy
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Hollister-Whitney
+Organizational Unit Name (eg, section) []:Engineering
+Common Name (e.g. server FQDN or YOUR name) []:hweg-calculdt
+Email Address []:gharder@hwec.com
