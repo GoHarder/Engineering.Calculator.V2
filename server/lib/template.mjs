@@ -18,7 +18,9 @@ const host = process.env.HOST || env.HOST;
 
 const port = process.env.PORT || env.PORT;
 
-const baseUrl = `${protocol}://${host}:${port}`;
+const name = process.env.NAME || env.NAME;
+
+const baseUrl = `${protocol}://${host}` + (name === 'development' ? `:${port}` : '');
 
 /**
  * Returns the file data from src/html directory
