@@ -26,6 +26,7 @@
          rope: {
             pitch: ropePitch,
             size: ropeSize,
+            totalWeight: totalRopeWeight,
             qty: ropeQty,
             o_pitch: o_ropePitch,
          },
