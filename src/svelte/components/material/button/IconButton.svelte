@@ -29,7 +29,7 @@
    // Reactive Rules
    $: buttonClass = classList(['mdc-icon-button material-icons', $$props.class]);
 
-   $: props = filterProps($$props, ['class', 'toggle']);
+   $: props = filterProps($$props, ['class', 'toggle', 'on', 'tooltip']);
 
    $: if (ButtonToggle && on !== undefined) {
       ButtonToggle.on = on;
