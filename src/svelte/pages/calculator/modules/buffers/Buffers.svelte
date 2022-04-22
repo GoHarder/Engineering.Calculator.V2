@@ -138,13 +138,13 @@
 
 <div class="container">
    <Fieldset title="Car Properties">
-      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step="0.1" type="weight" />
+      <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step="0.01" type="weight" />
 
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
    </Fieldset>
 
    <Fieldset title="Counterweight Properties">
-      <InputNumber bind:value={cwtWeight} label="Counterweight" link={Links.get('cwtWeight')} {metric} readonly={cwtWeightDisplay} step="0.1" type="weight" />
+      <InputNumber bind:value={cwtWeight} label="Counterweight" link={Links.get('cwtWeight')} {metric} readonly={cwtWeightDisplay} step="0.01" type="weight" />
    </Fieldset>
 </div>
 

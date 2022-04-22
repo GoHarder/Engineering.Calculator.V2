@@ -573,5 +573,6 @@
 
    .dimensions {
       display: flex;
+      flex-wrap: wrap-reverse;
    }
 </style>
