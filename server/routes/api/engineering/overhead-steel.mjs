@@ -6,7 +6,7 @@
 import express from 'express';
 
 // Project Imports
-import { checkAuth, checkCache } from '../../../middleware/lib.mjs';
+import { checkCache } from '../../../middleware/lib.mjs';
 import { parseValue } from '../../../../lib/string.mjs';
 import { getBeams, getChannels } from '../../../data/mongodb/pipelines/overhead-steel.mjs';
 import { eng as engDB } from '../../../data/mongodb/mongodb.mjs';
@@ -16,7 +16,7 @@ import { setEx } from '../../../data/redis/redis.mjs';
 export const router = express.Router();
 
 // Middleware
-router.use([checkAuth, checkCache]);
+router.use([checkCache]);
 
 // Routes
 
