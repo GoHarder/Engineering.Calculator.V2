@@ -407,11 +407,12 @@ export default class SteelCalculator {
       const testDeflection = round((this.length / 1666) * -1, 4);
       let output = [];
 
-      if (this.length === 0) return output;
-
       for (let i = 0; i < this.steel.length; i++) {
          const member = this.steel[i];
-         if (this.length === 0) output.push(JSON.stringify(member));
+         if (this.length === 0) {
+            output.push(JSON.stringify(member));
+            continue;
+         }
 
          const reactions = this.#getReactions(member);
          const shearSections = this.#getShearSections(member, clone(reactions));
