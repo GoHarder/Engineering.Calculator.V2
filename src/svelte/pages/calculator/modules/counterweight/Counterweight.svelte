@@ -389,7 +389,7 @@
    });
 </script>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
@@ -410,7 +410,7 @@
 </div>
 
 {#if roping > 1}
-   <div class="container">
+   <div class="flex-row">
       <RopesInput bind:pitch={ropePitch} bind:size={ropeSize} bind:qty={ropeQty} bind:o_pitch={o_ropePitch} link={Links.get('ropeSize')} {metric} />
 
       <Fieldset title="Sheave">
@@ -431,7 +431,7 @@
    </div>
 {/if}
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Properties">
       <Select bind:value={cwtModel} bind:selected={modelObj} label="Model" options={modelOptions}>
          {#each modelOptions as { name, disabled } (name)}
@@ -511,7 +511,7 @@
    </Fieldset>
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Dimensions">
       <div class="dimensions">
          <div>
@@ -562,17 +562,13 @@
    </Fieldset>
 </div>
 
-<style>
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
-
+<style lang="scss">
    .dimensions {
       display: flex;
       flex-wrap: wrap-reverse;
+
+      div {
+         width: fit-content;
+      }
    }
 </style>

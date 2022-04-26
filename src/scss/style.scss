@@ -84,6 +84,15 @@ header.main {
    position: relative;
 }
 
+.flex-row {
+   display: flex;
+   flex-wrap: wrap;
+   align-items: flex-start;
+   margin: 0.25em;
+   gap: 0.25em;
+   width: fit-content;
+}
+
 @media (min-width: 1600px) {
    .main-content {
       max-width: 1600px;

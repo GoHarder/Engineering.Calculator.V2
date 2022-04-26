@@ -282,7 +282,7 @@
    </svelte:fragment>
 </Dialog>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
@@ -313,7 +313,7 @@
    </Fieldset>
 </div>
 
-<div class="container">
+<div class="flex-row">
    {#each steelSets as { axis, delay, id, name, shape, members, reactions, label } (id)}
       <SteelSet
          on:addReaction={onAddReaction1}
@@ -333,7 +333,7 @@
    {/each}
 </div>
 
-<div class="container">
+<div class="flex-row">
    {#if steelSets.length === 0}
       <Button on:click={() => (templateDialog = true)} variant="contained">
          Load Template
@@ -352,14 +352,6 @@
 </div>
 
 <style>
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
-
    .properties {
       display: flex;
       flex-wrap: wrap;

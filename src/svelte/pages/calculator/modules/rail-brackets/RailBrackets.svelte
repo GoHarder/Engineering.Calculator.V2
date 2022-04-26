@@ -58,7 +58,7 @@
    // Lifecycle
 </script>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
 
@@ -84,11 +84,4 @@
 </div>
 
 <style>
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
 </style>

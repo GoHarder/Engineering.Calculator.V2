@@ -250,7 +250,7 @@
    });
 </script>
 
-<div bind:this={divEle} class="container">
+<div bind:this={divEle} class="flex-row">
    <Fieldset title="Globals">
       <InputLength value={overallTravel} label="Overall Travel" link="/Project/Requirements" />
    </Fieldset>
@@ -333,7 +333,7 @@
    {toeGuardError}
 />
 
-<div class="container">
+<div class="flex-row">
    <div class="pit-section {sizeClass}">
       <div class="pit-section-title">
          <legend>Pit Dimensions</legend>
@@ -378,13 +378,6 @@
 
 <style lang="scss">
    @use './src/scss/theme' as vantage;
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
 
    .pit-section {
       @include vantage.paper;

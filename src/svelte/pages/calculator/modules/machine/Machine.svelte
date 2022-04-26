@@ -318,7 +318,7 @@
    });
 </script>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber bind:value={carWeight} label="Car Weight" link={Links.get('carWeight')} {metric} step="0.01" type="weight" />
 
@@ -398,7 +398,7 @@
    </Fieldset>
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Hoist Ropes">
       <Select bind:value={ropeSize} bind:selected={ropeObj} label="Size" invalid={ropeLoadError} options={ropeSizeOpts} type="number">
          {#each ropeSizeOpts as { name, value } (value)}
@@ -487,11 +487,4 @@
    </div>
 {/if} -->
 <style>
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
 </style>

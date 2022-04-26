@@ -253,7 +253,7 @@
    });
 </script>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} readonly type="weight" />
 
@@ -261,7 +261,7 @@
    </Fieldset>
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Properties">
       <Select bind:value={material} label="Material">
          <Option value="Wood">Wood</Option>
@@ -322,7 +322,7 @@
    {/if}
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Cab">
       <InputLength bind:value={cabHeight} label="Height" {metric} />
 
@@ -377,7 +377,7 @@
    {/if}
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Finished Flooring">
       <InputLength bind:value={finFloorThickness} label="Thickness" {metric} />
 
@@ -410,7 +410,7 @@
    </Fieldset>
 </div>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Code Requirements">
       {#if loadingType === 'Passenger'}
          <InputNumber value={maxPlatformArea} label="Max Inside Platform Area" {metric} readonly step="0.01" type="area" />
@@ -433,14 +433,6 @@
 </div>
 
 <style lang="scss">
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
-
    .checkboxes {
       width: 300px;
       height: 56px;
