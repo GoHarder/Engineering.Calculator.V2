@@ -109,6 +109,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 19px;
+      margin-right: 11px;
       gap: 4px;
    }
 </style>
