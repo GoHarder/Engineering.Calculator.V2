@@ -1,5 +1,5 @@
 <script>
-   import { filterProps } from '../lib';
+   import { classList, filterProps } from '../lib';
 
    // Components
    // Stores
@@ -12,13 +12,14 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: props = filterProps($$props, ['title']);
+   $: props = filterProps($$props, ['class', 'title']);
+   $: fieldsetClass = classList([$$props.class]);
 
    // Events
    // Lifecycle
 </script>
 
-<fieldset {...props}>
+<fieldset {...props} class={fieldsetClass}>
    <legend>{title}</legend>
    <hr />
    <slot />
