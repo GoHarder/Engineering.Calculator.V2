@@ -78,16 +78,19 @@ $input-width: 300px;
 @mixin fieldset {
    border: none;
    margin: 0;
+   padding: 10px 12px;
 }
 
 @mixin fieldset-legend($border-color: rgba(0, 0, 0, 0.12)) {
    legend {
       font-size: 1.1rem;
-      margin: 6px 0 10px;
+      margin: 0;
       float: left;
       clear: right;
       cursor: default;
       user-select: none;
+      padding: 6px 2px;
+   
    }
 
    hr {
@@ -106,8 +109,15 @@ $input-width: 300px;
          font-family: 'Material Icons';
          content: ' \e3c9';
          position: absolute;
-         top: 0;
-         right: -24px;
+         top: 6px;
+         right: -30px;
+         width: 24px;
+         height: 24px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         background-color: white;
+         z-index: 10;
       }
    }
 }

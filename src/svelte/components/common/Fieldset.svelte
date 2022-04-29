@@ -20,7 +20,9 @@
 </script>
 
 <fieldset {...props} class={fieldsetClass}>
-   <legend>{title}</legend>
+   <div class="title">
+      <legend>{title}</legend>
+   </div>
    <hr />
    <slot />
 </fieldset>
@@ -32,5 +34,11 @@
       @include vantage.fieldset;
       @include vantage.paper;
       @include vantage.fieldset-legend(vantage.$primary);
+   }
+
+   .title {
+      display: flex;
+      align-items: center;
+      height: 36px;
    }
 </style>
