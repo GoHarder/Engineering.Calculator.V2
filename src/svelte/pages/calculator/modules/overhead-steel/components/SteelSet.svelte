@@ -1,28 +1,25 @@
 <script>
-   import { createEventDispatcher, onMount } from 'svelte';
-
+   import { createEventDispatcher } from 'svelte';
    import SteelCalculator from 'js/steelCalculator';
    import { clone } from 'lib/main.mjs';
 
    // Components
    import { StockStatusOptions } from 'components/common';
    import { Icon, IconButton } from 'components/material/button';
+   import { InputNumber } from 'components/material/input';
    import { Option, Select } from 'components/material/select';
    import { ToolTip } from 'components/material/tool-tip';
-
-   // Temporary
-   import { InputNumber } from 'components/material/input';
 
    import SteelMember from './SteelMember.svelte';
 
    // Stores
    // Properties
    export let axis;
-   export let delay = 0;
-   export let existing = false;
+   export let existing;
    export let id;
    export let label;
    export let members = [];
+   export let metric;
    export let name;
    export let reactions;
    export let shape;
@@ -35,8 +32,6 @@
    // Variables
    let options1 = [];
    let options2 = [];
-   let ranDelay = false;
-   let show = false;
 
    // Subscriptions
    // Contexts
@@ -53,59 +48,41 @@
       { rA: 0, rB: 0 }
    );
 
-   $: if (members[0].length === 0) {
-      show = true;
-   }
-
-   $: if (ranDelay && steelSizes.length > 0) {
-      show = true;
-   }
-
    // Events
-   const onCopy = () => {
-      const id = `member-${Date.now()}`;
+   const onCopyMember = () => {
+      const newMember = clone(members[0]);
 
-      const pointLoads = [...members[0].pointLoads].map((pointLoad) => {
-         pointLoad.show = false;
-         return { ...pointLoad };
+      newMember.id = `member-${Date.now()}`;
+
+      newMember.loads.map((load) => {
+         load.show = true;
+         return load;
       });
 
-      const newMember = { ...members[0], i: 2, id, label: `Copy of ${members[0].label}`, pointLoads, reactLoads: [] };
       members = [...members, newMember];
    };
 
-   const onDelete = () => {
-      dispatch('delete', id);
-   };
+   const onDelete = () => dispatch('delete', id);
 
    const onDeleteMember = (event) => {
-      members = [...members].filter((member) => member.id !== event.detail);
+      members = clone(members).filter((member) => member.id !== event.detail);
    };
 
    // Lifecycle
-   onMount(() => {
-      setTimeout(() => {
-         setTimeout(() => {
-            ranDelay = true;
-         }, delay);
-      }, 0);
-   });
 </script>
 
-<fieldset class:steel-set-skeleton={!show}>
-   <header>
-      <div class="label-div" data-tooltip-id={id}>
+<fieldset>
+   <div class="title">
+      <legend data-tooltip-id={id}>
          {#if members.length === 1}
-            <p class="label" bind:textContent={members[0].label} contenteditable="true" />
+            <span bind:textContent={members[0].label} contenteditable="true" />
          {:else}
-            <p class="label" bind:textContent={label} contenteditable="true" />
+            <span bind:textContent={label} contenteditable="true" />
          {/if}
-      </div>
-
-      <ToolTip {id}>Edit Label</ToolTip>
+      </legend>
 
       {#if members.length === 1}
-         <IconButton on:click={onCopy} class="density-3" toolTip="Copy">
+         <IconButton on:click={onCopyMember} class="density-3" toolTip="Copy">
             <Icon>file_copy</Icon>
          </IconButton>
       {/if}
@@ -113,47 +90,25 @@
       <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
          <Icon>close</Icon>
       </IconButton>
-   </header>
+   </div>
 
    <hr />
 
-   <SteelMember
-      on:addReaction
-      on:deleteReaction
-      on:delete={onDeleteMember}
-      bind:label={members[0].label}
-      bind:length={members[0].length}
-      bind:lengthRb={members[0].lengthRb}
-      bind:options={options1}
-      bind:pointLoads={members[0].pointLoads}
-      bind:reactLoads={members[0].reactLoads}
-      bind:rA={members[0].reactions.rA}
-      bind:rB={members[0].reactions.rB}
-      bind:o_lengthRb={members[0].o_lengthRb}
-      {axis}
-      delay={delay + 1000}
-      {existing}
-      i={members[0].i}
-      id={members[0].id}
-      {name}
-      setId={id}
-      {shape}
-      qty={members.length}
-   >
-      <Select bind:value={axis} label="Direction">
-         <Option value="x">Upright</Option>
-         <Option value="y">Side</Option>
-      </Select>
+   <div class="top">
+      <div>
+         <Select bind:value={axis} label="Orientation">
+            <Option value="x">Upright</Option>
+            <Option value="y">Sideways</Option>
+         </Select>
 
-      <Select bind:value={shape} label="Shape">
-         <Option value="cChannels">C Channel</Option>
-         <Option value="mcChannels">MC Channel</Option>
-         <Option value="sBeams">S Beam</Option>
-         <Option value="wBeams">W Beam</Option>
-      </Select>
+         <Select bind:value={shape} label="Shape">
+            <Option value="cChannels">C Channel</Option>
+            <Option value="mcChannels">MC Channel</Option>
+            <Option value="sBeams">S Beam</Option>
+            <Option value="wBeams">W Beam</Option>
+         </Select>
 
-      {#if shape && steelSizes.length > 0}
-         <Select bind:value={name} label="Size" options={steelSizes}>
+         <Select bind:value={name} label="Size" disabled={steelSizes.length < 1} options={steelSizes}>
             {#if supplied}
                <StockStatusOptions options={steelSizes} />
             {:else}
@@ -162,31 +117,51 @@
                {/each}
             {/if}
          </Select>
-      {/if}
-   </SteelMember>
+      </div>
 
-   <InputNumber value={reactions.rA} label="Reaction at R<sub>a</sub>" readonly type="weight" />
-   <InputNumber value={reactions.rB} label="Reaction at R<sub>b</sub>" readonly type="weight" />
+      <div>
+         <InputNumber value={reactions.rA} label="Reaction at R<sub>a</sub>" {metric} readonly type="weight" />
+
+         <InputNumber value={reactions.rB} label="Reaction at R<sub>b</sub>" {metric} readonly type="weight" />
+      </div>
+   </div>
+
+   <SteelMember
+      on:addLoad
+      bind:label={members[0].label}
+      bind:length={members[0].length}
+      bind:lengthRb={members[0].lengthRb}
+      bind:options={options1}
+      bind:loads={members[0].loads}
+      bind:rA={members[0].reactions.rA}
+      bind:rB={members[0].reactions.rB}
+      bind:o_lengthRb={members[0].o_lengthRb}
+      id={members[0].id}
+      {axis}
+      {existing}
+      i={1}
+      {name}
+      setId={id}
+      {shape}
+      qty={members.length}
+   />
 
    {#if members.length === 2}
       <SteelMember
-         on:addReaction
-         on:deleteReaction
+         on:addLoad
          on:delete={onDeleteMember}
          bind:label={members[1].label}
          bind:length={members[1].length}
          bind:lengthRb={members[1].lengthRb}
          bind:options={options2}
-         bind:pointLoads={members[1].pointLoads}
-         bind:reactLoads={members[1].reactLoads}
+         bind:loads={members[1].loads}
          bind:rA={members[1].reactions.rA}
          bind:rB={members[1].reactions.rB}
          bind:o_lengthRb={members[1].o_lengthRb}
-         {axis}
-         delay={delay + 2000}
-         {existing}
-         i={members[1].i}
          id={members[1].id}
+         {axis}
+         {existing}
+         i={2}
          {name}
          setId={id}
          {shape}
@@ -195,83 +170,29 @@
    {/if}
 </fieldset>
 
+<ToolTip {id}>Edit Label</ToolTip>
+
 <style lang="scss">
    @use 'src/scss/theme' as vantage;
-
-   header {
-      display: flex;
-      align-items: center;
-   }
-
-   .label {
-      @include vantage.edit-label;
-      font-size: 1.1rem;
-      margin: 6px 0 2px;
-      padding: 0 2px;
-   }
-
-   .label-div {
-      margin-right: auto;
-   }
-
    fieldset {
       @include vantage.fieldset;
       @include vantage.paper;
+      @include vantage.fieldset-legend(vantage.$primary);
    }
 
-   hr {
-      border: 1px solid vantage.$primary;
+   .title {
+      display: flex;
+      legend {
+         @include vantage.edit-label;
+         flex-grow: 1;
+         cursor: text;
+      }
    }
 
-   :global {
-      .steel-set-skeleton {
-         pointer-events: none;
-         .label-div,
-         .label {
-            animation: skeleton-loading 1s linear infinite alternate;
-            opacity: 0.7;
-            color: transparent;
-            border-radius: 4px;
-         }
-
-         .mdc-icon-button {
-            animation: skeleton-loading 1s linear infinite alternate;
-            opacity: 0.7;
-            color: transparent;
-            border-radius: 500px;
-         }
-
-         .mdc-button {
-            animation: skeleton-loading 1s linear infinite alternate;
-            opacity: 0.7;
-            border-radius: 4px;
-            .mdc-button__label {
-               color: transparent;
-            }
-            box-shadow: none;
-         }
-
-         // .mdc-text-field,
-         // .mdc-select {
-
-         .input {
-            animation: skeleton-loading 1s linear infinite alternate;
-            opacity: 0.7;
-            color: transparent;
-
-            > * {
-               display: none;
-            }
-         }
-      }
-
-      @keyframes skeleton-loading {
-         0% {
-            background-color: hsl(200, 0%, 70%);
-         }
-         100% {
-            background-color: hsl(200, 0%, 95%);
-         }
-      }
+   .top {
+      display: grid;
+      column-gap: 0.25em;
+      align-items: start;
+      grid-template-columns: repeat(auto-fill, min(300px, 404px));
    }
 </style>
