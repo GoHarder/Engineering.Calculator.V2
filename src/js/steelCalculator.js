@@ -116,7 +116,8 @@ export default class SteelCalculator {
 
             if (!table[key]) table[key] = { length: load.length, weight: 0 };
 
-            table[key].weight += load.weight;
+            // table[key].weight += load.weight;
+            table[key].weight += load.deadLoad + load.liveLoad;
 
             if (i !== this.loads.length - 1) return table;
 
