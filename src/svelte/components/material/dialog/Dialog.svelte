@@ -67,9 +67,9 @@
    onMount(() => {
       Dialog = new MDCDialog(divEle);
 
-      const buttons = divEle.querySelectorAll('button');
+      const buttons = divEle.querySelectorAll('.mdc-dialog__actions > button');
 
-      buttons.forEach((button) => {
+      buttons?.forEach((button) => {
          button.classList.add('mdc-dialog__button');
       });
    });
@@ -103,9 +103,11 @@
 
          <div class="mdc-dialog__content" id="dialog-content-{id}"><slot /></div>
 
-         <div class="mdc-dialog__actions">
-            <slot name="actions" />
-         </div>
+         {#if $$slots.actions}
+            <div class="mdc-dialog__actions">
+               <slot name="actions" />
+            </div>
+         {/if}
       </div>
    </div>
    <div class="mdc-dialog__scrim" />
