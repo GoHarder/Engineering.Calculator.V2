@@ -1,92 +1,18 @@
 <script>
-   import { createEventDispatcher } from 'svelte';
-
    // Components
-   import { Icon, IconButton } from 'components/material/button';
-   import { InputNumber, InputLength } from 'components/material/input';
-   import { Option, Select } from 'components/material/select';
-   import { ToolTip } from 'components/material/tool-tip';
-
    // Stores
    // Properties
-   export let id;
-   export let label;
-   export let length = 0;
-   export let reaction = false;
-   export let show;
-   export let liveLoad = 0;
-   export let deadLoad = 0;
-
    // Methods
    // Constants
-   const dispatch = createEventDispatcher();
-
    // Variables
    // Subscriptions
    // Contexts
    // Reactive Rules
    // Events
-   const onDelete = () => dispatch('delete', id);
-
    // Lifecycle
 </script>
 
-<div>
-   <header>
-      {#if reaction}
-         <p class="label">{label}</p>
-      {:else}
-         <p class="label edit" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
-         <ToolTip {id}>Edit Label</ToolTip>
-      {/if}
+<p>load</p>
 
-      <IconButton bind:on={show} toggle class="density-3" toolTip={show ? 'Minimize' : 'Maximize'}>
-         <Icon class="mdc-icon-button__icon--on">minimize</Icon>
-         <Icon>maximize</Icon>
-      </IconButton>
-
-      <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
-         <Icon>close</Icon>
-      </IconButton>
-   </header>
-
-   {#if show}
-      <InputLength bind:value={length} label="Length From R<sub>a</sub>" />
-
-      {#if !reaction}
-         <InputNumber bind:value={liveLoad} label="Live Load" type="weight" />
-
-         <InputNumber bind:value={deadLoad} label="Dead Load" type="weight" />
-      {:else}
-         <InputNumber bind:value={deadLoad} label="Dead Load" readonly type="weight" />
-      {/if}
-   {/if}
-</div>
-
-<hr />
-
-<style lang="scss">
-   @use './src/scss/theme' as vantage;
-
-   div {
-      margin-left: 8px;
-   }
-   header {
-      display: flex;
-      align-items: center;
-   }
-
-   hr {
-      margin: 0;
-   }
-
-   .label {
-      margin: 8px auto 8px 0;
-      user-select: none;
-
-      &.edit {
-         @include vantage.edit-label;
-         user-select: text;
-      }
-   }
+<style>
 </style>

@@ -1,6 +1,15 @@
+<script context="module">
+   let count = 1;
+
+   const getDelay = () => {
+      const current = count * 1000;
+      count++;
+      return current;
+   };
+</script>
+
 <script>
    import { createEventDispatcher, onMount } from 'svelte';
-   import { clone } from 'lib/main.mjs';
    import SteelCalculator from 'js/steelCalculator';
 
    // Components
@@ -12,23 +21,21 @@
 
    // Stores
    // Properties
-   export let axis;
-   export let delay = 0;
-   export let existing = false;
+   export let axis = 'x';
+   export let existing;
    export let i;
    export let id;
    export let label;
-   export let length = 0;
-   export let lengthRb = 0;
+   export let length;
+   export let lengthRb;
+   export let loads = [];
    export let name;
-   export let options = [];
-   export let pointLoads = [];
-   export let reactLoads = [];
-   export let rA = 0;
-   export let rB = 0;
-   export let setId = '';
-   export let shape;
+   export let options;
    export let qty;
+   export let rA;
+   export let rB;
+   export let setId;
+   export let shape;
 
    export let o_lengthRb = false;
 
@@ -38,23 +45,18 @@
    const dispatch = createEventDispatcher();
 
    // Variables
-   let loadIndex = 1;
    let run = false;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: _pointLoads = clone(pointLoads).map((load) => {
-      load.weight = load.liveLoad + load.deadLoad;
-      return load;
-   });
 
    // - Calculator Inputs
    $: Calc.shape = shape;
    $: Calc.axis = axis;
    $: Calc.length = length;
    $: Calc.lengthRb = lengthRb;
-   $: Calc.loads = [..._pointLoads, ...reactLoads];
+   $: Calc.loads = loads;
    $: Calc.existing = existing;
    $: Calc.name = name;
 
@@ -64,129 +66,62 @@
    $: rB = Calc.rB;
 
    // Events
-   const onAddLoad = () => {
-      const newLoad = {
-         id: `load-${Date.now()}`,
-         label: `Load ${loadIndex}`,
-         length: 0,
-         liveLoad: 0,
-         deadLoad: 0,
-         show: true,
-      };
+   const onAddLoad = () => dispatch('addLoad', { setId, memberId: id });
 
-      pointLoads = [...pointLoads, newLoad];
-      loadIndex++;
-   };
-
-   const onAddReaction = () => dispatch('addReaction', { set: setId, member: id });
-
-   const onDelete = () => {
-      dispatch('delete', id);
-   };
-
-   const onDeleteLoad = (event) => {
-      if (event.detail.includes('load')) {
-         pointLoads = [...pointLoads].filter((pointLoad) => pointLoad.id !== event.detail);
-      }
-
-      if (event.detail.includes('link')) {
-         dispatch('deleteReaction', event.detail);
-         reactLoads = [...reactLoads].filter((reactLoad) => reactLoad.id !== event.detail);
-      }
-   };
+   const onDelete = () => dispatch('delete', id);
 
    // Lifecycle
    onMount(() => {
+      const delay = getDelay();
+
       setTimeout(() => {
-         setTimeout(() => {
-            run = true;
-         }, delay);
-      }, 0);
+         run = true;
+      }, delay);
    });
 </script>
 
-{#if qty === 2}
-   {#if i === 2}
-      <hr />
-   {/if}
+<hr />
 
-   <header>
-      <p class="label" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
-      <ToolTip {id}>Edit Label</ToolTip>
+{#if qty === 2}
+   <div class="title">
+      <span class="label" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
 
       {#if i === 2}
          <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
             <Icon>close</Icon>
          </IconButton>
       {/if}
-   </header>
-
-   <hr />
+   </div>
 {/if}
 
-<div class="content">
-   <div class="member">
-      <InputLength bind:value={length} label="Length" />
+<InputLength bind:value={length} label="Length" />
 
-      <InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} />
+<InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} />
 
-      <slot />
-   </div>
+<Button on:click={onAddLoad} variant="contained">Add Load</Button>
 
-   <div class="vr" />
+{#if qty === 2}
+   <ToolTip {id}>Edit Label</ToolTip>
+{/if}
 
-   <div class="loads">
-      {#each reactLoads as { id, label, length, liveLoad, deadLoad, show } (id)}
-         <Load on:delete={onDeleteLoad} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} reaction={true} />
-      {/each}
-
-      {#each pointLoads as { id, label, length, liveLoad, deadLoad, show } (id)}
-         <Load on:delete={onDeleteLoad} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} reaction={false} />
-      {/each}
-
-      <div class="buttons">
-         <Button on:click={onAddLoad} style="margin: 8px; width:125px;" variant="contained">Add Load</Button>
-         <Button on:click={onAddReaction} style="margin: 8px; width:125px;" variant="contained">Add Reaction</Button>
-      </div>
-   </div>
-</div>
+{#each loads as load}
+   <Load />
+{/each}
 
 <style lang="scss">
    @use './src/scss/theme' as vantage;
 
-   .buttons {
-      display: flex;
-   }
-   header {
+   .title {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      height: 36px;
+      margin-bottom: 8px;
    }
 
    .label {
-      margin: 8px auto 8px 0;
       @include vantage.edit-label;
-   }
-
-   .content {
-      display: flex;
-   }
-
-   .vr {
-      width: 1px;
-      // margin: 0 8px;
-      background-color: rgba(0, 0, 0, 0.12);
-   }
-
-   hr {
-      margin: 0;
-   }
-
-   .loads {
-      width: 308px;
-   }
-
-   .member {
-      margin-top: 8px;
-      margin-right: 8px;
+      padding: 6px 2px;
+      flex-grow: 1;
    }
 </style>
