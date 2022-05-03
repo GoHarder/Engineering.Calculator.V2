@@ -44,18 +44,19 @@
    const helperId = `helper-text-${randomId()}`;
 
    // Variables
+   let Observer;
    let divEle1;
    let divEle2;
    let SelectIcon;
    let Select;
-   let menuItemValues = [];
+   // let menuItemValues = [];
    let useNativeValidation = true;
 
    // Subscriptions
    // Contexts
-   setContext('Select', {
-      getValue: (value) => (menuItemValues = [...menuItemValues, value]),
-   });
+   // setContext('Select', {
+   //    getValue: (value) => (menuItemValues = [...menuItemValues, value]),
+   // });
 
    // Reactive Rules
    $: props = filterProps($$props, ['calc', 'class', 'invalid', 'options', 'override', 'selected', 'fullWidth', 'label', 'link', 'value', 'type']);
@@ -81,12 +82,12 @@
 
    $: if (!override && calc !== undefined) value = calc;
 
-   $: if (value) update(value);
+   // $: if (value) update(value);
 
-   $: if (Select && menuItemValues) {
-      Select.layoutOptions();
-      update(value);
-   }
+   // $: if (Select && menuItemValues) {
+   //    Select.layoutOptions();
+   //    update(value);
+   // }
 
    $: if (options) {
       update(value);
@@ -94,6 +95,8 @@
 
    // Events
    const onChange = (event) => {
+      Select.layoutOptions();
+
       switch (type) {
          case 'number':
             value = parseFloat(event.detail.value);
@@ -126,11 +129,21 @@
 
    const onLink = () => history.pushState({ path: link }, '');
 
+   const onMutate = () => {
+      Select?.layoutOptions();
+      update(value);
+   };
+
    const onReset = () => (override = false);
 
    // Lifecycle
    onMount(() => {
       Select = new MDCSelect(divEle1);
+
+      const list = divEle2.querySelector('.mdc-deprecated-list');
+
+      Observer = new MutationObserver(onMutate);
+      Observer.observe(list, { childList: true });
 
       if (calc !== undefined) {
          const icon = divEle1.querySelector('.mdc-select__icon');
@@ -139,12 +152,7 @@
 
       if ($$slots.helperText) {
          const p = divEle1.nextElementSibling;
-         // const anchor = divEle1.querySelector('.mdc-select__anchor');
-
          p.id = helperId;
-         // anchor.ariaDescribedBy = helperId;
-
-         // console.log(anchor);
       }
 
       if (invalid !== undefined) {
@@ -152,6 +160,8 @@
       }
 
       Select.useNativeValidation = useNativeValidation;
+
+      update(value);
    });
 
    onDestroy(() => {
