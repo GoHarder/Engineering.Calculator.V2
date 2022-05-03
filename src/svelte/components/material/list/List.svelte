@@ -31,7 +31,7 @@
       const target = event.target.querySelector('.mdc-deprecated-list-item--selected');
 
       const detail = {
-         index: event.detail,
+         index: event.detail.index,
          target,
       };
 
