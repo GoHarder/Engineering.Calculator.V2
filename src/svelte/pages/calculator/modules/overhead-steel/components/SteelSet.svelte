@@ -140,6 +140,7 @@
       {axis}
       {existing}
       i={1}
+      {metric}
       {name}
       setId={id}
       {shape}
@@ -162,6 +163,7 @@
          {axis}
          {existing}
          i={2}
+         {metric}
          {name}
          setId={id}
          {shape}
