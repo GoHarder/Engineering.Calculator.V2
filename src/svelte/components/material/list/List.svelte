@@ -27,7 +27,16 @@
    $: ulClass = classList(['mdc-deprecated-list', dense ? 'mdc-deprecated-list--dense' : '', $$props.class]);
 
    // Events
-   const onAction = (event) => dispatch('action', event.detail);
+   const onAction = (event) => {
+      const target = event.target.querySelector('.mdc-deprecated-list-item--selected');
+
+      const detail = {
+         index: event.detail,
+         target,
+      };
+
+      dispatch('action', detail);
+   };
 
    // Lifecycle
    onMount(() => {
