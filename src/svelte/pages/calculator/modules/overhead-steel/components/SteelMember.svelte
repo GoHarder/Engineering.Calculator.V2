@@ -29,6 +29,7 @@
    export let length;
    export let lengthRb;
    export let loads = [];
+   export let metric;
    export let name;
    export let options;
    export let qty;
@@ -70,6 +71,14 @@
 
    const onDelete = () => dispatch('delete', id);
 
+   const onDeleteLoad = (event) => {
+      loads = loads.filter((load) => load.id !== event.detail);
+   };
+
+   const onUpdate = () => {
+      Calc.loads = loads;
+   };
+
    // Lifecycle
    onMount(() => {
       const delay = getDelay();
@@ -94,19 +103,25 @@
    </div>
 {/if}
 
-<InputLength bind:value={length} label="Length" />
+<div class="main">
+   <div class="form">
+      <InputLength bind:value={length} label="Length" {metric} />
 
-<InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} />
+      <InputLength bind:value={lengthRb} bind:override={o_lengthRb} label="Length to R<sub>b</sub>" calc={length} {metric} />
 
-<Button on:click={onAddLoad} variant="contained">Add Load</Button>
+      <Button on:click={onAddLoad} style="width: 150px;" variant="contained">Add Load</Button>
+   </div>
+
+   <div class="loads">
+      {#each loads as { id, label, length, liveLoad, deadLoad, show, type } (id)}
+         <Load on:delete={onDeleteLoad} on:update={onUpdate} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} {type} {metric} />
+      {/each}
+   </div>
+</div>
 
 {#if qty === 2}
    <ToolTip {id}>Edit Label</ToolTip>
 {/if}
-
-{#each loads as load}
-   <Load />
-{/each}
 
 <style lang="scss">
    @use './src/scss/theme' as vantage;
@@ -123,5 +138,13 @@
       @include vantage.edit-label;
       padding: 6px 2px;
       flex-grow: 1;
+   }
+
+   .main {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.25em;
+      row-gap: 1em;
+      width: fit-content;
    }
 </style>
