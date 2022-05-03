@@ -6,7 +6,7 @@
 import express from 'express';
 
 // Project Imports
-import { checkCache } from '../../../middleware/lib.mjs';
+import { checkAuth, checkCache } from '../../../middleware/lib.mjs';
 import { parseValue } from '../../../../lib/string.mjs';
 import { getBeams, getChannels } from '../../../data/mongodb/pipelines/overhead-steel.mjs';
 import { eng as engDB } from '../../../data/mongodb/mongodb.mjs';
@@ -49,4 +49,18 @@ router.get('/', async (req, res) => {
    await setEx(req.originalUrl, JSON.stringify(docs));
 
    res.status(200).json(docs);
+});
+
+router.get('/sheaves', checkAuth, async (req, res) => {
+   let sheaves = [];
+
+   const projection = { bearingBore: 0, shaftDiameter: 0, _uses: 0 };
+
+   try {
+      sheaves = await engDB.collection('sheaves').find({ _uses: 'overhead' }, { projection }).toArray();
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   res.status(200).json(sheaves);
 });
