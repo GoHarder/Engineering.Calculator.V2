@@ -1,5 +1,10 @@
+<script context="module">
+   // Poo
+</script>
+
 <script>
    import { createEventDispatcher } from 'svelte';
+   import { debounce } from 'lib/main.mjs';
 
    // Components
    import { Icon, IconButton } from 'components/material/button';
@@ -27,14 +32,17 @@
    // Methods
    // Constants
    const dispatch = createEventDispatcher();
+   const updateLabel = debounce((update) => (label = update), 5000);
 
    // Variables
+   let _label = label;
+
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: if (length || liveLoad || deadLoad) {
-      dispatch('update');
-   }
+   $: if (length || liveLoad || deadLoad) dispatch('update');
+
+   $: updateLabel(_label);
 
    // Events
    const onDelete = () => dispatch('delete', id);
@@ -45,7 +53,7 @@
 <div class="load" class:show>
    <div class="title">
       {#if type === 'load'}
-         <span class="label edit" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
+         <span class="label edit" bind:textContent={_label} contenteditable="true" data-tooltip-id={id} />
       {:else}
          <span class="label">{label}</span>
       {/if}
@@ -68,11 +76,17 @@
             <InputNumber bind:value={liveLoad} label="Live Load" type="weight" {metric} />
 
             <InputNumber bind:value={deadLoad} label="Dead Load" type="weight" {metric} />
-         {:else if type === 'hitch'}
+         {/if}
+
+         {#if type === 'reaction'}
+            <InputNumber value={deadLoad} label="Dead Load" readonly type="weight" {metric} />
+         {/if}
+
+         <!-- {:else if type === 'hitch'}
             <InputNumber value={liveLoad} label="Live Load" readonly type="weight" {metric} />
 
             <InputNumber value={deadLoad} label="Dead Load" readonly type="weight" {metric} />
-         {/if}
+         {/if} -->
       {/if}
    </div>
 </div>

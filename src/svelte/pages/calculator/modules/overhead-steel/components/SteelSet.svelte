@@ -1,7 +1,7 @@
 <script>
    import { createEventDispatcher } from 'svelte';
    import SteelCalculator from 'js/steelCalculator';
-   import { clone } from 'lib/main.mjs';
+   import { clone, debounce } from 'lib/main.mjs';
 
    // Components
    import { StockStatusOptions } from 'components/common';
@@ -26,16 +26,24 @@
    export let supplied;
 
    // Methods
+   const updateLabel1 = debounce((update) => (label = update), 5000);
+   const updateLabel2 = debounce((update) => (members[0].label = update), 5000);
+
    // Constants
    const dispatch = createEventDispatcher();
 
    // Variables
    let options1 = [];
    let options2 = [];
+   let _label1 = label;
+   let _label2 = members[0].label;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: updateLabel1(_label1);
+   $: updateLabel2(_label2);
+
    $: steelSizes = SteelCalculator.sortOptions(options1, options2) || [];
 
    $: reactions = clone(members).reduce(
@@ -55,7 +63,7 @@
       newMember.id = `member-${Date.now()}`;
 
       newMember.loads.map((load) => {
-         load.show = true;
+         load.show = false;
          return load;
       });
 
@@ -75,9 +83,9 @@
    <div class="title">
       <legend data-tooltip-id={id}>
          {#if members.length === 1}
-            <span bind:textContent={members[0].label} contenteditable="true" />
+            <span bind:textContent={_label2} contenteditable="true" />
          {:else}
-            <span bind:textContent={label} contenteditable="true" />
+            <span bind:textContent={_label1} contenteditable="true" />
          {/if}
       </legend>
 
@@ -186,8 +194,12 @@
       display: flex;
       legend {
          @include vantage.edit-label;
-         flex-grow: 1;
          cursor: text;
+         display: flex;
+         flex-grow: 1;
+         span {
+            flex-grow: 1;
+         }
       }
    }
 

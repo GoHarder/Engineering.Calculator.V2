@@ -11,6 +11,7 @@
 <script>
    import { createEventDispatcher, onMount } from 'svelte';
    import SteelCalculator from 'js/steelCalculator';
+   import { debounce } from 'lib/main.mjs';
 
    // Components
    import { Button, Icon, IconButton } from 'components/material/button';
@@ -41,16 +42,20 @@
    export let o_lengthRb = false;
 
    // Methods
+   const updateLabel = debounce((update) => (label = update), 5000);
+
    // Constants
    const Calc = new SteelCalculator();
    const dispatch = createEventDispatcher();
 
    // Variables
    let run = false;
+   let _label = label;
 
    // Subscriptions
    // Contexts
    // Reactive Rules
+   $: updateLabel(_label);
 
    // - Calculator Inputs
    $: Calc.shape = shape;
@@ -93,7 +98,7 @@
 
 {#if qty === 2}
    <div class="title">
-      <span class="label" bind:textContent={label} contenteditable="true" data-tooltip-id={id} />
+      <span class="label" bind:textContent={_label} contenteditable="true" data-tooltip-id={id} />
 
       {#if i === 2}
          <IconButton on:click={onDelete} class="density-3" toolTip="Delete">
@@ -138,6 +143,7 @@
       @include vantage.edit-label;
       padding: 6px 2px;
       flex-grow: 1;
+      max-width: calc(100% - 36px);
    }
 
    .main {
