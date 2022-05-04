@@ -12,6 +12,12 @@ import { router as api } from './api/router.mjs';
 /** The router for the module */
 export const router = express.Router();
 
+// Middleware
+export const headers = (req, res, next) => {
+   if (req.url === '/sw.js') res.set('Service-Worker-Allowed', '/');
+   next();
+};
+
 // Routes
 
 // - Index page
@@ -32,4 +38,4 @@ router.use('/api', api);
 router.get('/ping', (req, res) => res.status(202).send());
 
 // - Static files route
-router.use('/public', express.static('./public'));
+router.use('/public', headers, express.static('./public'));

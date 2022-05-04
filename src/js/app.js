@@ -2,6 +2,11 @@ import '../scss/style.scss';
 import App from '../svelte/App.svelte';
 import Nav from '../svelte/Nav.svelte';
 
+// Start service worker
+if ('serviceWorker' in navigator) {
+   navigator.serviceWorker.register('public/sw.js', { scope: '/' });
+}
+
 // Monkey patch to add a custom location change event to window
 history.pushState = ((f) =>
    function pushState() {

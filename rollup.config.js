@@ -55,4 +55,14 @@ const appBuild = {
    },
 };
 
-export default [appBuild];
+const serviceWorker = {
+   input: `src/js/sw.js`,
+   output: {
+      sourcemap: !production,
+      format: 'iife',
+      name: `sw`,
+      file: `public/sw.js`,
+   },
+};
+
+export default [appBuild, serviceWorker];

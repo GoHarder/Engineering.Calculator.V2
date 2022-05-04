@@ -2,3 +2,5 @@
 app.js
 app.css
 app.js.map
+sw.js
+sw.js.map
