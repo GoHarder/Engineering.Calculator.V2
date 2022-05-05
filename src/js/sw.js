@@ -1,15 +1,35 @@
-self.addEventListener('install', (event) => {
-   console.log('Installing Service Worker');
+import { version } from '../../build/release.json';
+import { cacheAll, cleanCaches } from './cache';
 
-   // caches.open('d');
+const staticName = `static v${version}`;
+const dynamicName = `dynamic v${version}`;
+
+const shell = ['/', '/public/img/vantage-logo.svg', 'https://fonts.googleapis.com/icon?family=Material+Icons', 'https://fonts.googleapis.com/css?family=Open+Sans'];
+
+const inShell = (string, array) => {
+   let cachePath = string;
+   if (string.indexOf(self.origin) === 0) cachePath = string.substring(self.origin.length);
+   return array.indexOf(cachePath) > -1;
+};
+
+self.addEventListener('install', (event) => {
+   event.waitUntil(cacheAll(staticName, shell));
 });
 
 self.addEventListener('activate', (event) => {
-   console.log('Activating Service Worker');
-   return self.clients.claim();
+   event.waitUntil(cleanCaches([dynamicName, staticName]));
+   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-   console.log('fetching...');
-   event.respondWith(fetch(event.request));
+   if (event.request.url.match('^.*(fonts.gstatic).*$')) {
+      console.log('font file');
+      return false;
+   }
+
+   if (inShell(event.request.url, shell)) {
+      event.respondWith(caches.match(event.request));
+   }
+
+   return false;
 });

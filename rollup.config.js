@@ -63,6 +63,7 @@ const serviceWorker = {
       name: `sw`,
       file: `public/sw.js`,
    },
+   plugins: [json()],
 };
 
 export default [appBuild, serviceWorker];
