@@ -57,12 +57,12 @@ const intTerm = (str) => {
    str = str.trim();
 
    if (!str.match(/x(\^\d)?/g)) return `${str}*x`;
+   if (str === 'x') str = '1*x';
 
    // Break down string
    const sign = str.match(/-/g)?.[0] ?? '';
    let number = str.match(/(\d+(\.\d+)?)/g)[0];
    let exponent = parseInt(str.match(/\^(\d+)/)?.[1]) + 1 || 2;
-
    number = nerdamer(`${number}/${exponent}`).text();
    nerdamer.clear('all');
 
