@@ -1,5 +1,5 @@
 import { version } from '../../build/release.json';
-import { cacheAll, cleanCaches } from './cache';
+import { cacheAll, cacheFirst, cleanCaches } from './cache';
 
 const staticName = `static v${version}`;
 const dynamicName = `dynamic v${version}`;
@@ -23,8 +23,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
    if (event.request.url.match('^.*(fonts.gstatic).*$')) {
-      console.log('font file');
-      return false;
+      event.respondWith(cacheFirst(dynamicName, event.request));
    }
 
    if (inShell(event.request.url, shell)) {

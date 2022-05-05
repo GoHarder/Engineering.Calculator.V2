@@ -20,3 +20,28 @@ export const cleanCaches = async (currentNames) => {
       })
    );
 };
+
+/**
+ * Puts an asset into the cache
+ * @param {string} cacheName The name of the cache
+ * @param {object} req The request object
+ * @param {object} res The response object
+ */
+const putInCache = async (cacheName, req, res) => {
+   const cache = await caches.open(cacheName);
+   await cache.put(req, res);
+};
+
+/**
+ * Responds to a request from the cache first then the server
+ * @param {string} cacheName The name of the cache
+ * @param {object} req The request object
+ */
+export const cacheFirst = async (cacheName, req) => {
+   const cacheRes = await caches.match(req);
+   if (cacheRes) return cacheRes;
+
+   const serverRes = await fetch(req);
+   putInCache(cacheName, req, serverRes.clone());
+   return serverRes;
+};
