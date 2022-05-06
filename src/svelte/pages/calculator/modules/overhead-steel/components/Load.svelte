@@ -78,15 +78,13 @@
             <InputNumber bind:value={deadLoad} label="Dead Load" type="weight" {metric} />
          {/if}
 
-         {#if type === 'reaction'}
-            <InputNumber value={deadLoad} label="Dead Load" readonly type="weight" {metric} />
+         {#if type === 'hitch'}
+            <InputNumber value={liveLoad} label="Live Load" readonly type="weight" {metric} />
          {/if}
 
-         <!-- {:else if type === 'hitch'}
-            <InputNumber value={liveLoad} label="Live Load" readonly type="weight" {metric} />
-
+         {#if ['hitch', 'reactions'].includes(type)}
             <InputNumber value={deadLoad} label="Dead Load" readonly type="weight" {metric} />
-         {/if} -->
+         {/if}
       {/if}
    </div>
 </div>
