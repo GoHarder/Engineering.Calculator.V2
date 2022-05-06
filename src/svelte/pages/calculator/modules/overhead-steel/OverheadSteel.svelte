@@ -2,7 +2,6 @@
    import { onMount } from 'svelte';
    import { clone, deepMerge } from 'lib/main.mjs';
    import { round } from 'lib/math.mjs';
-   import { capitalize } from 'lib/string.mjs';
    import { OverheadSteelLinks as Links } from '../links';
 
    // Components
@@ -12,6 +11,7 @@
    import { Dialog, Title } from 'components/material/dialog';
    import { Input, InputNumber } from 'components/material/input';
    import { Item, List, SubHeader } from 'components/material/list';
+   import { Option, Select } from 'components/material/select';
 
    import SteelSet from './components/SteelSet.svelte';
 
@@ -84,16 +84,17 @@
    Links.setProject(modules);
 
    const dialogs = {
-      default: { title: 'Select Load Type' },
-      hitch: { title: 'Dead End Hitch Location' },
-      reaction: { title: 'Select Reaction' },
-      sheave: { title: 'Sheave Location' },
+      default: { title: 'Select Load Type', height: 'fit-content' },
+      hitch: { title: 'Dead End Hitch', height: '134px' },
+      reaction: { title: 'Reaction', height: '134px' },
+      sheave: { title: 'Sheave', height: '134px' },
    };
 
    // Variables
    let Observer;
    let divEle;
    let sizeClass = 'large';
+   let location = 'car';
    let sheaves = [];
 
    // - Load Dialog
@@ -113,7 +114,7 @@
    let supplied = module?.existing ?? false;
    let steelSets = module?.steelSets ?? [];
 
-   // $: console.log(steelSets);
+   $: console.log(steelSets);
 
    // Subscriptions
    // Contexts
@@ -129,23 +130,8 @@
    }, []);
 
    $: if (reactions.length > 0) {
-      reactions.map((reaction) => {
-         const from = steelSets.find((set) => set.id === reaction.from);
-         if (!from) return;
-         const label = from.members.length === 1 ? from.members[0].label : from.label;
-         reaction.label = `${label} ${capitalize(use.toLowerCase())}`;
-         reaction.deatLoad = from.reactions[reaction.use];
-      });
+      // console.log(reactions);
    }
-
-   $: hitches = members.reduce((array, member) => {
-      const loads = member.loads.filter((load) => load.type === 'hitch');
-      const locations = loads.map((load) => {
-         return load.location;
-      });
-
-      return [...array, ...locations];
-   }, []);
 
    // Events
    const onAddSet = () => {
@@ -196,39 +182,9 @@
 
    const onDeleteSet = (event) => {
       steelSets = [...steelSets].filter((set) => set.id !== event.detail);
-      const update = clone(steelSets);
-      const members = update.reduce((array, set) => [...array, ...set.members], []);
-      members.map((member) => {
-         member.loads = member.loads.filter((load) => load.from !== event.detail);
-      });
-      steelSets = update;
    };
 
    // Routes for select load
-   const addHitch = (event) => {
-      const update = clone(steelSets);
-      const { setId, memberId } = loadEvent.detail;
-      const set = update.find((_set) => _set.id === setId);
-      const member = set.members.find((_member) => _member.id === memberId);
-      const type = event.detail.target.dataset.select;
-
-      const newLoad = {
-         id: `load-${Date.now()}`,
-         type: 'hitch',
-         label: `${capitalize(type)} Dead End Hitch`,
-         length: 0,
-         liveLoad: type === 'car' ? carLiveLoad : cwtLiveLoad,
-         location: type,
-         deadLoad: 50,
-         show: true,
-      };
-
-      member.loads.push(newLoad);
-      steelSets = update;
-      loadEvent = undefined;
-      loadDialog = false;
-   };
-
    const addLoad = () => {
       const update = clone(steelSets);
       const { setId, memberId } = loadEvent.detail;
@@ -268,7 +224,7 @@
          from: from.id,
          use,
          type: 'reaction',
-         label: `${label} ${capitalize(use.toLowerCase())}`,
+         label: `${label} R${use.split('')[1].toLowerCase()}`,
          length: 0,
          liveLoad: 0,
          deadLoad: from.reactions[use],
@@ -287,7 +243,6 @@
       const cases = {
          load: addLoad,
          reaction: () => (dialog = 'reaction'),
-         hitch: () => (dialog = 'hitch'),
       };
 
       cases[type]();
@@ -347,17 +302,6 @@
                <Item data-select="{from}_rB">Rb {rB}lb</Item>
             </SubHeader>
          {/each}
-      </List>
-   {/if}
-
-   {#if dialog === 'hitch'}
-      <List on:action={addHitch} dense singleSelection>
-         {#if !hitches.includes('car')}
-            <Item data-select="car">Car</Item>
-         {/if}
-         {#if !hitches.includes('counterweight')}
-            <Item data-select="counterweight">Counterweight</Item>
-         {/if}
       </List>
    {/if}
 
