@@ -82,7 +82,7 @@
             <InputNumber value={liveLoad} label="Live Load" readonly type="weight" {metric} />
          {/if}
 
-         {#if ['hitch', 'reactions'].includes(type)}
+         {#if ['hitch', 'reaction'].includes(type)}
             <InputNumber value={deadLoad} label="Dead Load" readonly type="weight" {metric} />
          {/if}
       {/if}
