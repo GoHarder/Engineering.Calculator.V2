@@ -16,8 +16,6 @@
    import SteelSet from './components/SteelSet.svelte';
 
    // Stores
-   // import fetchStore from 'stores/fetch';
-
    // Properties
    export let project;
    export const updateModule = () => {
@@ -48,33 +46,6 @@
    };
 
    // Methods
-   // const getSheaves = async () => {
-   //    const token = localStorage.getItem('token');
-
-   //    // Run fetch
-   //    fetchStore.loading(true);
-   //    let res, body;
-
-   //    try {
-   //       res = await fetch(`api/engineering/overhead-steel/sheaves`, {
-   //          method: 'GET',
-   //          headers: {
-   //             Authorization: `Bearer ${token}`,
-   //          },
-   //       });
-
-   //       if (res.body && res.status !== 204) body = await res.json();
-
-   //       if (!res.ok) throw new Error(body.message);
-
-   //       fetchStore.loading(false);
-
-   //       sheaves = [...body];
-   //    } catch (error) {
-   //       fetchStore.setError({ res, error });
-   //    }
-   // };
-
    // Constants
    const { globals, metric, modules } = project;
    const { overheadSteel: module } = modules;
@@ -96,6 +67,7 @@
    // let sizeClass = 'large';
    // let location = 'car';
    // let sheaves = [];
+   let sheaveLocations = { car: true, cwt: true };
 
    // - Load Dialog
    let dialog = 'default';
@@ -146,6 +118,50 @@
       });
       return [...array, ...locations];
    }, []);
+
+   $: sheaves = members.reduce((array, member) => {
+      const loads = member.loads.filter((load) => load.type === 'sheave');
+      return [...array, ...loads];
+   }, []);
+
+   $: if (sheaves.length > 0 && loadEvent !== undefined) {
+      const { memberId } = loadEvent.detail;
+      let car = true;
+      let cwt = true;
+
+      sheaveLocations = sheaves.reduce((object, sheave, i) => {
+         const key = sheave.member;
+
+         if (key in object === false) {
+            object[key] = { car: 0, cwt: 0 };
+         }
+
+         if (sheave.location === 'car') {
+            object[key].car++;
+            car = false;
+         }
+
+         if (sheave.location === 'counterweight') {
+            object[key].cwt++;
+            cwt = false;
+         }
+
+         if (i === sheaves.length - 1) {
+            if (object[memberId]) {
+               const count = object[memberId];
+
+               return { car: count.car < 2, cwt: count.cwt < 2 };
+            } else {
+               return { car, cwt };
+            }
+         }
+
+         return object;
+      }, {});
+   }
+
+   // $: console.log(loadEvent);
+   $: console.log(sheaveLocations);
 
    // Events
    const onAddSet = () => {
@@ -279,6 +295,35 @@
       loadDialog = false;
    };
 
+   const addSheave = (event) => {
+      const update = clone(steelSets);
+      const { setId, memberId } = loadEvent.detail;
+      const set = update.find((_set) => _set.id === setId);
+      const member = set.members.find((_member) => _member.id === memberId);
+      const type = event.detail.target.dataset.select;
+
+      const newLoad = {
+         id: `load-${Date.now()}`,
+         type: 'sheave',
+         label: `${capitalize(type)} Sheave`,
+         length: 0,
+         baseLiveLoad: type === 'car' ? carLiveLoad : cwtLiveLoad,
+         liveLoad: 0,
+         location: type,
+         deadLoad: 50,
+         sheave: '',
+         diameter: 0,
+         aoc: 180,
+         show: true,
+         member: member.id,
+      };
+
+      member.loads.push(newLoad);
+      steelSets = update;
+      loadEvent = undefined;
+      loadDialog = false;
+   };
+
    const onSelectLoad = (event) => {
       const type = event.detail.target.dataset.dialog;
 
@@ -286,6 +331,7 @@
          load: addLoad,
          reaction: () => (dialog = 'reaction'),
          hitch: () => (dialog = 'hitch'),
+         sheave: () => (dialog = 'sheave'),
       };
 
       cases[type]();
@@ -354,6 +400,17 @@
             <Item data-select="car">Car</Item>
          {/if}
          {#if !hitches.includes('counterweight')}
+            <Item data-select="counterweight">Counterweight</Item>
+         {/if}
+      </List>
+   {/if}
+
+   {#if dialog === 'sheave'}
+      <List on:action={addSheave} dense singleSelection>
+         {#if sheaveLocations.car}
+            <Item data-select="car">Car</Item>
+         {/if}
+         {#if sheaveLocations.cwt}
             <Item data-select="counterweight">Counterweight</Item>
          {/if}
       </List>
