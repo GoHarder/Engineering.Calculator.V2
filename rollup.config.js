@@ -47,7 +47,7 @@ const appBuild = {
       svg(),
       resolve(resolveConfig),
       commonjs(),
-      !production && livereload('public'),
+      !production && livereload({ watch: 'public', delay: 500 }),
       production && terser(),
    ],
    watch: {
