@@ -18,7 +18,10 @@
    import { InputLength } from 'components/material/input';
    import { ToolTip } from 'components/material/tool-tip';
 
+   import Hitch from './Hitch.svelte';
    import Load from './Load.svelte';
+   import Reaction from './Reaction.svelte';
+   import Sheave from './Sheave.svelte';
 
    // Stores
    // Properties
@@ -117,9 +120,23 @@
       <Button on:click={onAddLoad} style="width: 150px;" variant="contained">Add Load</Button>
    </div>
 
-   <div class="loads">
-      {#each loads as { id, label, length, liveLoad, deadLoad, show, type } (id)}
-         <Load on:delete={onDeleteLoad} on:update={onUpdate} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} {type} {metric} />
+   <div class="steel-member loads">
+      {#each loads as { id, label, length, liveLoad, deadLoad, diameter, sheave, show, type } (id)}
+         {#if type === 'hitch'}
+            <Hitch on:delete={onDeleteLoad} on:update={onUpdate} bind:length bind:show {deadLoad} {id} {label} {liveLoad} {metric} />
+         {/if}
+
+         {#if type === 'load'}
+            <Load on:delete={onDeleteLoad} on:update={onUpdate} bind:label bind:length bind:liveLoad bind:deadLoad bind:show {id} {metric} />
+         {/if}
+
+         {#if type === 'reaction'}
+            <Reaction on:delete={onDeleteLoad} on:update={onUpdate} bind:length bind:show {deadLoad} {id} {label} {metric} />
+         {/if}
+
+         {#if type === 'sheave'}
+            <Sheave on:delete={onDeleteLoad} on:update={onUpdate} bind:label bind:length bind:liveLoad bind:deadLoad bind:diameter bind:sheave bind:show {id} {metric} />
+         {/if}
       {/each}
    </div>
 </div>
@@ -152,5 +169,42 @@
       column-gap: 0.25em;
       row-gap: 1em;
       width: fit-content;
+   }
+
+   :global {
+      .steel-member.loads {
+         .load {
+            border: 1px solid rgb(224, 224, 224);
+            margin: 0 -1px -1px 0;
+            padding: 0.25em 0 0.25em 0.5em;
+            width: min(318px, 422px);
+
+            &.show > .title {
+               margin-bottom: 8px;
+            }
+         }
+
+         .title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 36px;
+            margin-bottom: 0px;
+         }
+
+         .label {
+            padding: 6px 2px;
+            flex-grow: 1;
+            cursor: default;
+         }
+
+         .edit {
+            @include vantage.edit-label;
+         }
+
+         .form {
+            margin-right: 0.5em;
+         }
+      }
    }
 </style>
