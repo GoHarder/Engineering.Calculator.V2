@@ -160,8 +160,7 @@
       }, {});
    }
 
-   // $: console.log(loadEvent);
-   $: console.log(sheaveLocations);
+   // $: console.log(steelSets);
 
    // Events
    const onAddSet = () => {
@@ -307,15 +306,13 @@
          type: 'sheave',
          label: `${capitalize(type)} Sheave`,
          length: 0,
-         baseLiveLoad: type === 'car' ? carLiveLoad : cwtLiveLoad,
          liveLoad: 0,
          location: type,
-         deadLoad: 50,
+         deadLoad: 0,
          sheave: '',
          diameter: 0,
-         aoc: 180,
+         elevation: 0,
          show: true,
-         member: member.id,
       };
 
       member.loads.push(newLoad);

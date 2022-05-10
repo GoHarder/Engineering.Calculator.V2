@@ -121,7 +121,7 @@
    </div>
 
    <div class="steel-member loads">
-      {#each loads as { id, label, length, liveLoad, deadLoad, diameter, sheave, show, type } (id)}
+      {#each loads as { elevation, id, label, length, liveLoad, deadLoad, diameter, sheave, show, type } (id)}
          {#if type === 'hitch'}
             <Hitch on:delete={onDeleteLoad} on:update={onUpdate} bind:length bind:show {deadLoad} {id} {label} {liveLoad} {metric} />
          {/if}
@@ -135,7 +135,20 @@
          {/if}
 
          {#if type === 'sheave'}
-            <Sheave on:delete={onDeleteLoad} on:update={onUpdate} bind:label bind:length bind:liveLoad bind:deadLoad bind:diameter bind:sheave bind:show {id} {metric} />
+            <Sheave
+               on:delete={onDeleteLoad}
+               on:update={onUpdate}
+               bind:elevation
+               bind:label
+               bind:length
+               bind:liveLoad
+               bind:deadLoad
+               bind:diameter
+               bind:sheave
+               bind:show
+               {id}
+               {metric}
+            />
          {/if}
       {/each}
    </div>

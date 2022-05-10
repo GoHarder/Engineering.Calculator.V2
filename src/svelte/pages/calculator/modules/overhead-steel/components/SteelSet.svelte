@@ -1,5 +1,6 @@
 <script>
-   import { createEventDispatcher } from 'svelte';
+   import { createEventDispatcher, setContext } from 'svelte';
+   import { writable } from 'svelte/store';
    import SteelCalculator from 'js/steelCalculator';
    import { clone, debounce } from 'lib/main.mjs';
 
@@ -31,18 +32,26 @@
 
    // Constants
    const dispatch = createEventDispatcher();
+   const contextStore = writable({});
 
    // Variables
    let options1 = [];
    let options2 = [];
    let _label1 = label;
    let _label2 = members[0].label;
+   let memberObj;
 
    // Subscriptions
    // Contexts
+   setContext('steelSet', {
+      getMemberObj: () => memberObj,
+      contextStore,
+   });
+
    // Reactive Rules
    $: updateLabel1(_label1);
    $: updateLabel2(_label2);
+   $: contextStore.set(memberObj);
 
    $: steelSizes = SteelCalculator.sortOptions(options1, options2) || [];
 
@@ -116,7 +125,7 @@
             <Option value="wBeams">W Beam</Option>
          </Select>
 
-         <Select bind:value={name} label="Size" disabled={steelSizes.length < 1} options={steelSizes}>
+         <Select bind:value={name} bind:selected={memberObj} label="Size" disabled={steelSizes.length < 1} options={steelSizes}>
             {#if supplied}
                <StockStatusOptions options={steelSizes} />
             {:else}
