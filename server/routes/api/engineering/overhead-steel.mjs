@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
 router.get('/sheaves', checkAuth, async (req, res) => {
    let sheaves = [];
 
-   const projection = { bearingBore: 0, shaftDiameter: 0, _uses: 0 };
+   const projection = { bearingBore: 0, shaftDiameter: 0, _uses: 0, 'pillowBlocks.height': 0, 'pillowBlocks.width': 0, 'pillowBlocks.length': 0 };
 
    try {
       sheaves = await engDB.collection('sheaves').find({ _uses: 'overhead' }, { projection }).toArray();
