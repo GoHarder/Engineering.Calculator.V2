@@ -119,7 +119,7 @@
          onPrevious();
       }
 
-      if (event.ctrlKey && event.key === 'Enter') {
+      if (event.ctrlKey && event.key === 'b') {
          showDrawer = !showDrawer;
       }
    };
