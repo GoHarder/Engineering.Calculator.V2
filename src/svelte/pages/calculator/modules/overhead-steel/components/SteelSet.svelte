@@ -137,9 +137,9 @@
       </div>
 
       <div>
-         <InputNumber value={reactions.rA} label="Reaction at R<sub>a</sub>" {metric} readonly type="weight" />
+         <InputNumber value={reactions.rA} label="Reaction at R<sub>a</sub>" {metric} readonly step="0.1" type="weight" />
 
-         <InputNumber value={reactions.rB} label="Reaction at R<sub>b</sub>" {metric} readonly type="weight" />
+         <InputNumber value={reactions.rB} label="Reaction at R<sub>b</sub>" {metric} readonly step="0.1" type="weight" />
       </div>
    </div>
 

@@ -1,6 +1,6 @@
 <script>
    import { onMount } from 'svelte';
-   import { clone, deepMerge } from 'lib/main.mjs';
+   import { clone, deepMerge, debounce } from 'lib/main.mjs';
    import { capitalize } from 'lib/string.mjs';
    import { round } from 'lib/math.mjs';
    import { OverheadSteelLinks as Links } from '../links';
@@ -46,6 +46,44 @@
    };
 
    // Methods
+   const sheaveLiveLoad = debounce((sheaves, load) => {
+      if (sheaves.length === 0) return;
+
+      const ropeLoad = round(load / 2, 1);
+
+      if (sheaves.length === 1) {
+         // NOTE: 5-11-2022 2:55 PM - split between two channels
+         sheaves[0].liveLoad = round(load / 2, 1);
+         return;
+      }
+
+      sheaves = sheaves.sort((a, b) => b.elevation - a.elevation);
+
+      const distX = Math.abs(sheaves[1].length - sheaves[0].length);
+      const distY = sheaves[0].elevation - sheaves[1].elevation;
+      const hypotenuse = Math.sqrt(distX ** 2 + distY ** 2);
+      const angle1 = Math.atan(distY / distX);
+      const angle2 = Math.asin((sheaves[0].diameter / 2 - sheaves[1].diameter / 2) / hypotenuse);
+      const sheave1AOC = angle1 + angle2 + Math.PI / 2;
+      // const sheave2AOC = Math.PI - sheave1AOC;
+
+      if (sheave1AOC * (180 / Math.PI) === 90) {
+         sheaves[0].liveLoad = round(ropeLoad / 2, 1);
+         sheaves[1].liveLoad = round(ropeLoad / 2, 1);
+         return;
+      }
+
+      const ropeAngle = Math.PI - sheave1AOC;
+      const loadX = Math.cos(ropeAngle) * ropeLoad;
+
+      sheaves[0].liveLoad = round((ropeLoad + loadX) / 2, 1);
+      sheaves[1].liveLoad = round((ropeLoad - loadX) / 2, 1);
+
+      // console.log(sheaves);
+      // console.log('angle 1', round(angle1 * (180 / Math.PI), 2));
+      // console.log('sheave 2', round(sheave2AOC * (180 / Math.PI), 2));
+   }, 5000);
+
    // Constants
    const { globals, metric, modules } = project;
    const { overheadSteel: module } = modules;
@@ -63,7 +101,7 @@
 
    // Variables
    // let Observer;
-   let divEle;
+   // let divEle;
    // let sizeClass = 'large';
    // let location = 'car';
    // let sheaves = [];
@@ -160,7 +198,15 @@
       }, {});
    }
 
-   // $: console.log(steelSets);
+   $: carSheaves = sheaves.filter((sheave) => sheave.location === 'car');
+
+   $: cwtSheaves = sheaves.filter((sheave) => sheave.location === 'counterweight');
+
+   $: sheaveLiveLoad(carSheaves, carLiveLoad);
+
+   $: sheaveLiveLoad(cwtSheaves, cwtLiveLoad);
+
+   $: console.log(carSheaves);
 
    // Events
    const onAddSet = () => {
@@ -231,9 +277,9 @@
          type: 'hitch',
          label: `${capitalize(type)} Dead End Hitch`,
          length: 0,
-         liveLoad: type === 'car' ? carLiveLoad : cwtLiveLoad,
+         liveLoad: round((type === 'car' ? carLiveLoad : cwtLiveLoad) / 2, 1),
          location: type,
-         deadLoad: 50,
+         deadLoad: 25,
          show: true,
       };
       member.loads.push(newLoad);
@@ -311,7 +357,10 @@
          deadLoad: 0,
          sheave: '',
          diameter: 0,
+         deflector: false,
+         block: '',
          elevation: 0,
+         member: member.id,
          show: true,
       };
 
@@ -464,7 +513,7 @@
    </div>
 </div>
 
-<div bind:this={divEle} class="flex-row">
+<div class="flex-row">
    {#each steelSets as set (set.id)}
       <SteelSet
          on:addLoad={onAddLoadDialog}

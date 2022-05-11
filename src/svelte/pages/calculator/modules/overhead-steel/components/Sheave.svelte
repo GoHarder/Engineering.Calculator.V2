@@ -127,7 +127,7 @@
    // Block up roughly 16" long
    $: blockWeight = (blockObj?.weight ?? 0) * 16;
 
-   $: deadLoad = round(110 + blockWeight + (sheaveObj?.weight ?? 0) + (pillowBlockObj?.weight ?? 0) * 2, 1);
+   $: deadLoad = round((110 + blockWeight + (sheaveObj?.weight ?? 0) + (pillowBlockObj?.weight ?? 0) * 2) / 2, 1);
 
    $: steelSizes = steel[shape] || [];
 
@@ -137,9 +137,9 @@
 
    $: memberDepth = memberObj?.depth ?? 0;
 
-   $: elevation = (deflector ? 0 : memberDepth) + (blockObj?.depth ?? 0);
+   $: shaftHeight = pillowBlockObj?.shaftHeight ?? 0;
 
-   $: console.log(elevation);
+   $: elevation = (deflector ? (memberDepth + shaftHeight) * -1 : shaftHeight) + (blockObj?.depth ?? 0);
 
    // Events
    const onDelete = () => dispatch('delete', id);
@@ -215,5 +215,23 @@
    </div>
 </div>
 
+<div class="hidden">
+   <!-- NOTE: 5-11-2022 1:15 PM - This is here to gurantee update the sheave object -->
+   <Select bind:value={sheave} bind:selected={sheaveObj} label="Sheave" options={sheaves}>
+      {#each sheaves as { diameter, _id, name } (_id)}
+         <Option value={name}>{name} (Ø{floor(diameter)}")</Option>
+      {/each}
+   </Select>
+
+   <Select bind:value={size} bind:selected={blockObj} label="Size" disabled={steelSizes.length === 0} options={steelSizes}>
+      {#each steelSizes as { _id, name } (_id)}
+         <Option value={name}>{name}</Option>
+      {/each}
+   </Select>
+</div>
+
 <style>
+   .hidden {
+      display: none;
+   }
 </style>
