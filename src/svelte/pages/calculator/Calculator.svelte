@@ -95,6 +95,35 @@
    $: parsePath(path);
 
    // Events
+   const onKeydown = (event) => {
+      if (event.ctrlKey && event.key === 'p') {
+         event.preventDefault();
+         console.log("Download doesn't exist");
+      }
+
+      if (event.ctrlKey && event.key === 's') {
+         event.preventDefault();
+         onSave();
+      }
+
+      if (event.ctrlKey && event.key === 'o') {
+         event.preventDefault();
+         history.pushState({ path: '/Home' }, '');
+      }
+
+      if (event.ctrlKey && event.key === 'ArrowRight') {
+         onNext();
+      }
+
+      if (event.ctrlKey && event.key === 'ArrowLeft') {
+         onPrevious();
+      }
+
+      if (event.ctrlKey && event.key === 'Enter') {
+         showDrawer = !showDrawer;
+      }
+   };
+
    const onNext = () => {
       updateModule();
 
@@ -132,7 +161,6 @@
       clearPath();
       clearProject();
    });
-
 </script>
 
 <svelte:head>
@@ -154,6 +182,8 @@
       </Fab>
    </div>
 {/if}
+
+<svelte:window on:keydown={onKeydown} />
 
 <header>
    <div>
