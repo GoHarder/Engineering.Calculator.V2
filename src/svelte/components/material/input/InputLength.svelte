@@ -5,6 +5,7 @@
    import { classList, filterProps, randomId } from '../../lib';
 
    import { floor, round } from 'lib/math.mjs';
+   import { debounce } from 'lib/main.mjs';
 
    // Components
    import Icon from '../common/Icon.svelte';
@@ -22,10 +23,10 @@
    export let value = undefined;
 
    // Methods
-   const updateValue = () => {
+   const updateValue = debounce(() => {
       value = round(feet * 12 + inches, 4);
       override = calc !== value;
-   };
+   }, 1000);
 
    // Constants
    const id = `input-length-${randomId()}`;
