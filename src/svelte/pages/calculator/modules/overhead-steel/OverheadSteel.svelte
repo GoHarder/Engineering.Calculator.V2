@@ -206,7 +206,7 @@
 
    $: sheaveLiveLoad(cwtSheaves, cwtLiveLoad);
 
-   $: console.log(carSheaves);
+   // $: console.log(carSheaves);
 
    // Events
    const onAddSet = () => {

@@ -1,10 +1,10 @@
-.vscode
-node_modules
 .dockerignore
 .env
-docker-compose.yml
+.vscode
 Dockerfile
-nginx.conf
-notes.txt
 Project.md
+docker-compose.yml
+nginx.conf
+node_modules
+notes.txt
 temp
