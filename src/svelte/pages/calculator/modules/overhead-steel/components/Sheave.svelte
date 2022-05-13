@@ -40,8 +40,6 @@
    // location: "car"
    // member: "member-1652283143929"
 
-   $: console.log(blockUp);
-
    // Methods
    const getSheaves = async () => {
       const token = localStorage.getItem('token');
@@ -138,7 +136,7 @@
 
    $: deadLoad = round((110 + blockWeight + (sheaveObj?.weight ?? 0) + (pillowBlockObj?.weight ?? 0) * 2) / 2, 1);
 
-   $: steelSizes = steel[shape] || [];
+   $: steelSizes = steel[blockUp.shape] || [];
 
    $: shapeAbbv = memberObj?.name?.match(/(^[MCSW]+)/g)[0] ?? '';
 
