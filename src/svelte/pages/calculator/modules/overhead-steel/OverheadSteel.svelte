@@ -1,5 +1,4 @@
 <script>
-   import { onMount } from 'svelte';
    import { clone, deepMerge, debounce } from 'lib/main.mjs';
    import { capitalize } from 'lib/string.mjs';
    import { round } from 'lib/math.mjs';
@@ -100,11 +99,6 @@
    };
 
    // Variables
-   // let Observer;
-   // let divEle;
-   // let sizeClass = 'large';
-   // let location = 'car';
-   // let sheaves = [];
    let sheaveLocations = { car: true, cwt: true };
 
    // - Load Dialog
@@ -123,8 +117,6 @@
    let existing = module?.existing ?? false;
    let supplied = module?.existing ?? false;
    let steelSets = module?.steelSets ?? [];
-
-   // $: console.log(steelSets);
 
    // Subscriptions
    // Contexts
@@ -205,8 +197,6 @@
    $: sheaveLiveLoad(carSheaves, carLiveLoad);
 
    $: sheaveLiveLoad(cwtSheaves, cwtLiveLoad);
-
-   // $: console.log(carSheaves);
 
    // Events
    const onAddSet = () => {
@@ -358,7 +348,7 @@
          sheave: '',
          diameter: 0,
          deflector: false,
-         block: '',
+         blockUp: { use: false, shape: '', size: '' },
          elevation: 0,
          member: member.id,
          show: true,
@@ -383,29 +373,9 @@
       cases[type]();
    };
 
-   // const onResize = (event) => {
-   //    // const width = event[0].contentRect.width + (metric ? 0 : 210);
-   //    const width = event[0].contentRect.width;
-   //    console.log(width);
-
-   //    // if (width < 910) {
-   //    //    sizeClass = 'small';
-   //    //    return;
-   //    // }
-
-   //    // if (width < 1270) {
-   //    //    sizeClass = 'medium';
-   //    //    return;
-   //    // }
-
-   //    sizeClass = 'large';
-   // };
-
    // Lifecycle
-   onMount(() => {
-      // Observer = new ResizeObserver(onResize);
-      // Observer.observe(divEle);
-   });
+
+   // $: console.log(steelSets);
 </script>
 
 <Dialog bind:show={loadDialog}>

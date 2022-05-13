@@ -17,9 +17,11 @@
    import fetchStore from 'stores/fetch';
 
    // Properties
-   export let elevation;
+   export let blockUp;
    export let deadLoad;
-   export let diameter = 0;
+   export let deflector;
+   export let diameter;
+   export let elevation;
    export let id;
    export let label;
    export let length;
@@ -27,6 +29,18 @@
    export let metric;
    export let sheave;
    export let show;
+
+   // let blockUp = false;
+   // let shape = '';
+   // let size = '';
+   // let deflector = false;
+
+   // block: ""
+   // deflector: false
+   // location: "car"
+   // member: "member-1652283143929"
+
+   $: console.log(blockUp);
 
    // Methods
    const getSheaves = async () => {
@@ -92,11 +106,6 @@
    let steel = {};
    let sheaveObj = {};
    let blockObj = {};
-
-   let blockUp = false;
-   let shape = '';
-   let size = '';
-   let deflector = false;
    let memberObj = {};
 
    // Contexts
@@ -192,15 +201,15 @@
          {#if !deflector}
             <Checkbox bind:checked={blockUp} label="Use Block Up" />
 
-            {#if blockUp}
-               <Select bind:value={shape} label="Shape">
+            {#if blockUp.use}
+               <Select bind:value={blockUp.shape} label="Shape">
                   <Option value="cChannels">C Channel</Option>
                   <Option value="mcChannels">MC Channel</Option>
                   <Option value="sBeams">S Beam</Option>
                   <Option value="wBeams">W Beam</Option>
                </Select>
 
-               <Select bind:value={size} bind:selected={blockObj} label="Size" disabled={steelSizes.length === 0} options={steelSizes}>
+               <Select bind:value={blockUp.size} bind:selected={blockObj} label="Size" disabled={steelSizes.length === 0} options={steelSizes}>
                   {#each steelSizes as { _id, name } (_id)}
                      <Option value={name}>{name}</Option>
                   {/each}
@@ -223,7 +232,7 @@
       {/each}
    </Select>
 
-   <Select bind:value={size} bind:selected={blockObj} label="Size" disabled={steelSizes.length === 0} options={steelSizes}>
+   <Select bind:value={blockUp.size} bind:selected={blockObj} label="Size" disabled={steelSizes.length === 0} options={steelSizes}>
       {#each steelSizes as { _id, name } (_id)}
          <Option value={name}>{name}</Option>
       {/each}
