@@ -1,6 +1,14 @@
 @use './src/scss/theme';
 @use '@material/typography/mdc-typography';
 
+
+// NOTE: 5-13-2022 9:00 AM - New variable font feature
+// Individual styles that are made on the site are made after the font name
+// @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wdth,wght@75,300;87.5,600;100,400;100,500&display=swap');
+
+// To download a range of sizes then use this (downloads all weights from 300 to 800 big font file)
+// @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..800&display=swap');
+
 *,
 *::before,
 *::after {
