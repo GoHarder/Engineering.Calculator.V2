@@ -1,4 +1,5 @@
 import '../scss/style.scss';
+import initStore from 'stores/init.js';
 import App from '../svelte/App.svelte';
 import Nav from '../svelte/Nav.svelte';
 
@@ -6,6 +7,14 @@ import Nav from '../svelte/Nav.svelte';
 if ('serviceWorker' in navigator) {
    navigator.serviceWorker.register('public/sw.js', { scope: '/' });
 }
+
+window.addEventListener('beforeinstallprompt', (event) => {
+   event.preventDefault();
+   initStore.update((store) => {
+      store = { ...store, installPrompt: event };
+      return store;
+   });
+});
 
 // Monkey patch to add a custom location change event to window
 history.pushState = ((f) =>

@@ -14,6 +14,7 @@
    import NotesDialog from './components/NotesDialog.svelte';
 
    // Stores
+   import initStore from 'stores/init';
    import pathStore from 'stores/path';
    import projectStore from 'stores/project';
 
@@ -39,6 +40,7 @@
    let jobName;
    let project;
    let updateModule;
+   let installPrompt;
 
    // - UI
    let comp;
@@ -57,6 +59,8 @@
    let tabTitle = 'HW Engineering Calculator';
 
    // Subscriptions
+   const clearInit = initStore.subscribe((store) => (installPrompt = store.installPrompt));
+
    const clearPath = pathStore.subscribe((store) => (path = store));
 
    const clearProject = projectStore.subscribe((store) => {
@@ -95,6 +99,17 @@
    $: parsePath(path);
 
    // Events
+   const onInstall = async () => {
+      installPrompt.prompt();
+      const userChoice = await installPrompt.userChoice;
+
+      if (userChoice.outcome) {
+         clearInit();
+         installPrompt = undefined;
+         return;
+      }
+   };
+
    const onKeydown = (event) => {
       if (event.ctrlKey && event.key === 'p') {
          event.preventDefault();
@@ -158,6 +173,7 @@
 
    // Lifecycle
    onDestroy(() => {
+      clearInit();
       clearPath();
       clearProject();
    });
@@ -200,6 +216,12 @@
    </div>
 
    <div class="buttons">
+      {#if installPrompt !== undefined}
+         <IconButton on:click={onInstall} toolTip="Install on Desktop">
+            <Icon>install_desktop</Icon>
+         </IconButton>
+      {/if}
+
       <IconButton on:click={() => (shareDialog = true)} toolTip="Share">
          <Icon>share</Icon>
       </IconButton>

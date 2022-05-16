@@ -17,7 +17,7 @@ export default {
       description: '',
       img: 'public/img/products/sling-platform.png',
       checked: true,
-      comp: Platform,
+      // comp: Platform,
       show: true,
    },
    sling: {
@@ -25,7 +25,7 @@ export default {
       description: '',
       img: 'public/img/products/sling-platform.png',
       checked: true,
-      comp: Sling,
+      // comp: Sling,
       show: true,
    },
    counterweight: {
@@ -33,7 +33,7 @@ export default {
       description: '',
       img: 'public/img/products/counterweight.png',
       checked: true,
-      comp: Counterweight,
+      // comp: Counterweight,
       show: true,
    },
    railBrackets: {
@@ -41,7 +41,7 @@ export default {
       description: 'Calculate rails and rail brackets.',
       img: 'public/img/products/rail.jpg',
       checked: true,
-      comp: RailBrackets,
+      // comp: RailBrackets,
       show: true,
    },
    machine: {
@@ -49,7 +49,7 @@ export default {
       description: '',
       img: 'public/img/products/machine.png',
       checked: true,
-      comp: Machine,
+      // comp: Machine,
       show: true,
    },
    buffers: {
@@ -57,7 +57,7 @@ export default {
       description: '',
       img: 'public/img/products/buffers.png',
       checked: true,
-      comp: Buffers,
+      // comp: Buffers,
       show: true,
    },
    hoistway: {
@@ -65,7 +65,7 @@ export default {
       description: 'To calculate min and max hoistway heights.',
       img: 'public/img/products/hoistway.png',
       checked: true,
-      comp: Hoistway,
+      // comp: Hoistway,
       show: true,
    },
    overheadSteel: {
@@ -73,7 +73,7 @@ export default {
       description: '',
       img: 'public/img/products/steel.png',
       checked: true,
-      comp: OverheadSteel,
+      // comp: OverheadSteel,
       show: true,
    },
 };
