@@ -24,6 +24,12 @@ const resolveConfig = {
    moduleDirectories: ['node_modules'],
 };
 
+const scssConfig = {
+   output: `public/app.css`,
+   outputStyle: production ? 'compressed' : 'expanded',
+   sourcemap: !production,
+};
+
 const svelteConfig = {
    preprocess: sveltePre(),
    compilerOptions: {
@@ -42,7 +48,7 @@ const appBuild = {
    plugins: [
       includePaths(includePathConfig),
       svelte(svelteConfig),
-      scss({ output: `public/app.css` }),
+      scss(scssConfig),
       json(),
       svg(),
       resolve(resolveConfig),
