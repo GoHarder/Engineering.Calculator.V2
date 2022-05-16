@@ -77,7 +77,7 @@
    "scope": "../",
    "display": "standalone",
    "background_color": "#cccccc",
-   "theme_color": "#333333",
+   "theme_color": "#4d4d4d",
    "description": "The Hollister-Whitney calculator for elevator systems.",
    "dir": "ltr",
    "lang": "en-US",
