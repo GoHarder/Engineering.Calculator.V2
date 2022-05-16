@@ -46,6 +46,7 @@ const { date, version } = readJson('./release.json');
 let index = readFile('../src/html/_index.html');
 index = index.replace('{{date}}', date);
 index = index.replace('{{version}}', version);
+index = index.replace(/\s+<!--\s\w+\s-->/g, '');
 
 const indexFileDesc = openSync(new URL('../src/html/index.html', import.meta.url), 'w');
 
