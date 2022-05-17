@@ -104,9 +104,10 @@
       const userChoice = await installPrompt.userChoice;
 
       if (userChoice.outcome) {
-         clearInit();
-         installPrompt = undefined;
-         return;
+         initStore.update((store) => {
+            store = { ...store, installPrompt: undefined };
+            return store;
+         });
       }
    };
 
