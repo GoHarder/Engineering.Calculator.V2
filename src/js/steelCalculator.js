@@ -17,7 +17,7 @@ const getData = async () => {
       let res, body;
 
       try {
-         res = await fetch(`api/engineering/overhead-steel?supplied=true`, {
+         res = await fetch(`api/engineering/overhead-steel`, {
             method: 'GET',
             headers: {
                Authorization: `Bearer ${token}`,
