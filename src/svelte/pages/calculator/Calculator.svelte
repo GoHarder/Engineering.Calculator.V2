@@ -9,6 +9,7 @@
    import { A, Badge, ShareDialog } from 'components/common';
    import { Fab, Icon, IconButton } from 'components/material/button';
    import { Content, Drawer, Item } from 'components/material/drawer';
+   import { CircularProgress } from 'components/material/progress';
    import { Snackbar } from 'components/material/snackbar';
 
    import NotesDialog from './components/NotesDialog.svelte';
@@ -41,6 +42,7 @@
    let project;
    let updateModule;
    let installPrompt;
+   let saving = true;
 
    // - UI
    let comp;
@@ -150,12 +152,17 @@
    };
 
    const onPrevious = () => {
+      saving = true;
       updateModule();
 
       Object.keys(moduleItems).forEach((key) => {
          const index = moduleItems[key]?.index ?? -1;
          if (index === selectedIndex + -1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
       });
+
+      setTimeout(() => {
+         saving = false;
+      }, 1000);
    };
 
    const onSave = async () => {
@@ -178,6 +185,10 @@
       clearPath();
       clearProject();
    });
+
+   setInterval(() => {
+      saving = !saving;
+   }, 5000);
 </script>
 
 <svelte:head>
@@ -237,8 +248,12 @@
          <Icon>download</Icon>
       </IconButton>
 
-      <IconButton on:click={onSave} toolTip="Save">
-         <Icon>save</Icon>
+      <IconButton on:click={onSave} disabled={saving} toolTip="Save">
+         {#if saving}
+            <CircularProgress show size="small" indeterminate />
+         {:else}
+            <Icon class="material-icons">save</Icon>
+         {/if}
       </IconButton>
    </div>
 </header>
