@@ -6,6 +6,10 @@ import Nav from '../svelte/Nav.svelte';
 // Start service worker
 if ('serviceWorker' in navigator) {
    navigator.serviceWorker.register('public/sw.js', { scope: '/' });
+   initStore.update((store) => {
+      store = { ...store, serviceWorker: true, syncManager: 'SyncManager' in window };
+      return store;
+   });
 }
 
 window.addEventListener('beforeinstallprompt', (event) => {

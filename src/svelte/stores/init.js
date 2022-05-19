@@ -7,7 +7,7 @@
 import { writable } from 'svelte/store';
 
 // Creates the custom store and sets up renewal loop
-const { set, subscribe, update } = writable({});
+const { set, subscribe, update } = writable({ serviceWorker: false, syncManager: false });
 
 // Export the store object
 export default {

@@ -5,21 +5,18 @@
 
 // Imports
 import { writable } from 'svelte/store';
+import initStore from './init';
 import fetchStore from './fetch';
 import userStore from './user';
 
 /**
  * Saves the project internally
  * @param {object} project The project object
- * @param {string} userId The user id
  */
-const saveProject = async (project, userId = undefined) => {
+const saveProject = async (project, sendError = true) => {
    // Prepare request information
    const method = '_id' in project ? 'PUT' : 'POST';
    const token = localStorage.getItem('token');
-
-   // Prepare the payload
-   if (userId) project.checkout = userId;
 
    // Run fetch
    fetchStore.loading(true);
@@ -45,14 +42,16 @@ const saveProject = async (project, userId = undefined) => {
 
       return body;
    } catch (error) {
-      fetchStore.setError({ res, error });
+      if (sendError) fetchStore.setError({ res, error });
       return false;
    }
 };
 
 /** The user object */
 let user = undefined;
+let pwa = undefined;
 
+initStore.subscribe((store) => (pwa = store));
 userStore.subscribe((store) => (user = store));
 
 // Creates the custom store and sets up renewal loop
@@ -118,9 +117,8 @@ const destroy = () => {
 /**
  * Saves the project
  * @param {object} project The project object
- * @param {string} userId The user id
  */
-const save = async (project, userId = undefined) => {
+const save = async (project) => {
    let update = {};
 
    // Update locally first
@@ -131,7 +129,7 @@ const save = async (project, userId = undefined) => {
    });
 
    // Save to server
-   update = await saveProject(update, userId);
+   update = await saveProject(update);
 
    // If response is good then update store
    if (update) _set(update);
@@ -182,17 +180,22 @@ const share = async (project, email) => {
 const set = (project) => _set(project);
 
 /**
- * Saves the project
+ * Auto saves the project and sets up an sync event
  * @param {object} project The project object
- * @param {string} userId The user id
  */
-const update = async (project) => {
-   _update((store) => {
-      const update = { ...store, ...project };
+const sync = async (project) => {
+   const { serviceWorker, syncManager } = pwa;
 
-      return update;
-   });
+   if (serviceWorker && syncManager) {
+      const sw = await navigator.serviceWorker.ready;
+      sw.sync.register('sync-project');
+   }
 };
+
+// /**
+//  * Saves the project
+//  * @param {object} project The project object
+//  */
 
 // export the store object
 export default {
@@ -202,5 +205,5 @@ export default {
    set,
    share,
    subscribe,
-   update,
+   sync,
 };
