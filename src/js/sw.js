@@ -1,10 +1,17 @@
-import { version } from '../../build/release.json';
+import { version } from '../../package.json';
 import { cacheAll, cacheFirst, cleanCaches } from './cache';
 
 const staticName = `static v${version}`;
 const dynamicName = `dynamic v${version}`;
 
-const shell = ['/', '/public/img/vantage-logo.svg', 'https://fonts.googleapis.com/icon?family=Material+Icons', 'https://fonts.googleapis.com/css?family=Open+Sans'];
+const shell = [
+   '/',
+   '/app.css',
+   '/app.js',
+   '/img/vantage-logo.svg',
+   'https://fonts.googleapis.com/icon?family=Material+Icons',
+   'https://fonts.googleapis.com/css?family=Open+Sans',
+];
 
 const inShell = (string, array) => {
    let cachePath = string;
