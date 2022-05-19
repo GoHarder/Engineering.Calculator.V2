@@ -1,5 +1,5 @@
 <script>
-   import { onDestroy } from 'svelte';
+   import { onDestroy, onMount } from 'svelte';
    import moduleLibrary from './modules/modules';
 
    import { clone } from 'lib/main.mjs';
@@ -42,7 +42,8 @@
    let project;
    let updateModule;
    let installPrompt;
-   let saving = true;
+   let saving = false;
+   let syncInterval;
 
    // - UI
    let comp;
@@ -152,25 +153,23 @@
    };
 
    const onPrevious = () => {
-      saving = true;
       updateModule();
 
       Object.keys(moduleItems).forEach((key) => {
          const index = moduleItems[key]?.index ?? -1;
          if (index === selectedIndex + -1) history.pushState({ path: `/Calculator/${capitalize(key)}` }, '');
       });
-
-      setTimeout(() => {
-         saving = false;
-      }, 1000);
    };
 
    const onSave = async () => {
+      saving = true;
       updateModule();
 
       const saved = await projectStore.save(project);
 
       if (saved) showSnackbar = true;
+
+      setTimeout(() => (saving = false), 5000);
    };
 
    const onScroll = (event) => (scrollTop = event.target.scrollTop);
@@ -179,16 +178,21 @@
       compEle.scrollTop = 0;
    };
 
+   onMount(() => {
+      syncInterval = setInterval(() => {
+         saving = true;
+         projectStore.sync(project);
+         setTimeout(() => (saving = false), 5000);
+      }, 60 * 1000);
+   });
+
    // Lifecycle
    onDestroy(() => {
       clearInit();
       clearPath();
       clearProject();
+      clearInterval(syncInterval);
    });
-
-   setInterval(() => {
-      saving = !saving;
-   }, 5000);
 </script>
 
 <svelte:head>
