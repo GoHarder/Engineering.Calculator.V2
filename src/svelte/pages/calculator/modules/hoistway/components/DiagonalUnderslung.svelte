@@ -46,7 +46,7 @@
    // Subscriptions
    // Contexts
    // Reactive Rules
-   $: imgSrc = `/public/img/hoistway/diagonal_underslung${cornerPost ? '_corner' : ''}.svg`;
+   $: imgSrc = `/img/hoistway/diagonal_underslung${cornerPost ? '_corner' : ''}.svg`;
 
    $: floorToPlate = platformThickness + botChanDepth + strikePlateThick + sheaveChanDepth + bufferBlockUpDepth;
    $: floorToShoe = platformThickness + botChanDepth + safetyHeight + shoePlateThick + shoeHeight;

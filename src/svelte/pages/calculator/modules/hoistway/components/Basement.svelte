@@ -26,7 +26,7 @@
    // Methods
    // Constants
    // Variables
-   let imgSrc = `/public/img/hoistway/basement_1.svg`;
+   let imgSrc = `/img/hoistway/basement_1.svg`;
 
    // Subscriptions
    // Contexts
@@ -41,11 +41,11 @@
    $: cwtTopClearError = cwtTopClear < minCwtTopClear;
 
    $: if (topToCarBeam === topToCwtBeam) {
-      imgSrc = `/public/img/hoistway/basement_2.svg`;
+      imgSrc = `/img/hoistway/basement_2.svg`;
    } else if (topToCarBeam < topToCwtBeam) {
-      imgSrc = `/public/img/hoistway/basement_1.svg`;
+      imgSrc = `/img/hoistway/basement_1.svg`;
    } else {
-      imgSrc = `/public/img/hoistway/basement_3.svg`;
+      imgSrc = `/img/hoistway/basement_3.svg`;
    }
 
    // Events

@@ -71,7 +71,7 @@
             <InputLength bind:value={overTravel} label="Over Travel" {metric} readonly />
          </div>
 
-         <img src="/public/img/hoistway/standard.svg" alt="Standard Overhead" />
+         <img src="/img/hoistway/standard.svg" alt="Standard Overhead" />
       </div>
    </Fieldset>
 </div>

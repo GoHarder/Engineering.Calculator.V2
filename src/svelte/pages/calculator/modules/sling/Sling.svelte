@@ -790,7 +790,7 @@
       <InputNumber bind:value={strikePlateQty} label="Strike Plate Quantity" min={1} max={10} />
 
       {#if strikePlateQty > 1}
-         <InputImg src="/public/img/sling/strike-plate.svg" alt="Strike Plate Offset" width="300">
+         <InputImg src="/img/sling/strike-plate.svg" alt="Strike Plate Offset" width="300">
             <InputLength bind:value={strikePlateOffset} label="Strike Plate Offset" {metric} />
          </InputImg>
       {/if}

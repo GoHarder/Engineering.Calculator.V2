@@ -557,7 +557,7 @@
             <InputLength value={cwtHeight} label="Overall Height" {metric} readonly />
          </div>
 
-         <img src="/public/img/counterweight/{imgString}.svg" alt="Counterweight Dimensions" />
+         <img src="/img/counterweight/{imgString}.svg" alt="Counterweight Dimensions" />
       </div>
    </Fieldset>
 </div>

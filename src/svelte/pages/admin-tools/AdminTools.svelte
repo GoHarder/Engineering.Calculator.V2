@@ -1,5 +1,5 @@
 <script>
-   import { beam_svg } from 'img/icons';
+   import { beam_svg } from 'svg';
 
    // Components
    import { A, Svg } from 'components/common';

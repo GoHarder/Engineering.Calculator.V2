@@ -61,25 +61,25 @@ export const plateMounting = [
 
 export const sheaveConfig = {
    parallelOverslung: {
-      sheaveOffsetImg: '/public/img/sling/sheave-offset-1.svg',
+      sheaveOffsetImg: '/img/sling/sheave-offset-1.svg',
       topChanSx: (weight, length, sheaveQty, offset) => (sheaveQty > 1 ? modulusAtEdgeOffset(weight, length / 2 - offset, 14000) : modulusAtCen(weight, length, 14000)),
       botChanSx: (weight, length, plateQty, offset) => (plateQty === 1 ? modulusAtCen(weight, length, 13750) : modulusAtEdgeOffset(weight, length / 2 - offset, 13750)),
       sheaveChanSx: () => 0,
    },
    diagonalOverslung: {
-      sheaveOffsetImg: '/public/img/sling/sheave-offset-2.svg',
+      sheaveOffsetImg: '/img/sling/sheave-offset-2.svg',
       topChanSx: (weight, length) => modulusAtCen(weight, length),
       botChanSx: (weight, length, plateQty, offset) => (plateQty === 1 ? modulusAtCen(weight, length, 13750) : modulusAtEdgeOffset(weight, length / 2 - offset, 13750)),
       sheaveChanSx: (weight, offset) => modulusAtCenOffset(weight, offset, 14000),
    },
    parallelUnderslung: {
-      sheaveOffsetImg: '/public/img/sling/sheave-offset-3.svg',
+      sheaveOffsetImg: '/img/sling/sheave-offset-3.svg',
       topChanSx: () => 0,
       botChanSx: (weight, length, plateQty, offset) => (plateQty === 1 ? modulusAtCen(weight, length, 13750) : modulusAtEdgeOffset(weight, length / 2 - offset, 13750)),
       sheaveChanSx: (weight, offset, length) => modulusAtEdgeOffset(weight, length / 2 - offset, 14000),
    },
    diagonalUnderslung: {
-      sheaveOffsetImg: '/public/img/sling/sheave-offset-2.svg',
+      sheaveOffsetImg: '/img/sling/sheave-offset-2.svg',
       topChanSx: () => 0,
       botChanSx: (weight, length) => modulusAtCen(weight, length, 13750),
       sheaveChanSx: (weight, offset) => modulusAtCenOffset(weight, offset, 14000),
