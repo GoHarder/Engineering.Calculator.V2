@@ -5,9 +5,9 @@
    "main": "index.mjs",
    "scripts": {
       "build": "rollup -c",
-      "update-version": "node build/update-version.mjs",
       "server": "node index.mjs",
       "start": "nodemon index.mjs",
+      "update-version": "node build/update-version.mjs",
       "watch": "rollup -c -w"
    },
    "author": "Gregory Harder",
