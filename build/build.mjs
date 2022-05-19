@@ -40,7 +40,9 @@ const readJson = (path) => {
 };
 
 // Get the data to process
-const { date, version } = readJson('./release.json');
+const { version } = readJson('../package.json');
+let date = new Date(Date.now());
+date = date.toLocaleDateString('en-us', { month: 'long', day: 'numeric', year: 'numeric' });
 
 // Process the html template
 let index = readFile('../src/html/_index.html');
@@ -52,13 +54,6 @@ const indexFileDesc = openSync(new URL('../src/html/index.html', import.meta.url
 
 writeFileSync(indexFileDesc, index);
 closeSync(indexFileDesc);
-
-// Process the package files
-let pack = readJson('../package.json');
-pack.version = version;
-const packFileDesc = openSync(new URL('../package.json', import.meta.url), 'w');
-writeFileSync(packFileDesc, JSON.stringify(pack));
-closeSync(packFileDesc);
 
 let packLock = readJson('../package-lock.json');
 packLock.version = version;
