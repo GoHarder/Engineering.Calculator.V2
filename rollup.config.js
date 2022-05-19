@@ -20,7 +20,7 @@ let includePathConfig = {
 
 const resolveConfig = {
    browser: true,
-   dedupe: ['svelte'],
+   dedupe: ['svelte', 'idb'],
    moduleDirectories: ['node_modules'],
 };
 
@@ -69,7 +69,7 @@ const serviceWorker = {
       name: `sw`,
       file: `public/sw.js`,
    },
-   plugins: [json(), production && terser()],
+   plugins: [json(), resolve(resolveConfig), production && terser()],
 };
 
 export default [appBuild, serviceWorker];
