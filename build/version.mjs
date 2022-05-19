@@ -1,9 +1,12 @@
 /**
- * @module build Builds the application for release
+ * @module version updates the version of the application
  */
 
 // Node Imports
 import { openSync, closeSync, readFileSync, writeFileSync } from 'fs';
+
+// Project Imports
+import { style } from '../server/lib/terminal.mjs';
 
 /**
  * Reads a file
@@ -58,7 +61,7 @@ closeSync(indexFileDesc);
 let packLock = readJson('../package-lock.json');
 packLock.version = version;
 const packLockFileDesc = openSync(new URL('../package-lock.json', import.meta.url), 'w');
-writeFileSync(packLockFileDesc, JSON.stringify(packLock));
+writeFileSync(packLockFileDesc, JSON.stringify(packLock, null, 3));
 closeSync(packLockFileDesc);
 
-console.log('Pre-build Done');
+console.log(`${style('✓', { color: 'green' })} Version Updated`);

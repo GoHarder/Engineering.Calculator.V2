@@ -7,7 +7,8 @@
       "build": "rollup -c",
       "server": "node index.mjs",
       "start": "nodemon index.mjs",
-      "update-version": "node build/update-version.mjs",
+      "update-app-shell": "node build/app-shell.mjs",
+      "update-version": "node build/version.mjs",
       "watch": "rollup -c -w"
    },
    "author": "Gregory Harder",
