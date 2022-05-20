@@ -78,7 +78,7 @@ const injectManifestConfig = {
 
 const swResolveConfig = {
    browser: true,
-   dedupe: ['workbox-precaching'],
+   dedupe: ['workbox-expiration', 'workbox-precaching', 'workbox-routing', 'workbox-strategies'],
    moduleDirectories: ['node_modules'],
 };
 
