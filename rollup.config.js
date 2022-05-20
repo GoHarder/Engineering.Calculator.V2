@@ -8,6 +8,8 @@ import svelte from 'rollup-plugin-svelte';
 import sveltePre from 'svelte-preprocess';
 import svg from 'rollup-plugin-svg';
 import { terser } from 'rollup-plugin-terser';
+import { injectManifest } from 'rollup-plugin-workbox';
+import { version } from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -18,9 +20,9 @@ let includePathConfig = {
    extensions: ['.js', '.mjs'],
 };
 
-const resolveConfig = {
+const appResolveConfig = {
    browser: true,
-   dedupe: ['svelte', 'idb'],
+   dedupe: ['svelte'],
    moduleDirectories: ['node_modules'],
 };
 
@@ -46,13 +48,13 @@ const appBuild = {
       file: `public/app.js`,
    },
    plugins: [
-      includePaths(includePathConfig),
-      svelte(svelteConfig),
-      scss(scssConfig),
       json(),
       svg(),
-      resolve(resolveConfig),
+      includePaths(includePathConfig),
+      resolve(appResolveConfig),
       commonjs(),
+      svelte(svelteConfig),
+      scss(scssConfig),
       !production && livereload({ watch: 'public', delay: 500 }),
       production && terser(),
    ],
@@ -61,15 +63,34 @@ const appBuild = {
    },
 };
 
+const injectManifestConfig = {
+   swSrc: 'src/js/sw.js',
+   swDest: 'public/sw.js',
+   globDirectory: 'public/',
+   mode: 'production',
+   globPatterns: ['**/*.js', '**/*.css', '**/*.jpg', '**/*.svg', '**/*.png'],
+   globIgnores: ['icons/*.png', 'img/vantage-email-logo.png'],
+   additionalManifestEntries: [
+      { revision: version, url: '/' },
+      { revision: version, url: '/app.js' },
+   ],
+};
+
+const swResolveConfig = {
+   browser: true,
+   dedupe: ['workbox-precaching'],
+   moduleDirectories: ['node_modules'],
+};
+
 const serviceWorker = {
    input: `src/js/sw.js`,
    output: {
       sourcemap: !production,
-      format: 'iife',
+      format: 'es',
       name: `sw`,
       file: `public/sw.js`,
    },
-   plugins: [json(), resolve(resolveConfig), production && terser()],
+   plugins: [resolve(swResolveConfig), injectManifest(injectManifestConfig)],
 };
 
 export default [appBuild, serviceWorker];

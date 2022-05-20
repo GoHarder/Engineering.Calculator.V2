@@ -184,18 +184,15 @@ const set = (project) => _set(project);
  * @param {object} project The project object
  */
 const sync = async (project) => {
-   const { serviceWorker, syncManager } = pwa;
+   console.log('background sync');
 
-   if (serviceWorker && syncManager) {
-      const sw = await navigator.serviceWorker.ready;
-      sw.sync.register('sync-project');
-   }
+   // const { serviceWorker, syncManager } = pwa;
+
+   // if (serviceWorker && syncManager) {
+   //    const sw = await navigator.serviceWorker.ready;
+   //    sw.sync.register('sync-project');
+   // }
 };
-
-// /**
-//  * Saves the project
-//  * @param {object} project The project object
-//  */
 
 // export the store object
 export default {
