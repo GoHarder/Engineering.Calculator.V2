@@ -91,6 +91,8 @@
    <svelte:fragment slot="title">
       {#if errorData && errorData.res}
          <Title class="error">{errorData.res.status}: {errorData.res.statusText}</Title>
+      {:else}
+         <Title class="error">Error</Title>
       {/if}
    </svelte:fragment>
 

@@ -116,7 +116,7 @@ const {
             localStorage.setItem('token', token);
             errors = 0;
          } catch (error) {
-            fetchStore.setError({ res, error });
+            if (errors >= 3) fetchStore.setError({ res, error });
             errors++;
          }
 
