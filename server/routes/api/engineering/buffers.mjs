@@ -36,7 +36,7 @@ router.get('/oil', async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   // await setEx(req.originalUrl, JSON.stringify(docs));
+   await setEx(req.originalUrl, JSON.stringify(docs));
 
    res.status(200).json(docs);
 });

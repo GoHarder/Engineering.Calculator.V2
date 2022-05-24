@@ -12,6 +12,6 @@ export const getShoes = (capacity, carSpeed) => {
       { $match: { maxCapacity: { $gte: capacity }, maxSpeed: { $gte: carSpeed } } },
       { $sort: { _manufacturerSort: 1 } },
       { $unset: '_manufacturerSort' },
-      { $project: { _id: 0, manufacturer: 0, maxCapacity: 0, maxSpeed: 0 } },
+      { $project: { manufacturer: 0, maxCapacity: 0, maxSpeed: 0 } },
    ];
 };

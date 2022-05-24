@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
    try {
       docs = await engDB
          .collection('safeties')
-         .find({ 'limits.speed': { $gte: speed } }, { projection: { _id: 0 }, sort: { name: 1 } })
+         .find({ 'limits.speed': { $gte: speed } }, { sort: { name: 1 } })
          .toArray();
    } catch (error) {
       return res.status(500).json({ message: error.message });

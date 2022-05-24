@@ -52,7 +52,7 @@ export const getBufferSprings = (minLoad, maxLoad, speed) => {
             compression: { $addToSet: '$applications.compression' },
          },
       },
-      { $project: { _id: 0, 'applications.maxSpeed': 0, 'calculated.maxSpeed': 0 } },
+      { $project: { 'applications.maxSpeed': 0, 'calculated.maxSpeed': 0 } },
       { $sort: { name: 1 } },
    ];
 };

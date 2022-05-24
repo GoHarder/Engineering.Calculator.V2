@@ -21,7 +21,7 @@ router.use([checkAuth, checkCache]);
 
 // - Get
 router.get('/steel/:steelType', async (req, res) => {
-   let docs = { message: 'ding' };
+   let docs;
 
    const _channel = getChannel(req.params.steelType);
 

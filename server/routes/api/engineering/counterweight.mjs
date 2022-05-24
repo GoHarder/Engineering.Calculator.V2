@@ -34,12 +34,12 @@ router.get('/', async (req, res) => {
    try {
       models = await engDB
          .collection('counterweights')
-         .find({ roping }, { projection: { _id: 0, roping: 0, _sort: 0 }, sort: { _sort: 1 } })
+         .find({ roping }, { projection: { roping: 0, _sort: 0 }, sort: { _sort: 1 } })
          .toArray();
 
       sheaves = await engDB
          .collection('sheaves')
-         .find({ _uses: 'counterweight' }, { projection: { _id: 0 }, sort: { diameter: 1, rimWidth: 1 } })
+         .find({ _uses: 'counterweight' }, { sort: { diameter: 1, rimWidth: 1 } })
          .toArray();
 
       shoePlates = await engDB.collection('shoe_plates').find().toArray();
