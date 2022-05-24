@@ -32,18 +32,15 @@ router.get('/', async (req, res) => {
 
       sheaves = await engDB
          .collection('sheaves')
-         .find({ _uses: 'car' }, { projection: { _id: 0 }, sort: { diameter: 1, rimWidth: 1 } })
+         .find({ _uses: 'car' }, { projection: { _sort: 0 }, sort: { diameter: 1, rimWidth: 1 } })
          .toArray();
 
       models = await engDB
          .collection('slings')
-         .find({}, { projection: { _id: 0, _sort: 0 }, sort: { _sort: 1 } })
+         .find({}, { projection: { _uses: 0 }, sort: { _sort: 1 } })
          .toArray();
 
-      shoePlates = await engDB
-         .collection('shoe_plates')
-         .find({}, { projection: { _id: 0 } })
-         .toArray();
+      shoePlates = await engDB.collection('shoe_plates').find({}).toArray();
 
       topChannels = await engDB.collection('steel').aggregate(_topChannels).toArray();
    } catch (error) {
