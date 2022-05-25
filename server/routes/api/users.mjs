@@ -27,6 +27,8 @@ const roles = ['user', 'admin', 'super'];
 router.post('/', checkAuth, async (req, res) => {
    const { body, token } = req;
 
+   if (token.role === 'user') return res.status(401).json({ message: 'User does not have permission' });
+
    // Validate the request query
    const schema = {
       email: (value) => validate.email(value),
@@ -70,7 +72,9 @@ router.post('/', checkAuth, async (req, res) => {
 
 // - Get
 router.get('/all', checkAuth, async (req, res) => {
-   let { _id } = req.token;
+   let { _id, role } = req.token;
+
+   if (role === 'user') return res.status(401).json({ message: 'User does not have permission' });
 
    let filter = { _id: { $ne: _id } };
 
@@ -186,6 +190,8 @@ router.put('/', checkAuth, async (req, res) => {
 router.put('/admin', checkAuth, async (req, res) => {
    const { body, token } = req;
 
+   if (token.role === 'user') return res.status(401).json({ message: 'User does not have permission' });
+
    // See if user had permission
    const tokenIndex = roles.findIndex((role) => role === token.role);
 
@@ -239,6 +245,8 @@ router.put('/reset-password', checkAuth, async (req, res) => {
 router.delete('/:_id', checkAuth, async (req, res) => {
    const { params, token } = req;
    let { _id } = params;
+
+   if (token.role === 'user') return res.status(401).json({ message: 'User does not have permission' });
 
    // Find the user to delete
    let userDoc = undefined;

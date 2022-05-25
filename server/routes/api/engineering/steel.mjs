@@ -21,7 +21,9 @@ router.use(checkAuth);
 
 // - Get
 router.get('/', async (req, res) => {
-   const { query } = req;
+   const { token, query } = req;
+
+   if (token.role === 'user') return res.status(401).json({ message: 'User does not have permission' });
 
    // Sanitize query
    query.page = parseInt(query.page);
@@ -47,7 +49,9 @@ router.get('/', async (req, res) => {
 
 // - Put
 router.put('/', async (req, res) => {
-   const { body } = req;
+   const { token, body } = req;
+
+   if (token.role === 'user') return res.status(401).json({ message: 'User does not have permission' });
 
    const sort = ['Stocked', 'Available', 'Check'];
 
