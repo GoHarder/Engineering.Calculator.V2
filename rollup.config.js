@@ -13,6 +13,14 @@ import { version } from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
 
+// Application
+
+const appResolveConfig = {
+   browser: true,
+   dedupe: ['svelte'],
+   moduleDirectories: ['node_modules'],
+};
+
 let includePathConfig = {
    include: {},
    paths: ['', 'src/svelte', 'src', 'public'],
@@ -20,11 +28,7 @@ let includePathConfig = {
    extensions: ['.js', '.mjs'],
 };
 
-const appResolveConfig = {
-   browser: true,
-   dedupe: ['svelte'],
-   moduleDirectories: ['node_modules'],
-};
+const livereloadOptions = { watch: 'public', delay: 500 };
 
 const scssConfig = {
    output: `public/app.css`,
@@ -39,11 +43,17 @@ const svelteConfig = {
    },
 };
 
+const terserOptions = {
+   format: {
+      comments: false,
+   },
+};
+
 const appBuild = {
    input: `src/js/app.js`,
    output: {
       sourcemap: !production,
-      format: 'iife',
+      format: 'cjs',
       name: `app`,
       file: `public/app.js`,
    },
@@ -55,13 +65,15 @@ const appBuild = {
       commonjs(),
       svelte(svelteConfig),
       scss(scssConfig),
-      !production && livereload({ watch: 'public', delay: 500 }),
-      production && terser(),
+      !production && livereload(livereloadOptions),
+      production && terser(terserOptions),
    ],
    watch: {
       clearScreen: false,
    },
 };
+
+// Service Worker
 
 const injectManifestConfig = {
    swSrc: 'src/js/sw.js',
