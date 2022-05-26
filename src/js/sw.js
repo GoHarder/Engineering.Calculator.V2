@@ -2,125 +2,131 @@ import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkOnly, Strategy } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { openDB } from 'idb';
-
-class IDB {
-   #name;
-   #version;
-   #stores;
-
-   constructor(name, version, stores) {
-      this.#name = name;
-      this.#version = parseInt(version.replace(/\./g, ''));
-      this.#stores = stores;
-
-      openDB(name, parseInt(version.replace(/\./g, '')), {
-         upgrade(db) {
-            stores.forEach((store) => {
-               if (db.objectStoreNames.contains(store)) {
-                  db.deleteObjectStore(store);
-               }
-
-               db.createObjectStore(store, { keyPath: 'id' });
-            });
-
-            if (db.objectStoreNames.contains('db-entries')) {
-               db.deleteObjectStore('db-entries');
-            }
-
-            const app = db.createObjectStore('db-entries', { keyPath: 'id' });
-            app.createIndex('dbName', 'dbName');
-            app.createIndex('timestamp', 'timestamp');
-         },
-      });
-   }
-
-   get #db() {
-      return openDB(this.#name, this.#version);
-   }
-
-   async get(dbName, url) {
-      const id = `${dbName}|${url}`;
-      const db = await this.#db;
-      const entryDoc = await db.get('db-entries', id);
-
-      if (!entryDoc) return;
-
-      return db.get('engineering', url);
-   }
-
-   async set(dbName, url, body) {
-      const id = `${dbName}|${url}`;
-      const db = await this.#db;
-
-      const tag = {
-         url,
-         timestamp: Date.now(),
-         dbName,
-         id,
-      };
-
-      const entry = {
-         id: url,
-         body,
-      };
-
-      // db.put('db-entries', tag);
-      // db.put('engineering', entry);
-   }
-
-   // export async function del(key) {
-   //    return (await dbPromise).delete('keyval', key);
-   // }
-   // export async function clear() {
-   //    return (await dbPromise).clear('keyval');
-   // }
-   // export async function keys() {
-   //    return (await dbPromise).getAllKeys('keyval');
-   // }
-}
+import { openDB, deleteDB } from 'idb';
 
 const manifest = self.__WB_MANIFEST;
 
-const version = manifest[manifest.length - 1].revision;
+const idbLifespan = new Map([
+   ['buffers', { time: 7 * 24 * 60 * 60 * 1000, qty: 20 }],
+   ['counterweight', { time: 7 * 24 * 60 * 60 * 1000, qty: 20 }],
+   ['machine', { time: 7 * 24 * 60 * 60 * 1000, qty: 20 }],
+   ['overhead-steel', { time: 30 * 24 * 60 * 60 * 1000, qty: 2 }],
+   ['platform', { time: 7 * 24 * 60 * 60 * 1000, qty: 3 }],
+   ['safety', { time: 7 * 24 * 60 * 60 * 1000, qty: 20 }],
+   ['shoes', { time: 7 * 24 * 60 * 60 * 1000, qty: 20 }],
+   ['sling', { time: 7 * 24 * 60 * 60 * 1000, qty: 1 }],
+]);
 
-const engineeringDB = new IDB('mongo-local', version, ['engineering']);
+const idb = openDB('application', 1, {
+   upgrade(db) {
+      const col = db.createObjectStore('engineering', { keyPath: 'url' });
+      col.createIndex('collection', 'collection');
+      col.createIndex('timestamp', 'timestamp');
+   },
+});
 
-class EngineeringDB extends Strategy {
+const idbGet = async (collection, key) => {
+   return (await idb).get(collection, key);
+};
+
+const idbGetAllFromIndex = async (collection, index, query) => {
+   return (await idb).getAllFromIndex(collection, index, query);
+};
+
+const idbPut = async (collection, value) => {
+   return (await idb).put(collection, value);
+};
+
+class EngineeringDb extends Strategy {
    constructor(options) {
       super(options);
-      this.dbName = options.dbName;
    }
 
-   _handle(request, handler) {
-      const dbReq = engineeringDB.get('engineering', request.url);
-      const fetchReq = handler.fetch(request);
+   async _handle(request, handler) {
+      const { url } = request;
+      const collection = url.match(/.*\/engineering\/([\w-]+)/)[1];
+      const lifespan = idbLifespan.get(collection);
 
-      return new Promise(async (res, rej) => {
-         const results = await Promise.all([dbReq, fetchReq]);
-         const clone = results[1].clone();
+      try {
+         const { timestamp, body } = await idbGet('engineering', url);
 
-         if (results[0]) {
-            const body = JSON.stringify(results[0].body);
-            const response = new Response(body, {
-               status: 200,
-               statusText: 'OK',
-               url: request.url,
-            });
+         if (Date.now() - lifespan.time > timestamp) throw new Error('Document is stale');
 
-            res(response);
+         return new Response(JSON.stringify(body), { status: 200, statusText: 'OK', headers: [['X-Service', 'Test']] });
+      } catch (error) {
+         console.log(error);
+         return handler.fetch(request);
+      }
+   }
+
+   async _awaitComplete(responseDone, handler, request, event) {
+      let response;
+      let error;
+
+      try {
+         response = await responseDone;
+
+         const clone = response.clone();
+         const { url } = clone;
+         const collection = url.match(/.*\/engineering\/([\w-]+)/)[1];
+         const maxQty = idbLifespan.get('overhead-steel').qty;
+         const body = await clone.json();
+
+         const entry = {
+            collection,
+            timestamp: Date.now(),
+            url,
+            body,
+         };
+
+         await idbPut('engineering', entry);
+
+         // NOTE: 5-26-2022 11:53 AM - This cleans up the database
+
+         const docs = await idbGetAllFromIndex('engineering', 'collection', IDBKeyRange.only('overhead-steel'));
+
+         if (docs.length <= maxQty) return;
+
+         let urls = docs.sort((docA, docB) => docB.timestamp - docA.timestamp);
+         urls = urls.map((doc) => doc.url);
+         urls = urls.slice(0, maxQty);
+
+         const tx = await (await idb).transaction('engineering', 'readwrite');
+         const index = tx.store.index('collection');
+         let cursor = await index.openCursor(IDBKeyRange.only('overhead-steel'));
+
+         while (cursor) {
+            const doc = cursor.value;
+            if (!urls.includes(doc.url)) await cursor.delete();
+            cursor = await cursor.continue();
          }
 
-         res(clone);
+         await tx.done;
+      } catch (error) {}
 
-         const response = results[1];
+      try {
+         await handler.runCallbacks('handlerDidRespond', {
+            event,
+            request,
+            response,
+         });
+         await handler.doneWaiting();
+      } catch (waitUntilError) {
+         error = waitUntilError;
+      }
 
-         if (response.status !== 200) return;
-
-         const body = await response.json();
-
-         engineeringDB.set('engineering', request.url, body);
+      await handler.runCallbacks('handlerDidComplete', {
+         event,
+         request,
+         response,
+         error,
       });
+
+      handler.destroy();
+
+      if (error) {
+         throw error;
+      }
    }
 }
 
@@ -134,7 +140,6 @@ class LocalStoragePlugin {
    }
 
    fetchDidFail() {
-      console.log('Response Failed');
       const token = localStorage.getItem(this.key);
       return token;
    }
@@ -164,9 +169,4 @@ registerRoute(
    'PUT'
 );
 
-registerRoute(
-   /.*\/api\/engineering/,
-   new EngineeringDB({
-      dbName: 'engineering',
-   })
-);
+registerRoute(/.*\/api\/engineering\/(?:(?!steel))/, new EngineeringDb());

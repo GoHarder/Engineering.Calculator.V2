@@ -21,7 +21,7 @@ const appResolveConfig = {
    moduleDirectories: ['node_modules'],
 };
 
-let includePathConfig = {
+const includePathConfig = {
    include: {},
    paths: ['', 'src/svelte', 'src', 'public'],
    external: [],
