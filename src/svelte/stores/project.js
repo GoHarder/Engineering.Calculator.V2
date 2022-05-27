@@ -213,14 +213,18 @@ const set = (project) => _set(project);
  * @param {object} project The project object
  */
 const sync = async (project) => {
-   console.log('background sync');
+   let update = {};
 
-   // const { serviceWorker, syncManager } = pwa;
+   // Update locally first
+   _update((store) => {
+      update = { ...store, ...project };
+      return update;
+   });
 
-   // if (serviceWorker && syncManager) {
-   //    const sw = await navigator.serviceWorker.ready;
-   //    sw.sync.register('sync-project');
-   // }
+   // Save to server
+   saveProject(update, false);
+
+   return update;
 };
 
 // export the store object
