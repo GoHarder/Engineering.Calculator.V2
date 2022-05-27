@@ -42,8 +42,17 @@ const saveProject = async (project, sendError = true) => {
 
       return body;
    } catch (error) {
-      if (sendError) fetchStore.setError({ res, error });
-      return false;
+      const { serviceWorker, syncManager } = pwa;
+
+      if (serviceWorker && syncManager) {
+         const sw = await navigator.serviceWorker.ready;
+         sw.sync.register(`workbox-background-sync:project-${method.toLowerCase()}`);
+         fetchStore.loading(false);
+      } else {
+         if (sendError) fetchStore.setError({ res, error });
+      }
+
+      return project;
    }
 };
 
@@ -77,7 +86,15 @@ const clear = async () => {
 
       fetchStore.loading(false);
    } catch (error) {
-      fetchStore.setError({ res, error });
+      const { serviceWorker, syncManager } = pwa;
+
+      if (serviceWorker && syncManager) {
+         const sw = await navigator.serviceWorker.ready;
+         sw.sync.register('workbox-background-sync:project-post');
+         fetchStore.loading(false);
+      } else {
+         fetchStore.setError({ res, error });
+      }
    }
 
    _set({});
@@ -107,7 +124,15 @@ const destroy = () => {
 
          fetchStore.loading(false);
       } catch (error) {
-         fetchStore.setError({ res, error });
+         const { serviceWorker, syncManager } = pwa;
+
+         if (serviceWorker && syncManager) {
+            const sw = await navigator.serviceWorker.ready;
+            sw.sync.register('workbox-background-sync:project-delete');
+            fetchStore.loading(false);
+         } else {
+            fetchStore.setError({ res, error });
+         }
       }
 
       return {};
@@ -118,21 +143,17 @@ const destroy = () => {
  * Saves the project
  * @param {object} project The project object
  */
-const save = async (project) => {
+const save = (project) => {
    let update = {};
 
    // Update locally first
    _update((store) => {
       update = { ...store, ...project };
-
       return update;
    });
 
    // Save to server
-   update = await saveProject(update);
-
-   // If response is good then update store
-   if (update) _set(update);
+   saveProject(update);
 
    return update;
 };
@@ -169,7 +190,15 @@ const share = async (project, email) => {
 
       _set(body);
    } catch (error) {
-      fetchStore.setError({ res, error });
+      const { serviceWorker, syncManager } = pwa;
+
+      if (serviceWorker && syncManager) {
+         const sw = await navigator.serviceWorker.ready;
+         sw.sync.register('workbox-background-sync:project-put');
+         fetchStore.loading(false);
+      } else {
+         fetchStore.setError({ res, error });
+      }
    }
 };
 

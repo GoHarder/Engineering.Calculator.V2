@@ -1,8 +1,10 @@
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
+import { clientsClaim } from 'workbox-core';
 import { registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkOnly, Strategy } from 'workbox-strategies';
+import { BackgroundSyncPlugin } from 'workbox-background-sync';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { openDB, deleteDB } from 'idb';
+import { openDB } from 'idb';
 
 const manifest = self.__WB_MANIFEST;
 
@@ -17,7 +19,7 @@ const idbLifespan = new Map([
    ['sling', { time: 7 * 24 * 60 * 60 * 1000, qty: 1 }],
 ]);
 
-const idb = openDB('application', 1, {
+const idb = openDB('mongo', 1, {
    upgrade(db) {
       const col = db.createObjectStore('engineering', { keyPath: 'url' });
       col.createIndex('collection', 'collection');
@@ -54,7 +56,7 @@ class EngineeringDb extends Strategy {
 
          return new Response(JSON.stringify(body), { status: 200, statusText: 'OK', headers: [['X-Service', 'Test']] });
       } catch (error) {
-         console.log(error);
+         // console.log(error);
          return handler.fetch(request);
       }
    }
@@ -149,6 +151,8 @@ precacheAndRoute(manifest);
 
 cleanupOutdatedCaches();
 
+clientsClaim();
+
 registerRoute(
    /.*(?:googleapis|gstatic)\.com.*$/,
    new CacheFirst({
@@ -170,3 +174,29 @@ registerRoute(
 );
 
 registerRoute(/.*\/api\/engineering\/(?:(?!steel))/, new EngineeringDb());
+
+registerRoute(
+   /.*\/api\/projects/,
+   new NetworkOnly({
+      plugins: [new BackgroundSyncPlugin('project-post')],
+   }),
+   'POST'
+);
+
+registerRoute(
+   /.*\/api\/projects/,
+   new NetworkOnly({
+      plugins: [new BackgroundSyncPlugin('project-put')],
+   }),
+   'PUT'
+);
+
+registerRoute(
+   /.*\/api\/projects/,
+   new NetworkOnly({
+      plugins: [new BackgroundSyncPlugin('project-delete')],
+   }),
+   'DELETE'
+);
+
+// .*\/api\/projects\/id\/\w{24} 20 projects

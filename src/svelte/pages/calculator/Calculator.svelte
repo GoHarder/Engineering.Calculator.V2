@@ -183,7 +183,7 @@
          saving = true;
          projectStore.sync(project);
          setTimeout(() => (saving = false), 5000);
-      }, 60 * 1000);
+      }, 10 * 60 * 1000);
    });
 
    // Lifecycle
