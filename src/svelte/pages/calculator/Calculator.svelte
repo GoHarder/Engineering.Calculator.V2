@@ -60,9 +60,13 @@
    let title = '';
    let maxIndex = 0;
    let tabTitle = 'HW Engineering Calculator';
+   let mobile = false;
 
    // Subscriptions
-   const clearInit = initStore.subscribe((store) => (installPrompt = store.installPrompt));
+   const clearInit = initStore.subscribe((store) => {
+      mobile = store.mobile;
+      installPrompt = store.installPrompt;
+   });
 
    const clearPath = pathStore.subscribe((store) => (path = store));
 
@@ -233,8 +237,8 @@
 
    <div class="buttons">
       {#if installPrompt !== undefined}
-         <IconButton on:click={onInstall} toolTip="Install on Desktop">
-            <Icon>install_desktop</Icon>
+         <IconButton on:click={onInstall} toolTip="Install on {mobile ? 'Device' : 'Desktop'}">
+            <Icon>install_{mobile ? 'mobile' : 'desktop'}</Icon>
          </IconButton>
       {/if}
 
