@@ -80,12 +80,10 @@ const injectManifestConfig = {
    swDest: 'public/sw.js',
    globDirectory: 'public/',
    mode: 'production',
-   globPatterns: ['**/*.js', '**/*.css', '**/*.jpg', '**/*.svg', '**/*.png'],
+   globPatterns: ['**/*.js', '**/*.css', '**/*.jpg', '**/*.svg', '**/*.png', '**/*.json', '**/*.ico'],
    globIgnores: ['icons/*.png', 'img/vantage-email-logo.png'],
-   additionalManifestEntries: [
-      { revision: version, url: '/' },
-      { revision: version, url: '/app.js' },
-   ],
+   maximumFileSizeToCacheInBytes: 6000000,
+   additionalManifestEntries: [{ revision: version, url: '/' }],
 };
 
 const swResolveConfig = {
