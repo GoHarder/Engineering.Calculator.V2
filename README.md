@@ -62,7 +62,7 @@ To run the server
 Update the html templates
 
 ```bash
-  npm run pre-build
+  npm run update-version
 ```
 
 Compile the front end
