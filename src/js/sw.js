@@ -21,9 +21,9 @@ const idbLifespan = new Map([
 
 const idb = openDB('mongo', 1, {
    upgrade(db) {
-      const col = db.createObjectStore('engineering', { keyPath: 'url' });
-      col.createIndex('collection', 'collection');
-      col.createIndex('timestamp', 'timestamp');
+      const col1 = db.createObjectStore('engineering', { keyPath: 'url' });
+      col1.createIndex('collection', 'collection');
+      col1.createIndex('timestamp', 'timestamp');
    },
 });
 
@@ -198,5 +198,3 @@ registerRoute(
    }),
    'DELETE'
 );
-
-// .*\/api\/projects\/id\/\w{24} 20 projects
