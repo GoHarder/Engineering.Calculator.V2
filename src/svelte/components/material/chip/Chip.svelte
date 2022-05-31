@@ -18,7 +18,7 @@
    // Lifecycle
 </script>
 
-<span class={spanClass} role="row" id="chip-{id}">
+<span class={spanClass} id="chip-{id}">
    <span class="mdc-evolution-chip__cell mdc-evolution-chip__cell--primary" role="gridcell">
       <button class="mdc-evolution-chip__action mdc-evolution-chip__action--primary" type="button" tabindex="0">
          <span class="mdc-evolution-chip__ripple mdc-evolution-chip__ripple--primary" />
@@ -28,5 +28,5 @@
 </span>
 
 <style lang="scss" global>
-   @use "@material/chips/styles";
+   @use '@material/chips/styles';
 </style>
