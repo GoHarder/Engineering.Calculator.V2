@@ -1,8 +1,6 @@
 import fetchStore from '../svelte/stores/fetch';
 import { clone } from 'lib/main.mjs';
 import { round, roundInc, solveCubic } from 'lib/math.mjs';
-import nerdamer from 'nerdamer/nerdamer.core.js';
-import Solve from 'nerdamer/Solve.js';
 
 let data = undefined;
 
