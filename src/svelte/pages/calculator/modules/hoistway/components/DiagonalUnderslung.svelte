@@ -80,7 +80,7 @@
    });
 </script>
 
-<div bind:this={divEle} class="container">
+<div bind:this={divEle} class="flex-row">
    <Fieldset title="Sling Dimensions">
       <div class="observer {sizeClass}">
          <hr class="hr-1" />
@@ -119,14 +119,6 @@
 </div>
 
 <style lang="scss">
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
-
    .observer {
       .form-1 {
          grid-area: form-1;

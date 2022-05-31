@@ -98,7 +98,8 @@ header.main {
    align-items: flex-start;
    margin: 0.25em;
    gap: 0.25em;
-   width: fit-content;
+   // NOTE: 5-31-2022 3:20 PM - This was causing fits with resize observer
+   // width: fit-content;
 }
 
 @media (min-width: 1600px) {

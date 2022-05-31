@@ -44,7 +44,7 @@
    // Lifecycle
 </script>
 
-<div class="container">
+<div class="flex-row">
    <Fieldset title="Clearance Dimensions">
       <div class="flex">
          <div>
@@ -77,14 +77,6 @@
 </div>
 
 <style>
-   .container {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 0.25em;
-      gap: 0.25em;
-   }
-
    .flex {
       display: flex;
       flex-wrap: wrap-reverse;
