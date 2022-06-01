@@ -118,7 +118,7 @@
    };
 
    const breakpoints = {
-      808: ['small'],
+      866: ['small'],
       1266: ['medium'],
       5000: ['large'],
    };
@@ -339,8 +339,6 @@
             <img src="/img/hoistway/pit.svg" alt="Hoistway Pit" />
          </div>
 
-         <!-- <div class="pit-section-img" style="background-image: url({'img/hoistway/pit.svg'});" /> -->
-
          <fieldset class="pit-section-cwt">
             <legend>Counterweight</legend>
             <hr />
@@ -362,6 +360,28 @@
 <style lang="scss">
    @use './src/scss/theme' as vantage;
 
+   :global {
+      // Top Clearance
+      .hoistway-clearance {
+         .form {
+            display: flex;
+            flex-wrap: wrap-reverse;
+         }
+
+         &.small .form {
+            width: min-content;
+         }
+
+         .section-img {
+            img {
+               max-width: 100%;
+               max-height: 100%;
+            }
+         }
+      }
+   }
+
+   // Pit section
    .pit-section {
       @include vantage.paper;
       @include vantage.fieldset-legend(vantage.$primary);
@@ -416,15 +436,11 @@
    .medium {
       .form {
          display: grid;
-
-         grid-template: {
-            columns: repeat(auto-fill, minmax(324px, 432px));
-            areas: 'car img' 'cwt img';
-         }
+         grid-auto-columns: min-content max-content;
+         grid-template-areas: 'car img' 'cwt img';
       }
 
       .pit-section-img {
-         width: auto;
          object-fit: cover;
       }
    }
@@ -432,11 +448,8 @@
    .small {
       .form {
          display: grid;
-
-         grid-template: {
-            columns: repeat(auto-fill, minmax(324px, 432px));
-            areas: 'img' 'car' 'cwt';
-         }
+         grid-auto-columns: min-content;
+         grid-template-areas: 'img' 'car' 'cwt';
       }
 
       .pit-section-img {

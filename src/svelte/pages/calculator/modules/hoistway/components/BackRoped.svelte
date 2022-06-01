@@ -1,5 +1,6 @@
 <script>
    import { toLengthString } from 'lib/math.mjs';
+   import { containerQuery } from 'components/lib.js';
 
    // Components
    import { Fieldset } from 'components/common';
@@ -25,6 +26,11 @@
 
    // Methods
    // Constants
+   const breakpoints = {
+      818: ['small'],
+      5000: ['large'],
+   };
+
    // Variables
    // Subscriptions
    // Contexts
@@ -43,10 +49,10 @@
    // Lifecycle
 </script>
 
-<div class="flex-row">
+<div class="flex-row hoistway-clearance" use:containerQuery={breakpoints}>
    <Fieldset title="Clearance Dimensions">
-      <div class="flex">
-         <div>
+      <div class="form">
+         <div class="inputs">
             <InputLength bind:value={topToCarBeam} label="Beam And Slab" {metric} />
 
             <InputLength value={carTopClear} label="Car Clearance" invalid={carTopClearError} {metric} readonly>
@@ -70,14 +76,12 @@
             <InputLength bind:value={overTravel} label="Over Travel" {metric} readonly />
          </div>
 
-         <img src="/img/hoistway/back_roped.svg" alt="Back Roped" />
+         <div class="section-img">
+            <img src="/img/hoistway/back_roped.svg" alt="Back Roped" />
+         </div>
       </div>
    </Fieldset>
 </div>
 
 <style>
-   .flex {
-      display: flex;
-      flex-wrap: wrap-reverse;
-   }
 </style>
