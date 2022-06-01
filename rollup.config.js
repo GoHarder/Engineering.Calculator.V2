@@ -15,9 +15,9 @@ const production = !process.env.ROLLUP_WATCH;
 
 // Application
 
-const appResolveConfig = {
+const resolveConfig = {
    browser: true,
-   dedupe: ['svelte'],
+   dedupe: ['svelte', 'workbox-expiration', 'workbox-precaching', 'workbox-routing', 'workbox-strategies'],
    moduleDirectories: ['node_modules'],
 };
 
@@ -49,30 +49,6 @@ const terserOptions = {
    },
 };
 
-const appBuild = {
-   input: `src/js/app.js`,
-   output: {
-      sourcemap: !production,
-      format: 'cjs',
-      name: `app`,
-      file: `public/app.js`,
-   },
-   plugins: [
-      json(),
-      svg(),
-      includePaths(includePathConfig),
-      resolve(appResolveConfig),
-      commonjs(),
-      svelte(svelteConfig),
-      scss(scssConfig),
-      !production && livereload(livereloadOptions),
-      production && terser(terserOptions),
-   ],
-   watch: {
-      clearScreen: false,
-   },
-};
-
 // Service Worker
 
 const injectManifestConfig = {
@@ -86,21 +62,29 @@ const injectManifestConfig = {
    additionalManifestEntries: [{ revision: version, url: '/' }],
 };
 
-const swResolveConfig = {
-   browser: true,
-   dedupe: ['workbox-expiration', 'workbox-precaching', 'workbox-routing', 'workbox-strategies'],
-   moduleDirectories: ['node_modules'],
-};
-
-const serviceWorker = {
-   input: `src/js/sw.js`,
+const appBuild = {
+   input: `src/js/app.js`,
    output: {
       sourcemap: !production,
-      format: 'es',
-      name: `sw`,
-      file: `public/sw.js`,
+      format: 'cjs',
+      name: `app`,
+      file: `public/app.js`,
    },
-   plugins: [resolve(swResolveConfig), injectManifest(injectManifestConfig)],
+   plugins: [
+      json(),
+      svg(),
+      includePaths(includePathConfig),
+      resolve(resolveConfig),
+      commonjs(),
+      svelte(svelteConfig),
+      scss(scssConfig),
+      !production && livereload(livereloadOptions),
+      production && terser(terserOptions),
+      injectManifest(injectManifestConfig),
+   ],
+   watch: {
+      clearScreen: false,
+   },
 };
 
-export default [appBuild, serviceWorker];
+export default [appBuild];
