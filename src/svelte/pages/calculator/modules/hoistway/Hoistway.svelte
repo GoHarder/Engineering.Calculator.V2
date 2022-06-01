@@ -1,8 +1,7 @@
 <script>
-   import { onMount } from 'svelte';
-
    import { deepMerge } from 'lib/main.mjs';
    import * as tables from './tables';
+   import { containerQuery } from 'components/lib.js';
 
    import { HoistwayLinks as Links } from '../links';
 
@@ -118,7 +117,11 @@
       DiagonalUnderslung,
    };
 
-   // console.log(project);
+   const breakpoints = {
+      808: ['small'],
+      1266: ['medium'],
+      5000: ['large'],
+   };
 
    // Variables
    // - Globals
@@ -187,11 +190,6 @@
    let floorToShoe = 0;
    let floorToTop = 0;
 
-   // - UI
-   let divEle;
-   let Observer;
-   let sizeClass = 'large';
-
    // - Objects
    let comp1Obj;
    let comp2Obj;
@@ -227,30 +225,11 @@
    $: carShoeError = floorToShoe - floorToPlate + 0.5 > carBfrCompressHeight + carPitChan; // check
 
    // Events
-   const onResize = (event) => {
-      const width = event[0].contentRect.width + (metric ? 0 : 210);
-
-      if (width < 910) {
-         sizeClass = 'small';
-         return;
-      }
-
-      if (width < 1270) {
-         sizeClass = 'medium';
-         return;
-      }
-
-      sizeClass = 'large';
-   };
 
    // Lifecycle
-   onMount(() => {
-      Observer = new ResizeObserver(onResize);
-      Observer.observe(divEle);
-   });
 </script>
 
-<div bind:this={divEle} class="flex-row">
+<div class="flex-row">
    <Fieldset title="Globals">
       <InputLength value={overallTravel} label="Overall Travel" link="/Project/Requirements" />
    </Fieldset>
@@ -333,46 +312,50 @@
    {toeGuardError}
 />
 
-<div class="flex-row">
-   <div class="pit-section {sizeClass}">
+<div class="flex-row small medium large" use:containerQuery={breakpoints}>
+   <div class="pit-section">
       <div class="pit-section-title">
          <legend>Pit Dimensions</legend>
          <hr />
       </div>
 
-      <fieldset class="pit-section-car">
-         <legend>Car</legend>
+      <div class="form">
+         <fieldset class="pit-section-car">
+            <legend>Car</legend>
+            <hr />
 
-         <hr />
+            <InputLength bind:value={pitDepth} label="Pit Depth" {metric} />
 
-         <InputLength bind:value={pitDepth} label="Pit Depth" />
+            <InputLength bind:value={carBufferGap} label="Gap" {metric} />
 
-         <InputLength bind:value={carBufferGap} label="Gap" />
+            <InputLength bind:value={carBfrGrpHeight} bind:override={o_carBfrGrpHeight} label="Buffer Height" calc={carBfrGrpHeightCalc} {metric} />
 
-         <InputLength bind:value={carBfrGrpHeight} bind:override={o_carBfrGrpHeight} label="Buffer Height" calc={carBfrGrpHeightCalc} />
+            <InputLength bind:value={carBufferComp} label="Buffer Compression" link={Links.get('carBufferComp')} {metric} />
 
-         <InputLength bind:value={carBufferComp} label="Buffer Compression" link={Links.get('carBufferComp')} />
+            <InputLength bind:value={carPitChan} label="Pit Channel" {metric} />
+         </fieldset>
 
-         <InputLength bind:value={carPitChan} label="Pit Channel" />
-      </fieldset>
+         <div class="pit-section-img">
+            <img src="/img/hoistway/pit.svg" alt="Hoistway Pit" />
+         </div>
 
-      <img src="/img/hoistway/pit.svg" alt="Hoistway Pit" class="pit-section-img" />
+         <!-- <div class="pit-section-img" style="background-image: url({'img/hoistway/pit.svg'});" /> -->
 
-      <fieldset class="pit-section-cwt">
-         <legend>Counterweight</legend>
+         <fieldset class="pit-section-cwt">
+            <legend>Counterweight</legend>
+            <hr />
 
-         <hr />
+            <InputLength bind:value={cwtHeight} label="Height" link={Links.get('cwtHeight')} {metric} />
 
-         <InputLength bind:value={cwtHeight} label="Height" link={Links.get('cwtHeight')} />
+            <InputLength bind:value={cwtBufferGap} label="Gap" {metric} />
 
-         <InputLength bind:value={cwtBufferGap} label="Gap" />
+            <InputLength bind:value={cwtBfrGrpHeight} bind:override={o_cwtBfrGrpHeight} label="Buffer Height" calc={cwtBufferHeight} {metric} />
 
-         <InputLength bind:value={cwtBfrGrpHeight} bind:override={o_cwtBfrGrpHeight} label="Buffer Height" calc={cwtBufferHeight} />
+            <InputLength bind:value={cwtBufferComp} label="Buffer Compression" link={Links.get('cwtBufferComp')} {metric} />
 
-         <InputLength bind:value={cwtBufferComp} label="Buffer Compression" link={Links.get('cwtBufferComp')} />
-
-         <InputLength bind:value={cwtPitChan} label="Pit Channel" />
-      </fieldset>
+            <InputLength bind:value={cwtPitChan} label="Pit Channel" {metric} />
+         </fieldset>
+      </div>
    </div>
 </div>
 
@@ -381,70 +364,83 @@
 
    .pit-section {
       @include vantage.paper;
+      @include vantage.fieldset-legend(vantage.$primary);
 
       fieldset {
          border: none;
          @include vantage.fieldset-legend;
       }
+   }
 
-      .pit-section-title {
-         @include vantage.fieldset-legend(vantage.$primary);
-         grid-area: title;
-         padding: 5.6px 12px 0px;
-         width: 100%;
+   .pit-section-title {
+      @include vantage.fieldset-legend(vantage.$primary);
+      padding: 5.6px 12px 0px;
+      width: 100%;
+   }
+
+   .pit-section-car {
+      grid-area: car;
+   }
+
+   .pit-section-img {
+      grid-area: img;
+      img {
+         max-width: 100%;
+         max-height: 100%;
+      }
+   }
+
+   .pit-section-cwt {
+      grid-area: cwt;
+   }
+
+   .large {
+      .form {
+         display: flex;
+         flex-wrap: wrap;
       }
 
-      .pit-section-car {
-         grid-area: car;
+      .pit-section-title {
+         display: none;
       }
 
       .pit-section-img {
-         grid-area: img;
-         object-fit: contain;
+         height: 400px;
       }
 
-      .pit-section-cwt {
-         grid-area: cwt;
+      fieldset {
+         @include vantage.fieldset-legend(vantage.$primary);
       }
+   }
 
-      &.small {
+   .medium {
+      .form {
          display: grid;
-         grid-template: {
-            columns: 456px;
-            areas: 'title' 'img' 'car' 'cwt';
-         }
 
-         .pit-section-img {
-            width: 100%;
+         grid-template: {
+            columns: repeat(auto-fill, minmax(324px, 432px));
+            areas: 'car img' 'cwt img';
          }
       }
 
-      &.medium {
+      .pit-section-img {
+         width: auto;
+         object-fit: cover;
+      }
+   }
+
+   .small {
+      .form {
          display: grid;
-         grid-template: {
-            columns: auto max-content;
-            areas: 'title title' 'car img' 'cwt img';
-         }
 
-         .pit-section-img {
-            width: auto;
+         grid-template: {
+            columns: repeat(auto-fill, minmax(324px, 432px));
+            areas: 'img' 'car' 'cwt';
          }
       }
 
-      &.large {
-         display: flex;
-
-         .pit-section-title {
-            display: none;
-         }
-
-         .pit-section-img {
-            height: 400px;
-         }
-
-         fieldset {
-            @include vantage.fieldset-legend(vantage.$primary);
-         }
+      .pit-section-img {
+         object-fit: cover;
       }
    }
 </style>

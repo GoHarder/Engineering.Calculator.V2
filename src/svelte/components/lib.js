@@ -102,4 +102,46 @@ export const filterProps = (props, filter) => {
 export const classList = (classes) => classes.join(' ').replace(/\s{2,}/g, ' ');
 
 /** Creates a random id string  */
-export const randomId = () => Math.random().toString(36).substr(2, 10);
+export const randomId = () => Math.random().toString(36).slice(2);
+
+/**
+ * This is a polyfill for css container queries
+ * @param {HTMLElement} element The element to apply the query to
+ * @param {object} breakpoints The breakpoints and classes to apply
+ */
+export const containerQuery = (element, breakpoints) => {
+   let debug = false;
+
+   if ('debug' in breakpoints) {
+      debug = true;
+      delete breakpoints.debug;
+   }
+
+   const onResize = () => {
+      const width = element.clientWidth;
+
+      if (debug) console.log(width);
+
+      const points = Object.entries(breakpoints);
+      const classes = points.reduce((output, [point, classes], i) => {
+         element.classList.remove(...classes);
+         const prevPoint = parseFloat(points?.[i - 1]?.[0] ?? 0);
+         point = parseFloat(point);
+
+         if (point >= width && width >= prevPoint) return classes;
+         return output;
+      }, []);
+
+      element.classList.add(...classes);
+   };
+
+   const observer = new ResizeObserver(onResize);
+
+   observer.observe(element);
+
+   return {
+      destroy() {
+         observer.disconnect();
+      },
+   };
+};
