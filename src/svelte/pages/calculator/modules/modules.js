@@ -15,7 +15,7 @@ export default {
    platform: {
       title: 'Platform',
       description: '',
-      img: 'public/img/products/sling-platform.png',
+      img: 'img/products/sling-platform.png',
       checked: true,
       comp: Platform,
       show: true,
@@ -23,7 +23,7 @@ export default {
    sling: {
       title: 'Sling',
       description: '',
-      img: 'public/img/products/sling-platform.png',
+      img: 'img/products/sling-platform.png',
       checked: true,
       comp: Sling,
       show: true,
@@ -31,7 +31,7 @@ export default {
    counterweight: {
       title: 'Counterweight',
       description: '',
-      img: 'public/img/products/counterweight.png',
+      img: 'img/products/counterweight.png',
       checked: true,
       comp: Counterweight,
       show: true,
@@ -39,7 +39,7 @@ export default {
    railBrackets: {
       title: 'Rail Brackets',
       description: 'Calculate rails and rail brackets.',
-      img: 'public/img/products/rail.jpg',
+      img: 'img/products/rail.jpg',
       checked: true,
       comp: RailBrackets,
       show: true,
@@ -47,7 +47,7 @@ export default {
    machine: {
       title: 'Machine',
       description: '',
-      img: 'public/img/products/machine.png',
+      img: 'img/products/machine.png',
       checked: true,
       comp: Machine,
       show: true,
@@ -55,7 +55,7 @@ export default {
    buffers: {
       title: 'Buffers',
       description: '',
-      img: 'public/img/products/buffers.png',
+      img: 'img/products/buffers.png',
       checked: true,
       comp: Buffers,
       show: true,
@@ -63,7 +63,7 @@ export default {
    hoistway: {
       title: 'Hoistway',
       description: 'To calculate min and max hoistway heights.',
-      img: 'public/img/products/hoistway.png',
+      img: 'img/products/hoistway.png',
       checked: true,
       comp: Hoistway,
       show: true,
@@ -71,7 +71,7 @@ export default {
    overheadSteel: {
       title: 'Overhead Steel',
       description: '',
-      img: 'public/img/products/steel.png',
+      img: 'img/products/steel.png',
       checked: true,
       comp: OverheadSteel,
       show: true,
