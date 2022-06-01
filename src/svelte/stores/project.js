@@ -227,6 +227,22 @@ const sync = async (project) => {
    return update;
 };
 
+/**
+ * Updates the project without saving
+ * @param {object} project The project object
+ */
+const update = (project) => {
+   let update = {};
+
+   // Update locally first
+   _update((store) => {
+      update = { ...store, ...project };
+      return update;
+   });
+
+   return update;
+};
+
 // export the store object
 export default {
    clear,
@@ -236,4 +252,5 @@ export default {
    share,
    subscribe,
    sync,
+   update,
 };
