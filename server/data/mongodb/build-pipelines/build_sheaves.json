@@ -1,0 +1,26 @@
+[
+   {
+      "$lookup": {
+         "from": "pillow_blocks",
+         "localField": "pillowBlocks",
+         "foreignField": "_id",
+         "as": "pillowBlocks"
+      }
+   },
+   {
+      "$unset": [
+         "pillowBlocks._id"
+      ]
+   },
+   {
+      "$merge": {
+         "into": {
+            "db": "engineering",
+            "coll": "sheaves"
+         },
+         "on": "_id",
+         "whenMatched": "merge",
+         "whenNotMatched": "discard"
+      }
+   }
+]

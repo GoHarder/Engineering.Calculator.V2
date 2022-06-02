@@ -1,0 +1,91 @@
+[
+   {
+      "$lookup": {
+         "from": "machine_bases",
+         "localField": "bases",
+         "foreignField": "_id",
+         "as": "bases"
+      }
+   },
+   {
+      "$lookup": {
+         "from": "rope_grippers",
+         "localField": "ropeGrippers",
+         "foreignField": "_id",
+         "as": "ropeGrippers"
+      }
+   },
+   {
+      "$set": {
+         "bases": {
+            "$cond": {
+               "if": {
+                  "$not": "$_base"
+               },
+               "then": "$bases",
+               "else": {
+                  "$concatArrays": [
+                     "$bases",
+                     [
+                        "$_base"
+                     ]
+                  ]
+               }
+            }
+         }
+      }
+   },
+   {
+      "$unwind": "$bases"
+   },
+   {
+      "$group": {
+         "_id": "$_id",
+         "name": {
+            "$first": "$name"
+         },
+         "bases": {
+            "$push": "$bases"
+         },
+         "centerOfGravity": {
+            "$first": "$centerOfGravity"
+         },
+         "location": {
+            "$first": "$location"
+         },
+         "ropeGrippers": {
+            "$first": "$ropeGrippers"
+         },
+         "roping": {
+            "$first": "$roping"
+         },
+         "sheaves": {
+            "$first": "$sheaves"
+         },
+         "type": {
+            "$first": "$type"
+         },
+         "_base": {
+            "$first": "$_base"
+         }
+      }
+   },
+   {
+      "$unset": [
+         "bases._id",
+         "ropeGrippers._id",
+         "_base"
+      ]
+   },
+   {
+      "$merge": {
+         "into": {
+            "db": "engineering",
+            "coll": "machines"
+         },
+         "on": "_id",
+         "whenMatched": "replace",
+         "whenNotMatched": "discard"
+      }
+   }
+]
