@@ -1,5 +1,5 @@
 <script>
-   import { onMount } from 'svelte';
+   import { containerQuery } from 'components/lib.js';
 
    // Components
    import { Fieldset } from 'components/common';
@@ -35,13 +35,14 @@
 
    // Methods
    // Constants
+   const breakpoints = {
+      918: ['small'],
+      1164: ['medium'],
+      5000: ['large'],
+   };
+
    // Variables
    let brace = 4;
-
-   // - UI
-   let divEle;
-   let Observer;
-   let sizeClass = 'large';
 
    // Subscriptions
    // Contexts
@@ -58,32 +59,12 @@
    $: bufferBlockUpDepth;
 
    // Events
-   const onResize = (event) => {
-      const width = event[0].contentRect.width + (metric ? 0 : 210);
-
-      if (width < 890) {
-         sizeClass = 'small';
-         return;
-      }
-
-      if (width < 1165) {
-         sizeClass = 'medium';
-         return;
-      }
-
-      sizeClass = 'large';
-   };
-
    // Lifecycle
-   onMount(() => {
-      Observer = new ResizeObserver(onResize);
-      Observer.observe(divEle);
-   });
 </script>
 
-<div bind:this={divEle} class="flex-row">
+<div class="flex-row hoistway-sling small medium large" use:containerQuery={breakpoints}>
    <Fieldset title="Sling Dimensions">
-      <div class="observer {sizeClass}">
+      <div class="form">
          <hr class="hr-1" />
          <hr class="hr-2" />
 
@@ -113,7 +94,9 @@
             </InputLength>
          </div>
 
-         <img src={imgSrc} alt="Sling" class="img" />
+         <div class="img">
+            <img src={imgSrc} alt="Sling" />
+         </div>
 
          <div class="form-2">
             <InputLength bind:value={railHeight} label="Rail" {metric} />
@@ -134,53 +117,5 @@
    </Fieldset>
 </div>
 
-<style lang="scss">
-   .observer {
-      .form-1 {
-         grid-area: form-1;
-      }
-
-      .form-2 {
-         grid-area: form-2;
-      }
-
-      .img {
-         grid-area: img;
-      }
-
-      .hr-1 {
-         grid-area: 'hr-1';
-      }
-
-      .hr-2 {
-         grid-area: 'hr-2';
-      }
-
-      &.small {
-         display: grid;
-         grid-template-columns: 1fr;
-         grid-template-areas: 'img' 'hr-1' 'form-1' 'hr-2' 'form-2';
-      }
-
-      &.medium {
-         display: grid;
-         grid-template-columns: auto auto;
-         grid-template-areas: 'form-1 img' 'hr-1 img' 'form-2 img';
-
-         .hr-2 {
-            display: none;
-         }
-      }
-
-      &.large {
-         display: flex;
-         .img {
-            height: 375px;
-         }
-         .hr-1,
-         .hr-2 {
-            display: none;
-         }
-      }
-   }
+<style>
 </style>

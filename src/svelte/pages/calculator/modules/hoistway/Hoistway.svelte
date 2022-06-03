@@ -225,7 +225,6 @@
    $: carShoeError = floorToShoe - floorToPlate + 0.5 > carBfrCompressHeight + carPitChan; // check
 
    // Events
-
    // Lifecycle
 </script>
 
@@ -284,6 +283,7 @@
    {railClear}
 />
 
+<!-- TODO: 6-01-2022 3:03 PM - Add container querry polyfill -->
 <svelte:component
    this={comp2Obj || ParallelOverslung}
    bind:botChanDepth
@@ -376,6 +376,65 @@
             img {
                max-width: 100%;
                max-height: 100%;
+            }
+         }
+      }
+
+      .hoistway-sling {
+         .form-1 {
+            grid-area: form-1;
+         }
+
+         .form-2 {
+            grid-area: form-2;
+         }
+
+         .img {
+            grid-area: img;
+            img {
+               max-width: 100%;
+               max-height: 100%;
+            }
+         }
+
+         .hr-1 {
+            grid-area: 'hr-1';
+         }
+
+         .hr-2 {
+            grid-area: 'hr-2';
+         }
+
+         &.small .form {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-areas: 'img' 'hr-1' 'form-1' 'hr-2' 'form-2';
+         }
+
+         &.medium {
+            .form {
+               display: grid;
+               grid-template-columns: auto auto;
+               grid-template-areas: 'form-1 img' 'hr-1 img' 'form-2 img';
+            }
+
+            .hr-2 {
+               display: none;
+            }
+         }
+
+         &.large {
+            .form {
+               display: flex;
+               flex-wrap: wrap;
+            }
+
+            img {
+               height: 375px;
+            }
+            .hr-1,
+            .hr-2 {
+               display: none;
             }
          }
       }
