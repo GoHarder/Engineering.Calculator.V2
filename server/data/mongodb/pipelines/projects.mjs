@@ -11,13 +11,13 @@
 export const byRecentlyOpened = (_id, skip, limit) => {
    return [
       { $match: { 'opened._id': _id } },
-      { $addFields: { _sort: { $filter: { input: '$opened', as: 'user', cond: { $eq: ['$$user._id', _id] } } } } },
-      { $unwind: { path: '$_sort' } },
-      { $addFields: { _sort: '$_sort.date' } },
+      { $set: { _sort: { $first: { $filter: { input: '$opened', cond: { $eq: ['$$this._id', _id] } } } } } },
+      { $set: { _sort: '$_sort.date' } },
+      { $unset: ['globals', 'metric', 'modules', 'notes', 'temp'] },
       { $sort: { _sort: -1 } },
-      { $project: { carNo: 1, contract: 1, created: 1, creator: 1, customer: 1, jobName: 1, layout: 1, opened: 1 } },
       { $skip: skip },
       { $limit: limit },
+      { $unset: '_sort' },
    ];
 };
 
@@ -45,7 +45,8 @@ export const bySearch = (search, skip, limit) => {
             },
          },
       },
-      { $project: { carNo: 1, contract: 1, created: 1, creator: 1, customer: 1, jobName: 1, layout: 1, opened: 1, score: { $meta: 'searchScore' } } },
+      { $set: { score: { $meta: 'searchScore' } } },
+      { $unset: ['globals', 'metric', 'modules', 'notes', 'temp'] },
       { $skip: skip },
       { $limit: limit },
    ];
