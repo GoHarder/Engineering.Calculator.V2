@@ -1,21 +1,21 @@
-/**
+/**search
  * @module sling The sling aggregation pipelines
  */
 
 /** The aggregation for the sling channels */
 export const _channels = [
    { $match: { material: 'ASTM A36', depth: { $gte: 6 }, shape: 'channel' } },
+   { $unset: ['_stockStatusSort', 'area', 'flangeThickness', 'gage', 'inertiaY', 'material', 'modulusY', 'webThickness'] },
    { $sort: { _nameSort: 1, depth: 1 } },
-   { $unset: ['_nameSort', '_stockStatusSort'] },
-   { $project: { area: 0, flangeThickness: 0, gage: 0, inertiaY: 0, material: 0, modulusY: 0, webThickness: 0 } },
+   { $unset: '_nameSort' },
 ];
 
 /** The aggregation for the sling top channels with gussets */
 export const _topChannels = [
    { $match: { material: 'ASTM A36', depth: { $gte: 6 }, shape: 'channel' } },
+   { $unset: ['_stockStatusSort', 'area', 'flangeThickness', 'gage', 'inertiaY', 'material', 'modulusY', 'webThickness'] },
    { $sort: { _nameSort: 1, depth: 1 } },
-   { $unset: ['_nameSort', '_stockStatusSort'] },
    { $lookup: { from: 'sling_gussets', localField: 'depth', foreignField: 'channelDepth', as: 'slingGusset' } },
-   { $unwind: { path: '$slingGusset' } },
-   { $project: { area: 0, flangeThickness: 0, inertiaY: 0, material: 0, modulusY: 0, 'slingGusset._id': 0, 'slingGusset.channelDepth': 0, webThickness: 0 } },
+   { $set: { slingGusset: { $first: '$slingGusset' } } },
+   { $unset: ['_nameSort', 'slingGusset._id', 'slingGusset.channelDepth'] },
 ];
