@@ -136,13 +136,11 @@
    </div>
 </section>
 
-<style lang="scss">
+<style>
    .card-container {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-around;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 300px);
+      justify-content: center;
       gap: 0.5em;
       margin-bottom: 0.5em;
    }
