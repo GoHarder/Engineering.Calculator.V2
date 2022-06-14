@@ -149,6 +149,7 @@
       display: grid;
       grid-template-columns: 1fr 400px 48px 48px 1fr;
       grid-template-areas: '. search btn-1 btn-2 .';
+      margin-top: 8px;
    }
 
    .search {
