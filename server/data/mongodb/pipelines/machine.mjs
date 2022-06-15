@@ -106,7 +106,7 @@ const setCoils = {
  * @param {number} roping The elevator roping
  * @param {number} shaftLoad The sheave shaft load
  */
-const getMachines = (cb, speed, capacity, type, location, roping, shaftLoad) => {
+export const getMachines = (cb, speed, capacity, type, location, roping, shaftLoad) => {
    // Convert counterbalance
    cb = `capAt${cb.toFixed(3).replace(/0\.(\d{2})(\d)/, '$1_$2')}`;
    cb = ['capAt40_0', 'capAt42_5', 'capAt45_0', 'capAt50_0'].includes(cb) && cb;
