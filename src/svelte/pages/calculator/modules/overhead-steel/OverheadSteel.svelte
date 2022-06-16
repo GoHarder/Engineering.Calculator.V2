@@ -10,6 +10,7 @@
    import { Checkbox } from 'components/material/checkbox';
    import { Dialog, Title } from 'components/material/dialog';
    import { Input, InputNumber } from 'components/material/input';
+   import { ImageList, Item as ImgItem } from 'components/material/image-list';
    import { Item, List, SubHeader } from 'components/material/list';
 
    import SteelSet from './components/SteelSet.svelte';
@@ -107,6 +108,13 @@
    let loadEvent;
    let reactionOptions = [];
 
+   // - Template
+   let templateDialog = false;
+
+   // - Image Columns
+   let innerWidth = 0;
+   let imgColumns = 4;
+
    // - Globals
    let carWeight = globals?.car?.weight ?? 0;
    let compWeight = globals?.compensation?.weight ?? 0;
@@ -197,6 +205,23 @@
    $: sheaveLiveLoad(carSheaves, carLiveLoad);
 
    $: sheaveLiveLoad(cwtSheaves, cwtLiveLoad);
+
+   // - Image Columns
+   $: {
+      const table = new Map([
+         [1500, 4],
+         [1200, 3],
+         [970, 2],
+         [0, 1],
+      ]);
+
+      for (const row of table) {
+         if (innerWidth > row[0]) {
+            imgColumns = row[1];
+            break;
+         }
+      }
+   }
 
    // Events
    const onAddSet = () => {
@@ -374,9 +399,9 @@
    };
 
    // Lifecycle
-
-   // $: console.log(steelSets);
 </script>
+
+<svelte:window bind:innerWidth />
 
 <Dialog bind:show={loadDialog}>
    <svelte:fragment slot="title">
@@ -441,6 +466,29 @@
    </svelte:fragment>
 </Dialog>
 
+<Dialog bind:show={templateDialog} fullScreen>
+   <svelte:fragment slot="title">
+      <Title>Load Template</Title>
+   </svelte:fragment>
+
+   <ImageList columns={imgColumns} textProtection>
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
+   </ImageList>
+
+   <svelte:fragment slot="actions">
+      <Button on:click={() => (templateDialog = false)} variant="outlined" color="secondary">Cancel</Button>
+   </svelte:fragment>
+</Dialog>
+
 <div class="flex-row">
    <Fieldset title="Globals">
       <InputNumber value={capacity} label="Capacity" link="/Project/Requirements" {metric} type="weight" />
@@ -464,7 +512,7 @@
       </Fieldset>
 
       <div class="buttons">
-         <Button variant="contained" class="button-1">
+         <Button on:click={() => (templateDialog = true)} variant="contained" class="button-1">
             Load Template
             <svelte:fragment slot="trailingIcon">
                <Icon>file_open</Icon>
