@@ -33,7 +33,14 @@
    };
 
    // Constants
+   const syncTime = 15 * 60 * 1000;
+
    // Variables
+
+   // - PWA
+   let installPrompt;
+   let saving = false;
+   let syncInterval;
 
    // - Project
    let carNo;
@@ -41,9 +48,6 @@
    let jobName;
    let project;
    let updateModule;
-   let installPrompt;
-   let saving = false;
-   let syncInterval;
 
    // - UI
    let comp;
@@ -97,6 +101,12 @@
    });
 
    // Contexts
+   const sync = () => {
+      saving = true;
+      projectStore.sync(project);
+      setTimeout(() => (saving = false), 5000);
+   };
+
    // Reactive Rules
    $: if (contract && jobName && carNo) {
       domTitle = `${contract} - ${jobName} - ${carNo}`;
@@ -174,6 +184,8 @@
       if (saved) showSnackbar = true;
 
       setTimeout(() => (saving = false), 5000);
+      clearInterval(syncInterval);
+      syncInterval = setInterval(sync, syncTime);
    };
 
    const onScroll = (event) => (scrollTop = event.target.scrollTop);
@@ -183,11 +195,7 @@
    };
 
    onMount(() => {
-      syncInterval = setInterval(() => {
-         saving = true;
-         projectStore.sync(project);
-         setTimeout(() => (saving = false), 5000);
-      }, 15 * 60 * 1000);
+      syncInterval = setInterval(sync, syncTime);
    });
 
    // Lifecycle

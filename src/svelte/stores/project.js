@@ -214,15 +214,17 @@ const set = (project) => _set(project);
  */
 const sync = async (project) => {
    let update = {};
+   let save = false;
 
    // Update locally first
    _update((store) => {
+      save = JSON.stringify(store) !== JSON.stringify(project);
       update = { ...store, ...project };
       return update;
    });
 
    // Save to server
-   saveProject(update, false);
+   if (save) saveProject(update, false);
 
    return update;
 };
