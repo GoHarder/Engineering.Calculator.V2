@@ -21,6 +21,12 @@
 
    // Properties
    // Methods
+   const sync = () => {
+      saving = true;
+      projectStore.save(project);
+      setTimeout(() => (saving = false), 5000);
+   };
+
    const parsePath = (path) => {
       updateModule = undefined;
 
@@ -101,11 +107,6 @@
    });
 
    // Contexts
-   const sync = () => {
-      saving = true;
-      projectStore.sync(project);
-      setTimeout(() => (saving = false), 5000);
-   };
 
    // Reactive Rules
    $: if (contract && jobName && carNo) {

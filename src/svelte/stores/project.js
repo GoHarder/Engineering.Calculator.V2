@@ -145,15 +145,17 @@ const destroy = () => {
  */
 const save = (project) => {
    let update = {};
+   let save = false;
 
    // Update locally first
    _update((store) => {
+      save = JSON.stringify(store) !== JSON.stringify(project);
       update = { ...store, ...project };
       return update;
    });
 
    // Save to server
-   saveProject(update);
+   if (save) saveProject(update, false);
 
    return update;
 };
@@ -209,27 +211,6 @@ const share = async (project, email) => {
 const set = (project) => _set(project);
 
 /**
- * Auto saves the project and sets up an sync event
- * @param {object} project The project object
- */
-const sync = async (project) => {
-   let update = {};
-   let save = false;
-
-   // Update locally first
-   _update((store) => {
-      save = JSON.stringify(store) !== JSON.stringify(project);
-      update = { ...store, ...project };
-      return update;
-   });
-
-   // Save to server
-   if (save) saveProject(update, false);
-
-   return update;
-};
-
-/**
  * Updates the project without saving
  * @param {object} project The project object
  */
@@ -253,6 +234,5 @@ export default {
    set,
    share,
    subscribe,
-   sync,
    update,
 };
