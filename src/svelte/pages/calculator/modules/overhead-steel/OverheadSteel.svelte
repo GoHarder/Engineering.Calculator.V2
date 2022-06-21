@@ -10,10 +10,10 @@
    import { Checkbox } from 'components/material/checkbox';
    import { Dialog, Title } from 'components/material/dialog';
    import { Input, InputNumber } from 'components/material/input';
-   import { ImageList, Item as ImgItem } from 'components/material/image-list';
    import { Item, List, SubHeader } from 'components/material/list';
 
    import SteelSet from './components/SteelSet.svelte';
+   import TemplateDialog from './components/tempalte-dialog/TemplateDialog.svelte';
 
    // Stores
    // Properties
@@ -110,10 +110,7 @@
 
    // - Template
    let templateDialog = false;
-
-   // - Image Columns
-   let innerWidth = 0;
-   let imgColumns = 4;
+   let template = [];
 
    // - Globals
    let carWeight = globals?.car?.weight ?? 0;
@@ -206,23 +203,6 @@
 
    $: sheaveLiveLoad(cwtSheaves, cwtLiveLoad);
 
-   // - Image Columns
-   $: {
-      const table = new Map([
-         [1500, 4],
-         [1200, 3],
-         [970, 2],
-         [0, 1],
-      ]);
-
-      for (const row of table) {
-         if (innerWidth > row[0]) {
-            imgColumns = row[1];
-            break;
-         }
-      }
-   }
-
    // Events
    const onAddSet = () => {
       const id = `set-${Date.now()}`;
@@ -278,6 +258,12 @@
          member.loads = member.loads.filter((load) => load.from !== event.detail);
       });
       steelSets = update;
+   };
+
+   const onLoadTemplate = (event) => {
+      steelSets = template;
+      tempalte = [];
+      templateDialog = false;
    };
 
    // Routes for select load
@@ -399,9 +385,10 @@
    };
 
    // Lifecycle
-</script>
 
-<svelte:window bind:innerWidth />
+   // $: console.log(steelSets);
+   // $: console.log(template);
+</script>
 
 <Dialog bind:show={loadDialog}>
    <svelte:fragment slot="title">
@@ -466,28 +453,7 @@
    </svelte:fragment>
 </Dialog>
 
-<Dialog bind:show={templateDialog} fullScreen>
-   <svelte:fragment slot="title">
-      <Title>Load Template</Title>
-   </svelte:fragment>
-
-   <ImageList columns={imgColumns} textProtection>
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-      <ImgItem alt="Design A-1" label="Deisgn A-1" select src="/img/overhead/mrl_a_1.svg" />
-   </ImageList>
-
-   <svelte:fragment slot="actions">
-      <Button on:click={() => (templateDialog = false)} variant="outlined" color="secondary">Cancel</Button>
-   </svelte:fragment>
-</Dialog>
+<TemplateDialog on:load={onLoadTemplate} bind:show={templateDialog} bind:template />
 
 <div class="flex-row">
    <Fieldset title="Globals">
