@@ -260,9 +260,9 @@
       steelSets = update;
    };
 
-   const onLoadTemplate = (event) => {
+   const onLoadTemplate = () => {
       steelSets = template;
-      tempalte = [];
+      template = [];
       templateDialog = false;
    };
 
