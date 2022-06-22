@@ -387,7 +387,7 @@
    // Lifecycle
 
    // $: console.log(steelSets);
-   // $: console.log(template);
+   $: console.log(template);
 </script>
 
 <Dialog bind:show={loadDialog}>
