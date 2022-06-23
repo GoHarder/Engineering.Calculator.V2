@@ -262,7 +262,7 @@
    // Lifecycle
 </script>
 
-<div class="root">
+<div class="template-dialog-plan">
    <div>
       {#each Object.keys(dims) as key}
          <InputLength bind:value={dims[key]} label="Dimension {key.toUpperCase()}" />
@@ -270,29 +270,9 @@
    </div>
 
    <div class="image-aspect-container" style="width: calc(100% - 300px);">
-      <img class="image" src="/img/overhead/plan-231.svg" alt="Plan 231" />
+      <img class="image" src="/img/overhead/plan-1.svg" alt="Plan 1" />
    </div>
 </div>
 
 <style>
-   .root {
-      display: flex;
-      flex-wrap: wrap;
-   }
-
-   .image-aspect-container {
-      position: relative;
-   }
-
-   .image-aspect-container .image {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-   }
 </style>

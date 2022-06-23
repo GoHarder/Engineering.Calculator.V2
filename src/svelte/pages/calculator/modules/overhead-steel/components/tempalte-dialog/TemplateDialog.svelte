@@ -6,8 +6,8 @@
    import { Dialog, Title } from 'components/material/dialog';
    import { ImageList, Item } from 'components/material/image-list';
 
-   import Plan221 from './components/Plan221.svelte';
-   import Plan231 from './components/Plan231.svelte';
+   import Plan1 from './components/Plan1.svelte';
+   import Plan2 from './components/Plan2.svelte';
 
    // Stores
    // Properties
@@ -20,8 +20,8 @@
 
    const comps = {
       select: { title: 'Load Template' },
-      plan221: { obj: Plan221, title: 'Plan 221' },
-      plan231: { obj: Plan231, title: 'Plan 231' },
+      plan1: { obj: Plan1, title: 'Plan 1' },
+      plan2: { obj: Plan2, title: 'Plan 2' },
    };
 
    const table = new Map([
@@ -61,8 +61,8 @@
 
    {#if comp === 'select'}
       <ImageList columns={imgColumns} textProtection>
-         <Item on:click={() => onSelect('plan221')} alt="Plan 221" label="Plan 221" select src="/img/overhead/plan-221.svg" />
-         <Item on:click={() => onSelect('plan231')} alt="Plan 231" label="Plan 231" select src="/img/overhead/plan-231.svg" />
+         <Item on:click={() => onSelect('plan1')} alt="Plan 1" label="Plan 1" select src="/img/overhead/plan-1.svg" />
+         <Item on:click={() => onSelect('plan2')} alt="Plan 2" label="Plan 2" select src="/img/overhead/plan-2.svg" />
       </ImageList>
    {:else}
       <svelte:component this={comps[comp].obj} bind:template />
@@ -79,5 +79,25 @@
    </svelte:fragment>
 </Dialog>
 
-<style>
+<style global>
+   .template-dialog-plan {
+      display: flex;
+      flex-wrap: wrap;
+   }
+
+   .template-dialog-plan .image-aspect-container {
+      position: relative;
+   }
+
+   .template-dialog-plan .image-aspect-container .image {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+   }
 </style>
