@@ -49,14 +49,18 @@ router.post('/', checkAuth, async (req, res) => {
    if (tokenIndex < bodyIndex) return res.status(403).json({ message: 'User does not have permission assign that role' });
 
    const password = randomPassword();
+   const salt = randomStr(16);
 
-   body.hashedPassword = hash(password);
+   body._salt = salt;
+   body._schema = 2;
+
+   body.hashedPassword = hash(`${password}:${salt}`);
 
    // Add user
    let updateInfo = undefined;
 
    try {
-      updateInfo = await appDB.collection('users').insertOne(req.body);
+      updateInfo = await appDB.collection('users').insertOne(body);
       body._id = updateInfo.insertedId;
    } catch (error) {
       return res.status(500).json({ message: error.message });

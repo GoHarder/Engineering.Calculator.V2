@@ -59,7 +59,7 @@ export const get = async (key) => {
 };
 
 /**
- * Gets a document in the cache
+ * Sets a document to expire
  * @param {string} key The document key
  * @param {number} ttl The time the document will exist in cache
  */
@@ -104,10 +104,6 @@ export const init = async () => {
    if (!cache) return true;
 
    const connected = await connect();
-
-   // const test = await client.setEx('test1', 60, 'test1');
-
-   // console.log(test);
 
    if (connected) {
       console.log(`${style('✓', { color: 'green' })} Connected to redis`);
