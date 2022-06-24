@@ -25,7 +25,7 @@ const addSalt = async (userDoc, password) => {
    const salt = randomStr(16);
    const hashedPassword = getHash(`${password}:${salt}`);
    userDoc = { ...userDoc, ...{ _salt: salt, hashedPassword, _schema: 2 } };
-   appDB.collection('users').findOneAndUpdate({ _id: userDoc._id }, { $set: userDoc });
+   appDB.collection('users').updateOne({ _id: userDoc._id }, { $set: userDoc });
 };
 
 // Routes
@@ -41,14 +41,15 @@ router.post('/', async (req, res) => {
 
    const test1 = validate.schema(req.body, schema);
 
-   if (!test1.valid) return res.status(400).json({ message: `${capitalize(test1.errors[0])} is invalid` });
+   if (!test1.valid) return res.status(400).json({ message: `${capitalize(test1.errors[0])} is invalid`, code: '00044' });
 
    // Lookup users document
    let { email, password, longToken } = req.body;
    let userDoc = undefined;
 
    try {
-      userDoc = await appDB.collection('users').findOne({ email });
+      const result = await appDB.collection('users').findOneAndUpdate({ email }, { $set: { _login: new Date(Date.now()) } });
+      userDoc = result.value;
    } catch (error) {
       return res.status(500).json({ message: error.message });
    }
@@ -67,7 +68,7 @@ router.post('/', async (req, res) => {
 
    const test2 = validate.schema(userDoc, docSchema);
 
-   if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0]).replace('Hashed', '')} is invalid` });
+   if (!test2.valid) return res.status(401).json({ message: `${capitalize(test2.errors[0]).replace('Hashed', '')} is invalid`, code: '00071' });
 
    // Upgrade to schema 2
    if (userDoc._schema === 1) addSalt(userDoc, password);
