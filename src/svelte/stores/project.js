@@ -145,17 +145,15 @@ const destroy = () => {
  */
 const save = (project) => {
    let update = {};
-   let save = false;
 
    // Update locally first
    _update((store) => {
-      save = JSON.stringify(store) !== JSON.stringify(project);
       update = { ...store, ...project };
       return update;
    });
 
    // Save to server
-   if (save) saveProject(update, false);
+   saveProject(update, false);
 
    return update;
 };
