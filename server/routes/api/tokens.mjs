@@ -9,7 +9,7 @@ import express from 'express';
 import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { app as appDB } from '../../data/mongodb/mongodb.mjs';
-import { hash as getHash, signToken, randomStr, hash } from '../../lib/crypto.mjs';
+import { hash as getHash, signToken, randomStr } from '../../lib/crypto.mjs';
 import { checkAuth } from '../../middleware/lib.mjs';
 import { clone } from '../../../lib/main.mjs';
 
