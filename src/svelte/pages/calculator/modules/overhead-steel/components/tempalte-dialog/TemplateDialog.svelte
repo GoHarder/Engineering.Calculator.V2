@@ -8,6 +8,7 @@
 
    import Plan1 from './components/Plan1.svelte';
    import Plan2 from './components/Plan2.svelte';
+   import  Plan3  from "./components/Plan3.svelte";
 
    // Stores
    // Properties
@@ -22,6 +23,7 @@
       select: { title: 'Load Template' },
       plan1: { obj: Plan1, title: 'Plan 1' },
       plan2: { obj: Plan2, title: 'Plan 2' },
+      plan3: { obj: Plan3, title: 'Plan 3' },
    };
 
    const table = new Map([
@@ -63,6 +65,7 @@
       <ImageList columns={imgColumns} textProtection>
          <Item on:click={() => onSelect('plan1')} alt="Plan 1" label="Plan 1" select src="/img/overhead/plan-1.svg" />
          <Item on:click={() => onSelect('plan2')} alt="Plan 2" label="Plan 2" select src="/img/overhead/plan-2.svg" />
+         <Item on:click={() => onSelect('plan3')} alt="Plan 3" label="Plan 3" select src="/img/overhead/plan-3.svg" />
       </ImageList>
    {:else}
       <svelte:component this={comps[comp].obj} bind:template />
