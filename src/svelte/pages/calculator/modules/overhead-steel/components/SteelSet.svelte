@@ -67,7 +67,9 @@
 
    // Events
    const onCopyMember = () => {
+      _label1 = _label2;
       const newMember = clone(members[0]);
+      members[0].label = 'Unnamed Member';
 
       newMember.id = `member-${Date.now()}`;
 
