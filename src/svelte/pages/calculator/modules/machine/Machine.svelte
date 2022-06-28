@@ -395,6 +395,10 @@
             {/each}
          </Select>
       {/if}
+
+      <Checkbox bind:checked={machineBeams} label="Beams" />
+
+      <Checkbox bind:checked={machineBlockUp} label="Block Up" />
    </Fieldset>
 </div>
 
