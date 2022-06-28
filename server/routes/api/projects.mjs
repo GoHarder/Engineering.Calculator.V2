@@ -135,6 +135,11 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
    res.status(200).json(doc);
 });
 
+router.get('/download/:_id', (req, res) => {
+   let { params } = req;
+   res.download('./server/routes/api/test.txt', `${params._id}`);
+});
+
 router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
    const { token, query } = req;
    let { _id } = token;

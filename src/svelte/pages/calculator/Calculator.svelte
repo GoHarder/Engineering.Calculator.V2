@@ -195,6 +195,17 @@
       compEle.scrollTop = 0;
    };
 
+   // NOTE: THIS IS AN EXPERIMENT
+   const onDownload = () => {
+      const element = document.createElement('a');
+      element.setAttribute('href', `api/projects/download/${project._id}.txt`);
+      element.setAttribute('download', `${project._id}.txt`);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+   };
+
    onMount(() => {
       syncInterval = setInterval(sync, syncTime);
    });
@@ -261,7 +272,7 @@
          </IconButton>
       </Badge>
 
-      <IconButton toolTip="Download PDF">
+      <IconButton on:click={onDownload} toolTip="Download PDF">
          <Icon>download</Icon>
       </IconButton>
 
