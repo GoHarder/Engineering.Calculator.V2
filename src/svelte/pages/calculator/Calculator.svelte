@@ -38,6 +38,16 @@
       }
    };
 
+   const download = (path, fileName) => {
+      const element = document.createElement('a');
+      element.setAttribute('href', `api/projects/${path}/${fileName}`);
+      element.setAttribute('download', fileName);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+   };
+
    // Constants
    const syncTime = 15 * 60 * 1000;
 
@@ -107,7 +117,6 @@
    });
 
    // Contexts
-
    // Reactive Rules
    $: if (contract && jobName && carNo) {
       domTitle = `${contract} - ${jobName} - ${carNo}`;
@@ -167,6 +176,8 @@
       });
    };
 
+   const onPDF = () => download('pdf', `${project._id}.pdf`);
+
    const onPrevious = () => {
       updateModule();
 
@@ -193,17 +204,6 @@
 
    const onToTop = () => {
       compEle.scrollTop = 0;
-   };
-
-   // NOTE: THIS IS AN EXPERIMENT
-   const onDownload = () => {
-      const element = document.createElement('a');
-      element.setAttribute('href', `api/projects/download/${project._id}.txt`);
-      element.setAttribute('download', `${project._id}.txt`);
-      element.style.display = 'none';
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
    };
 
    onMount(() => {
@@ -272,7 +272,7 @@
          </IconButton>
       </Badge>
 
-      <IconButton on:click={onDownload} toolTip="Download PDF">
+      <IconButton on:click={onPDF} toolTip="Download PDF">
          <Icon>download</Icon>
       </IconButton>
 

@@ -13,6 +13,7 @@ import { checkAuth } from '../../middleware/lib.mjs';
 import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { sendSharedProject } from '../../lib/mailgun.mjs';
+import { build } from '../../lib/pdf.mjs';
 
 /** The router for the module */
 export const router = express.Router();
@@ -135,10 +136,25 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
    res.status(200).json(doc);
 });
 
-router.get('/download/:_id', (req, res) => {
+router.get('/pdf/:_id', (req, res) => {
    let { params } = req;
-   res.download('./server/routes/api/test.txt', `${params._id}`);
+   let { _id } = params;
+
+   const stream = res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment;filename=${_id}.pdf`,
+   });
+
+   const onData = (chunk) => stream.write(chunk);
+   const onEnd = () => stream.end();
+
+   build(onData, onEnd);
 });
+
+// router.get('/download/:_id', (req, res) => {
+//    let { params } = req;
+//    res.download('./server/routes/api/test.txt', `${params._id}`);
+// });
 
 router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
    const { token, query } = req;

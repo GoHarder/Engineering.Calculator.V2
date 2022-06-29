@@ -19,6 +19,7 @@
       "mailgun.js": "^3.7.3",
       "mongodb": "^4.1.4",
       "nerdamer": "^1.1.13",
+      "pdfkit": "^0.13.0",
       "redis": "^4.0.0"
    },
    "devDependencies": {
