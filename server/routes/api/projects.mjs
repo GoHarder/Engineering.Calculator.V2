@@ -136,19 +136,44 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
    res.status(200).json(doc);
 });
 
-router.get('/pdf/:_id', (req, res) => {
-   let { params } = req;
+router.get('/pdf/:_id', [checkAuth], async (req, res) => {
+   let { token, params } = req;
    let { _id } = params;
+
+   // Get the documents
+   let projectDoc;
+   let userDoc;
+
+   const projection = {
+      _id: 0,
+      hashedPassword: 0,
+      role: 0,
+      _salt: 0,
+      _login: 0,
+   };
+
+   try {
+      _id = new ObjectId(_id);
+      const tokenId = new ObjectId(token._id);
+
+      projectDoc = await appDB.collection('projects').findOne({ _id });
+      userDoc = await appDB.collection('users').findOne({ _id: tokenId }, { projection });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (!projectDoc) return res.status(404).json({ message: 'Workbook not found' });
+   if (!userDoc) return res.status(404).json({ message: 'User not found' });
 
    const stream = res.writeHead(200, {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment;filename=${_id}.pdf`,
+      'Content-Disposition': `attachment;filename=${_id}`,
    });
 
    const onData = (chunk) => stream.write(chunk);
    const onEnd = () => stream.end();
 
-   build(onData, onEnd);
+   build(userDoc, projectDoc, onData, onEnd);
 });
 
 // router.get('/download/:_id', (req, res) => {

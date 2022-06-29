@@ -15,6 +15,7 @@
    import NotesDialog from './components/NotesDialog.svelte';
 
    // Stores
+   import fetchStore from 'stores/fetch';
    import initStore from 'stores/init';
    import pathStore from 'stores/path';
    import projectStore from 'stores/project';
@@ -38,14 +39,28 @@
       }
    };
 
-   const download = (path, fileName) => {
-      const element = document.createElement('a');
-      element.setAttribute('href', `api/projects/${path}/${fileName}`);
-      element.setAttribute('download', fileName);
-      element.style.display = 'none';
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
+   const download = async (path, fileName) => {
+      fetchStore.loading(true);
+      let res, body;
+
+      const token = localStorage.getItem('token');
+
+      try {
+         res = await fetch(`api/projects/${path}/${fileName}`, {
+            headers: { Authorization: `Bearer ${token}` },
+         });
+
+         fileData = await res.blob();
+
+         const a = document.createElement('a');
+         a.href = window.URL.createObjectURL(fileData);
+         a.download = fileName;
+         a.click();
+
+         fetchStore.loading(false);
+      } catch (error) {
+         fetchStore.setError({ res, error });
+      }
    };
 
    // Constants
@@ -176,7 +191,7 @@
       });
    };
 
-   const onPDF = () => download('pdf', `${project._id}.pdf`);
+   const onPDF = () => download('pdf', project._id);
 
    const onPrevious = () => {
       updateModule();
