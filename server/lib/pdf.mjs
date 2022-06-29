@@ -31,8 +31,18 @@ export const build = (user, project, onData, onEnd) => {
    doc.on('data', onData);
    doc.on('end', onEnd);
 
+   doc.registerFont('base', 'Helvetica');
+   doc.registerFont('bold', 'Helvetica-Bold');
+   doc.registerFont('italic', 'Helvetica-Oblique');
+   doc.registerFont('bold-italic', 'Helvetica-BoldOblique');
+
    setMetaData(doc, user, project);
 
-   doc.fontSize(12).text('This is some example text.');
+   const { carNo, contract, customer, jobName, layout } = project;
+
+   doc.font('bold').text(`Job Name: ${jobName} car ${carNo}`, { align: 'center' });
+   doc.text(`Customer: ${customer}`, { align: 'center' });
+   doc.font('base').text(`contract: ${contract} layout: ${layout}`, { align: 'center' });
+
    doc.end();
 };
