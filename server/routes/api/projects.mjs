@@ -13,7 +13,8 @@ import { checkAuth } from '../../middleware/lib.mjs';
 import * as validate from '../../../lib/validate.mjs';
 import { capitalize } from '../../../lib/string.mjs';
 import { sendSharedProject } from '../../lib/mailgun.mjs';
-import { build } from '../../lib/pdf.mjs';
+import { build as buildPdf } from '../../lib/pdf.mjs';
+import { build as buildCad } from '../../lib/cad.mjs';
 
 /** The router for the module */
 export const router = express.Router();
@@ -100,6 +101,34 @@ router.post('/check-in/:_id', async (req, res) => {
 });
 
 // - Get
+router.get('/cad/:_id', [checkAuth], async (req, res) => {
+   let { params } = req;
+   let { _id } = params;
+
+   // Get the documents
+   let projectDoc;
+
+   try {
+      _id = new ObjectId(_id);
+
+      projectDoc = await appDB.collection('projects').findOne({ _id });
+   } catch (error) {
+      return res.status(500).json({ message: error.message });
+   }
+
+   if (!projectDoc) return res.status(404).json({ message: 'Project not found' });
+
+   const stream = res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'Content-Disposition': `attachment;filename=${_id}.txt`,
+   });
+
+   const onData = (chunk) => stream.write(chunk);
+   const onEnd = () => stream.end();
+
+   buildCad(projectDoc, onData, onEnd);
+});
+
 router.get('/id/:_id', [checkAuth], async (req, res) => {
    let { token, params } = req;
    let { _id } = params;
@@ -115,7 +144,7 @@ router.get('/id/:_id', [checkAuth], async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   if (!doc) return res.status(404).json({ message: 'Workbook not found' });
+   if (!doc) return res.status(404).json({ message: 'Project not found' });
 
    // If the document is checked out just return
    if (doc.checkout) return res.status(200).json(doc);
@@ -162,7 +191,7 @@ router.get('/pdf/:_id', [checkAuth], async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   if (!projectDoc) return res.status(404).json({ message: 'Workbook not found' });
+   if (!projectDoc) return res.status(404).json({ message: 'Project not found' });
    if (!userDoc) return res.status(404).json({ message: 'User not found' });
 
    const stream = res.writeHead(200, {
@@ -173,7 +202,7 @@ router.get('/pdf/:_id', [checkAuth], async (req, res) => {
    const onData = (chunk) => stream.write(chunk);
    const onEnd = () => stream.end();
 
-   build(userDoc, projectDoc, onData, onEnd);
+   buildPdf(userDoc, projectDoc, onData, onEnd);
 });
 
 // router.get('/download/:_id', (req, res) => {
@@ -209,7 +238,7 @@ router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   if (docs === undefined) res.status(500).json({ message: 'Could not get workbooks' });
+   if (docs === undefined) res.status(500).json({ message: 'Could not get Projects' });
 
    res.status(200).json({ docs, length: count?.total || 0 });
 });
@@ -241,7 +270,7 @@ router.get('/search', [checkAuth, sanitizeQuery], async (req, res) => {
       return res.status(500).json({ message: error.message });
    }
 
-   if (docs === undefined) res.status(500).json({ message: 'Could not get workbooks' });
+   if (docs === undefined) res.status(500).json({ message: 'Could not get projects' });
 
    res.status(200).json({ docs, length: count?.total ?? 0 });
 });

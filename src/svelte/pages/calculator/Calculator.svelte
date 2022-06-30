@@ -41,7 +41,7 @@
 
    const download = async (path, fileName) => {
       fetchStore.loading(true);
-      let res, body;
+      let res;
 
       const token = localStorage.getItem('token');
 
@@ -141,6 +141,8 @@
    $: parsePath(path);
 
    // Events
+   const onCAD = () => download('cad', project._id);
+
    const onInstall = async () => {
       installPrompt.prompt();
       const userChoice = await installPrompt.userChoice;
@@ -287,8 +289,12 @@
          </IconButton>
       </Badge>
 
-      <IconButton on:click={onPDF} toolTip="Download PDF">
+      <IconButton on:click={onCAD} toolTip="Download CAD">
          <Icon>download</Icon>
+      </IconButton>
+
+      <IconButton on:click={onPDF} toolTip="Download PDF">
+         <Icon>picture_as_pdf</Icon>
       </IconButton>
 
       <IconButton on:click={onSave} disabled={saving} toolTip="Save">
