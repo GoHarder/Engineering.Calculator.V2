@@ -205,11 +205,6 @@ router.get('/pdf/:_id', [checkAuth], async (req, res) => {
    buildPdf(userDoc, projectDoc, onData, onEnd);
 });
 
-// router.get('/download/:_id', (req, res) => {
-//    let { params } = req;
-//    res.download('./server/routes/api/test.txt', `${params._id}`);
-// });
-
 router.get('/recent', [checkAuth, sanitizeQuery], async (req, res) => {
    const { token, query } = req;
    let { _id } = token;
