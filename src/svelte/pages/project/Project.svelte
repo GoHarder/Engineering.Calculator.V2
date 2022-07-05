@@ -22,9 +22,9 @@
    const getCompIndex = (name) => comps.findIndex((comp) => comp.name === name);
 
    const parsePath = (path) => {
-      const index = getCompIndex(path[1]);
+      let index = getCompIndex(path[1]);
       currentIndex = index;
-
+      if (index < 0) index = 0;
       comp = comps[index];
    };
 
