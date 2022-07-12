@@ -22,78 +22,114 @@ const match = (cb, speed, capacity, type, location, roping, shaftLoad) => {
 };
 
 /**
- * Filters the limits and the max system loads
+ * Creates the sheave object in the first set stage
  * @param {number} cb The elevator counterbalance
  * @param {number} speed The machine speed
  * @param {number} capacity The machine capacity
  * @param {number} shaftLoad The sheave shaft load
  */
-const setSheaves = (cb, speed, capacity, shaftLoad) => {
-   const maxSystemLoad = { $filter: { input: '$$sheave.maxSystemLoad', as: 'max', cond: { $and: [{ $gte: ['$$max.speed', speed] }, { $gte: ['$$max.load', shaftLoad] }] } } };
+const setSheaves1 = (cb, speed, capacity, shaftLoad) => {
    let cond = { $gte: ['$$limit.speed', speed] };
-   8200;
-   if (cb) cond = { $and: [{ $gte: ['$$limit.speed', speed] }, { $gte: [`$$limit.${cb}`, capacity] }] };
 
-   const limits = { $filter: { input: '$$sheave.limits', as: 'limit', cond } };
+   if (cb) cond = { $and: [cond, { $gte: [`$$limit.${cb}`, capacity] }] };
 
-   return { $map: { input: '$sheaves', as: 'sheave', in: { $mergeObjects: ['$$sheave', { maxSystemLoad, limits }] } } };
-};
+   const limits = { $size: { $filter: { input: '$$sheave.limits', as: 'limit', cond } } };
 
-/**
- * Sets the roping for the rope grippers
- * @param {number} roping The elevator roping
- */
-const setGrippers1 = (roping) => {
-   return {
-      $map: {
-         input: '$ropeGrippers',
-         as: 'ropeGripper',
-         in: {
-            $mergeObjects: [
-               { $unsetField: { input: '$$ropeGripper', field: 'ropings' } },
-               { $first: { $filter: { input: '$$ropeGripper.ropings', cond: { $eq: ['$$this.roping', roping] } } } },
-            ],
-         },
-      },
+   const maxSystemLoad = {
+      $size: { $filter: { input: '$$sheave.maxSystemLoad', as: 'max', cond: { $and: [{ $gte: ['$$max.speed', speed] }, { $gte: ['$$max.load', shaftLoad] }] } } },
    };
-};
 
-/**
- * Creates the match step for the aggregation
- * @param {number} speed The machine speed
- * @param {number} capacity The machine capacity
- * @param {number} shaftLoad The sheave shaft load
- */
-const setGrippers2 = (speed, capacity, shaftLoad) => {
    return {
       $filter: {
-         input: '$ropeGrippers',
-         as: 'gripper',
-         cond: {
-            $and: [
-               { $gte: ['$$gripper.maxSpeed', speed] },
-               { $gte: ['$$gripper.maxCapacity', capacity] },
-               { $lte: ['$$gripper.minCapacity', capacity] },
-               { $gte: ['$$gripper.maxLoad', shaftLoad] },
-               { $lte: ['$$gripper.minLoad', shaftLoad] },
-            ],
-         },
+         input: '$sheaves',
+         as: 'sheave',
+         cond: { $let: { vars: { limits, maxSystemLoad }, in: { $and: [{ $gt: ['$$limits', 0] }, { $gt: ['$$maxSystemLoad', 0] }] } } },
       },
    };
 };
 
-const setCoils = {
-   $set: {
-      sheaves: {
-         $map: {
-            input: '$sheaves',
-            as: 'sheave',
-            in: {
-               $mergeObjects: ['$$sheave', { coils: { $reduce: { input: '$$sheave.limits', initialValue: [], in: { $concatArrays: [['$$this.coil'], '$$value'] } } } }],
+/**
+ * Creates the rope grippers object in the first set stage
+ * @param {number} speed The machine speed
+ * @param {number} capacity The machine capacity
+ * @param {number} roping The elevator roping
+ * @param {number} shaftLoad The sheave shaft load
+ */
+const setRopeGrippers = (speed, capacity, roping, shaftLoad) => {
+   const ropings = {
+      $size: {
+         $filter: {
+            input: '$$gripper.ropings',
+            cond: {
+               $and: [
+                  { $eq: ['$$this.roping', roping] },
+                  { $gte: ['$$this.maxSpeed', speed] },
+                  { $gte: ['$$this.maxCapacity', capacity] },
+                  { $lte: ['$$this.minCapacity', capacity] },
+                  { $gte: ['$$this.maxLoad', shaftLoad] },
+                  { $lte: ['$$this.minLoad', shaftLoad] },
+               ],
             },
          },
       },
-   },
+   };
+
+   return { $filter: { input: '$ropeGrippers', as: 'gripper', cond: { $let: { vars: { ropings }, in: { $gt: ['$$ropings', 0] } } } } };
+};
+
+/**
+ * Creates the bases object in the second set stage
+ */
+const setBases2 = () => {
+   const mount = { $filter: { input: '$bases', as: 'base', cond: { $eq: [{ $type: '$$base.ropeGrippers' }, 'array'] } } };
+   const noMount = { $filter: { input: '$bases', as: 'base', cond: { $eq: [{ $type: '$$base.ropeGrippers' }, 'missing'] } } };
+   const valid = { $reduce: { input: '$ropeGrippers', initialValue: [], in: { $concatArrays: ['$$value', ['$$this.name']] } } };
+
+   const ropeGrippers = {
+      $reduce: {
+         input: '$$this.ropeGrippers',
+         initialValue: [],
+         in: { $concatArrays: ['$$value', { $cond: { if: { $in: ['$$this.name', '$$valid'] }, then: ['$$this.name'], else: [] } }] },
+      },
+   };
+
+   const $$mount = {
+      $reduce: {
+         input: '$$mount',
+         initialValue: [],
+         in: {
+            $let: {
+               vars: { ropeGrippers },
+               in: {
+                  $concatArrays: [
+                     '$$value',
+                     { $cond: { if: { $gt: [{ $size: '$$ropeGrippers' }, 0] }, then: [{ $mergeObjects: ['$$this', { ropeGrippers: '$$ropeGrippers' }] }], else: [] } },
+                  ],
+               },
+            },
+         },
+      },
+   };
+
+   return { $let: { vars: { mount, noMount, valid }, in: { $concatArrays: ['$$noMount', $$mount] } } };
+};
+
+/**
+ * Creates the sheave object in the second set stage
+ * @param {number} cb The elevator counterbalance
+ * @param {number} speed The machine speed
+ * @param {number} capacity The machine capacity
+ */
+const setSheaves2 = (cb, speed, capacity) => {
+   let cond = { $gte: ['$$limit.speed', speed] };
+
+   if (cb) cond = { $and: [cond, { $gte: [`$$limit.${cb}`, capacity] }] };
+
+   const limits = { $size: { $filter: { input: '$$sheave.limits', as: 'limit', cond } } };
+
+   const coils = { $reduce: { input: '$$limits', initialValue: [], in: { $concatArrays: ['$$value', ['$$this.coil']] } } };
+
+   return { $map: { input: '$sheaves', as: 'sheave', in: { $let: { vars: { limits }, in: { $mergeObjects: ['$$sheave', { coils }] } } } } };
 };
 
 /**
@@ -106,126 +142,43 @@ const setCoils = {
  * @param {number} roping The elevator roping
  * @param {number} shaftLoad The sheave shaft load
  */
-export const getMachines = (cb, speed, capacity, type, location, roping, shaftLoad) => {
+export const getMachines = (cb, speed, capacity, type, location, roping, shaftLoad, seismicZone) => {
    // Convert counterbalance
    cb = `capAt${cb.toFixed(3).replace(/0\.(\d{2})(\d)/, '$1_$2')}`;
    cb = ['capAt40_0', 'capAt42_5', 'capAt45_0', 'capAt50_0'].includes(cb) && cb;
 
-   return [
-      match(cb, speed, capacity, type, location, roping, shaftLoad),
-      { $set: { sheaves: setSheaves(cb, speed, capacity, shaftLoad), ropeGrippers: setGrippers1(roping) } },
-      {
-         $set: {
-            sheaves: {
-               $filter: { input: '$sheaves', as: 'sheave', cond: { $and: [{ $gt: [{ $size: '$$sheave.limits' }, 0] }, { $gt: [{ $size: '$$sheave.maxSystemLoad' }, 0] }] } },
-            },
-            ropeGrippers: setGrippers2(speed, capacity, shaftLoad),
+   // Set second set stage
+   const set2 = { $set: { bases: setBases2() } };
+
+   if (type === 'Gearless') set2.sheaves = setSheaves2();
+
+   // Set third set stage
+   const iso = { $filter: { input: '$bases', as: 'base', cond: { $eq: [{ $type: '$$base.isolation' }, 'array'] } } };
+
+   const noIso = { $filter: { input: '$bases', as: 'base', cond: { $eq: [{ $type: '$$base.isolation' }, 'missing'] } } };
+
+   const $$iso = {
+      $map: {
+         input: '$$iso',
+         as: 'base',
+         in: {
+            $mergeObjects: ['$$base', { isolation: { $filter: { input: '$$base.isolation', as: 'isolation', cond: { $in: [seismicZone, '$$isolation.seismicZone'] } } } }],
          },
       },
-      type === 'Gearless' ? setCoils : undefined,
+   };
+
+   return [
+      match(cb, speed, capacity, type, location, roping, shaftLoad),
       {
-         $unset: [
-            'location',
-            'ropeGrippers.maxCapacity',
-            'ropeGrippers.maxLoad',
-            'ropeGrippers.maxSpeed',
-            'ropeGrippers.minCapacity',
-            'ropeGrippers.minLoad',
-            'ropeGrippers.roping',
-            'roping',
-            'sheaves.limits',
-            'sheaves.maxSystemLoad',
-            'type',
-         ],
+         $set: {
+            sheaves: setSheaves1(cb, speed, capacity, shaftLoad),
+            ropeGrippers: setRopeGrippers(speed, capacity, roping, shaftLoad),
+            bases: { $filter: { input: '$bases', as: 'base', cond: { $in: [location, '$$base.location'] } } },
+         },
       },
+      set2,
+      { $set: { bases: { $let: { vars: { iso, noIso }, in: { $concatArrays: ['$$noIso', $$iso] } } } } },
+      { $unset: ['location', 'roping', 'type', 'sheaves.limits', 'sheaves.maxSystemLoad', 'ropeGrippers.ropings', 'bases.location', 'bases.isolation.seismicZone'] },
       { $sort: { name: 1 } },
-   ].filter((step) => step);
+   ];
 };
-
-// console.log(JSON.stringify(getMachines(0.45, 900, 1500, 'Geared', 'Overhead', 1, 8200), null, 3));
-
-// export const getMachines = (counterbalance, speed, capacity, type, location, roping, shaftLoad) => {
-//    const cbKey = `capAt${counterbalance.toFixed(3).replace(/0\.(\d{2})(\d)/, '$1_$2')}`;
-
-//    const validCB = ['capAt40_0', 'capAt42_5', 'capAt45_0', 'capAt50_0'].includes(cbKey);
-
-//    const match = { speed: { $gte: speed } };
-
-//    let cond = { $gte: ['$$limit.speed', speed] };
-
-//    if (validCB) {
-//       match[cbKey] = { $gte: capacity };
-//       cond = { $and: [cond, { $gte: [`$$limit.${cbKey}`, capacity] }] };
-//    }
-
-//    return [
-//       { $unwind: { path: '$sheaves' } },
-//       {
-//          $match: {
-//             type,
-//             location,
-//             roping,
-//             'sheaves.limits': { $elemMatch: match },
-//             'sheaves.maxSystemLoad': { $elemMatch: { speed: { $gte: speed }, load: { $gte: shaftLoad } } },
-//          },
-//       },
-//       { $unwind: { path: '$ropeGrippers' } },
-//       {
-//          $addFields: {
-//             // 'sheaves.limits': { $filter: { input: '$sheaves.limits', as: 'limit', cond } },
-//             'ropeGrippers.ropings': { $filter: { input: '$ropeGrippers.ropings', as: 'nth', cond: { $eq: ['$$nth.roping', 1] } } },
-//          },
-//       },
-//       {
-//          $project: {
-//             _id: 1,
-//             name: 1,
-//             bases: 1,
-//             centerOfGravity: 1,
-//             ropeGrippers: {
-//                name: 1,
-//                maxCapacity: { $first: '$ropeGrippers.ropings.maxCapacity' },
-//                maxLoad: { $first: '$ropeGrippers.ropings.maxLoad' },
-//                maxSpeed: { $first: '$ropeGrippers.ropings.maxSpeed' },
-//                minCapacity: { $first: '$ropeGrippers.ropings.minCapacity' },
-//                minLoad: { $first: '$ropeGrippers.ropings.minLoad' },
-//                outToOut: 1,
-//                weight: 1,
-//             },
-//             sheaves: 1,
-//          },
-//       },
-//       {
-//          $group: {
-//             _id: '$_id',
-//             name: { $first: '$name' },
-//             bases: { $first: '$bases' },
-//             centerOfGravity: { $first: '$centerOfGravity' },
-//             ropeGrippers: { $addToSet: '$ropeGrippers' },
-//             sheaves: { $addToSet: '$sheaves' },
-//          },
-//       },
-//       {
-//          $addFields: {
-//             ropeGrippers: {
-//                $filter: {
-//                   input: '$ropeGrippers',
-//                   as: 'nth',
-//                   cond: { $and: [{ $gte: ['$$nth.maxSpeed', speed] }, { $gte: ['$$nth.maxCapacity', capacity] }, { $lte: ['$$nth.minCapacity', capacity] }] },
-//                },
-//             },
-//          },
-//       },
-//       {
-//          $project: {
-//             _id: 1,
-//             name: 1,
-//             bases: 1,
-//             centerOfGravity: 1,
-//             ropeGrippers: { name: 1, maxLoad: 1, minLoad: 1, outToOut: 1, weight: 1 },
-//             sheaves: { diameter: 1, maxGroovePressure: 1, name: 1, rimWidth: 1 },
-//          },
-//       },
-//       { $sort: { name: 1 } },
-//    ];
-// };

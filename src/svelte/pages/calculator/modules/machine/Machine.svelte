@@ -82,6 +82,7 @@
          `counterbalance=${counterbalance}`,
          `roping=${roping}`,
          `shaftLoad=${shaftLoad}`,
+         `seismicZone=${seismicZone}`,
       ].join('&');
 
       const token = localStorage.getItem('token');
@@ -114,7 +115,8 @@
 
    // Constants
    const { globals, modules, metric } = project;
-   const { capacity, roping, speed, counterbalance, loading, machine, overallTravel } = globals;
+   const { capacity, roping, speed, seismic, counterbalance, loading, machine, overallTravel } = globals;
+   const { zone: seismicZone } = seismic;
    const { type: loadingType, freight: freightClass } = loading;
    const { capacity: machineCapacity, speed: machineSpeed } = machine;
    const { machine: module } = modules;
