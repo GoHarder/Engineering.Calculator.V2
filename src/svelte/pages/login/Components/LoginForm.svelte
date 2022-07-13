@@ -29,7 +29,7 @@
       let res, body;
 
       try {
-         const reqBody = JSON.stringify({ email, password, longToken });
+         const reqBody = JSON.stringify({ email: email.toLowerCase(), password, longToken });
 
          res = await fetch('/api/tokens', {
             method: 'POST',
