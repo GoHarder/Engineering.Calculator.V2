@@ -170,6 +170,8 @@
    // NOTE: 4-05-2022 9:43 AM - This is a sandbox for variables
    let machineBeams = true;
    let machineBlockUp = true;
+   let machineBase;
+   let isolation;
 
    // - Database
    let machines = [];
@@ -186,6 +188,8 @@
    let machineObj = {};
    let sheaveObj = {};
    let ropeObj = {};
+   let ropeGriperObj = {};
+   let machineBaseObj = {};
 
    // Subscriptions
    // Contexts
@@ -251,6 +255,14 @@
    $: ropeGripOptions = (machineObj?.ropeGrippers ?? []).filter((gripper) => {
       const maxLoad = gripper.maxLoad * ropeGripQty;
       return gripper.minLoad <= ropeGripLoad && ropeGripLoad <= maxLoad;
+   });
+
+   // - Bases
+   $: baseOptions = (machineObj?.bases ?? []).filter((base) => {
+      if ('minSheaveDia' in base && 'diameter' in sheaveObj) {
+         return base.minSheaveDia.some((dia) => dia >= sheaveObj.diameter);
+      }
+      return true;
    });
 
    // - Groove Calcs
@@ -374,15 +386,25 @@
             <Option value="Rope">Rope</Option>
          </Select>
       {/if}
-
-      <!-- <Checkbox bind:checked={machineBeams} label="Machine Beams" />
-
-      {#if machineBeams}
-         <Checkbox bind:checked={machineBlockUp} label="Block Up" />
-      {/if} -->
    </Fieldset>
 
    <Fieldset title="Equipment">
+      {#if baseOptions.length > 0}
+         <Select bind:value={machineBase} bind:selected={machineBaseObj} label="Base" options={baseOptions}>
+            {#each baseOptions as { name } (name)}
+               <Option value={name}>{name}</Option>
+            {/each}
+         </Select>
+      {/if}
+
+      {#if machineBaseObj.isolation}
+         <Select bind:value={isolation} label="Isolation">
+            {#each machineBaseObj.isolation as { name } (name)}
+               <Option value={name}>{name}</Option>
+            {/each}
+         </Select>
+      {/if}
+
       {#if machineObj.ropeGrippers}
          <Select bind:value={ropeGripQty} label="Rope Gripper Qty" type="number">
             <Option value="1">1</Option>
@@ -391,7 +413,7 @@
       {/if}
 
       {#if ropeGripOptions.length > 0}
-         <Select bind:value={ropeGripModel} label="Rope Gripper Model">
+         <Select bind:value={ropeGripModel} bind:selected={ropeGriperObj} label="Rope Gripper Model" options={ropeGripOptions}>
             {#each ropeGripOptions as { name } (name)}
                <Option value={name}>{name}</Option>
             {/each}
