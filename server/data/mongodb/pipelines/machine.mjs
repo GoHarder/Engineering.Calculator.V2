@@ -55,26 +55,48 @@ const setSheaves1 = (cb, speed, capacity, shaftLoad) => {
  * @param {number} roping The elevator roping
  * @param {number} shaftLoad The sheave shaft load
  */
-const setRopeGrippers = (speed, capacity, roping, shaftLoad) => {
+const setRopeGrippers = (speed, capacity, roping) => {
    const ropings = {
       $size: {
          $filter: {
-            input: '$$gripper.ropings',
+            input: '$$this.ropings',
             cond: {
                $and: [
                   { $eq: ['$$this.roping', roping] },
                   { $gte: ['$$this.maxSpeed', speed] },
                   { $gte: ['$$this.maxCapacity', capacity] },
                   { $lte: ['$$this.minCapacity', capacity] },
-                  { $gte: ['$$this.maxLoad', shaftLoad] },
-                  { $lte: ['$$this.minLoad', shaftLoad] },
                ],
             },
          },
       },
    };
 
-   return { $filter: { input: '$ropeGrippers', as: 'gripper', cond: { $let: { vars: { ropings }, in: { $gt: ['$$ropings', 0] } } } } };
+   const selected = { $first: { $filter: { input: '$$this.ropings', cond: { $eq: ['$$this.roping', roping] } } } };
+
+   return {
+      $reduce: {
+         input: '$ropeGrippers',
+         initialValue: [],
+         in: {
+            $let: {
+               vars: { ropings, roping: selected },
+               in: {
+                  $concatArrays: [
+                     '$$value',
+                     {
+                        $cond: {
+                           if: { $gt: ['$$ropings', 0] },
+                           then: [{ $mergeObjects: ['$$this', { minLoad: '$$roping.minLoad', maxLoad: '$$roping.maxLoad' }] }],
+                           else: [],
+                        },
+                     },
+                  ],
+               },
+            },
+         },
+      },
+   };
 };
 
 /**
@@ -169,16 +191,16 @@ export const getMachines = (cb, speed, capacity, type, location, roping, shaftLo
 
    return [
       match(cb, speed, capacity, type, location, roping, shaftLoad),
+      { $sort: { name: 1 } },
       {
          $set: {
             sheaves: setSheaves1(cb, speed, capacity, shaftLoad),
-            ropeGrippers: setRopeGrippers(speed, capacity, roping, shaftLoad),
+            ropeGrippers: setRopeGrippers(speed, capacity, roping),
             bases: { $filter: { input: '$bases', as: 'base', cond: { $in: [location, '$$base.location'] } } },
          },
       },
       set2,
       { $set: { bases: { $let: { vars: { iso, noIso }, in: { $concatArrays: ['$$noIso', $$iso] } } } } },
       { $unset: ['location', 'roping', 'type', 'sheaves.limits', 'sheaves.maxSystemLoad', 'ropeGrippers.ropings', 'bases.location', 'bases.isolation.seismicZone'] },
-      { $sort: { name: 1 } },
    ];
 };
