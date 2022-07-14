@@ -50,7 +50,7 @@
             headers: { Authorization: `Bearer ${token}` },
          });
 
-         fileData = await res.blob();
+         const fileData = await res.blob();
 
          const a = document.createElement('a');
          a.href = window.URL.createObjectURL(fileData);
