@@ -52,9 +52,11 @@
 
          const fileData = await res.blob();
 
+         if (path === 'cad') path = 'txt';
+
          const a = document.createElement('a');
          a.href = window.URL.createObjectURL(fileData);
-         a.download = fileName;
+         a.download = `${fileString}.${path}`;
          a.click();
 
          fetchStore.loading(false);
@@ -76,6 +78,7 @@
    // - Project
    let carNo;
    let contract;
+   let customer;
    let jobName;
    let project;
    let updateModule;
@@ -108,6 +111,7 @@
    const clearProject = projectStore.subscribe((store) => {
       carNo = store.carNo;
       contract = store.contract;
+      customer = store.customer;
       jobName = store.jobName;
       project = store;
 
@@ -137,6 +141,11 @@
       domTitle = `${contract} - ${jobName} - ${carNo}`;
       tabTitle = domTitle;
    }
+
+   $: fileString = [contract, customer, jobName].reduce((output, chunk, i) => {
+      if (chunk) output += `${i > 0 ? '.' : ''}${chunk}`;
+      return output;
+   }, '');
 
    $: parsePath(path);
 
